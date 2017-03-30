@@ -1,0 +1,42 @@
+{
+  "name": "point-of-view",
+  "version": "0.1.0",
+  "description": "Template plugin for Fastify",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard && tap test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fastify/point-of-view.git"
+  },
+  "keywords": [
+    "fastify",
+    "template",
+    "view",
+    "speed",
+    "ejs",
+    "pug",
+    "handlebars"
+  ],
+  "author": "Tomas Della Vedova - @delvedor (http://delved.org)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fastify/point-of-view/issues"
+  },
+  "homepage": "https://github.com/fastify/point-of-view#readme",
+  "dependencies": {
+    "fastify-plugin": "^0.1.0",
+    "hashlru": "^2.1.0"
+  },
+  "devDependencies": {
+    "ejs": "^2.5.6",
+    "fastify": "^0.13.0",
+    "handlebars": "^4.0.6",
+    "pre-commit": "^1.2.2",
+    "pug": "^2.0.0-beta11",
+    "request": "^2.81.0",
+    "standard": "^9.0.2",
+    "tap": "^10.3.0"
+  }
+}
