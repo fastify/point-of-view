@@ -65,16 +65,29 @@ test('reply.view should return 500 if some data is missing', t => {
   })
 })
 
-/* test('register callback should throw if the engine is missing', t => {
+test('register callback should throw if the engine is missing', t => {
   t.plan(2)
   const fastify = Fastify()
 
   fastify.register(require('./index'), {}, err => {
-    t.error(err)
+    t.ok(err instanceof Error)
     t.is(err.message, 'Missing engine')
-    t.pass()
   })
-}) */
+})
+
+test('register callback should throw if the engine is not supported', t => {
+  t.plan(2)
+  const fastify = Fastify()
+
+  fastify.register(require('./index'), {
+    engine: {
+      notSupported: null
+    }
+  }, err => {
+    t.ok(err instanceof Error)
+    t.is(err.message, '\'notSupported\' not yet supported, PR? :)')
+  })
+})
 
 test('reply.view with ejs engine and custom templates folder', t => {
   t.plan(6)
