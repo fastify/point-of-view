@@ -16,7 +16,7 @@ function fastifyView (fastify, opts, next) {
 
   const type = Object.keys(opts.engine)[0]
   if (supportedEngines.indexOf(type) === -1) {
-    next(new Error(`${type} not yet supported, PR? :)`))
+    next(new Error(`'${type}' not yet supported, PR? :)`))
     return
   }
 
@@ -24,6 +24,7 @@ function fastifyView (fastify, opts, next) {
   const options = opts.options || {}
   const templatesDir = path.join(process.cwd(), opts.templates || './')
   const lru = HLRU(opts.maxCache || 100)
+  const prod = process.env.NODE_ENV === 'production'
 
   function view (page, data) {
     if (!page || !data) {
@@ -33,12 +34,12 @@ function fastifyView (fastify, opts, next) {
 
     const toHtml = lru.get(page)
 
-    if (toHtml) {
+    if (toHtml && prod) {
       this.header('Content-Type', 'text/html').send(toHtml(data))
       return
     }
 
-    fs.readFile(templatesDir + page, 'utf8', readCallback(this, page, data))
+    fs.readFile(path.join(templatesDir, page), 'utf8', readCallback(this, page, data))
   }
 
   function readCallback (that, page, data) {
@@ -56,4 +57,4 @@ function fastifyView (fastify, opts, next) {
   next()
 }
 
-module.exports = fp(fastifyView, '>=0.13.0')
+module.exports = fp(fastifyView, '>=0.13.1')
