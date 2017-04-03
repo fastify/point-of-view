@@ -1,6 +1,5 @@
 # point-of-view
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/fastify/point-of-view.svg)](https://greenkeeper.io/)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)
  [![Build Status](https://travis-ci.org/fastify/point-of-view.svg?branch=master)](https://travis-ci.org/fastify/point-of-view)
 
@@ -14,6 +13,9 @@ Currently supports the following templates engines:
 - [`handlebars`](http://handlebarsjs.com/)
 
 In `production` mode, `point-of-view` will heavily cache the templates file and functions, while in `development` will reload every time the template file and function.
+
+*Note that at least Fastify `v0.13.1` is needed.*
+
 ## Install
 
 ```
