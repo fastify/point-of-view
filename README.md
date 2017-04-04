@@ -11,6 +11,7 @@ Currently supports the following templates engines:
 - [`ejs`](http://www.embeddedjs.com/)
 - [`pug`](https://pugjs.org/api/getting-started.html)
 - [`handlebars`](http://handlebarsjs.com/)
+- [`marko`](http://markojs.com/)
 
 In `production` mode, `point-of-view` will heavily cache the templates file and functions, while in `development` will reload every time the template file and function.
 
