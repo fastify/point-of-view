@@ -60,19 +60,7 @@ function fastifyView (fastify, opts, next) {
       return
     }
 
-    const markoTemplate = lru.get(page)
-
-    if (markoTemplate && prod) {
-      if (opts && opts.stream) {
-        this.send(markoTemplate.stream(data))
-      } else {
-        markoTemplate.renderToString(data, send(this))
-      }
-      return
-    }
-
     const template = engine.load(join(templatesDir, page))
-    lru.set(page, template)
 
     if (opts && opts.stream) {
       this.send(template.stream(data))
