@@ -221,3 +221,68 @@ test('reply.view with handlebars engine', t => {
     })
   })
 })
+
+test('reply.view with marko engine', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const marko = require('marko')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      marko: marko
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('/templates/index.marko', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    request({
+      method: 'GET',
+      uri: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html')
+      t.strictEqual(marko.load('./templates/index.marko').renderToString(data), body)
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with marko engine, with stream', t => {
+  t.plan(5)
+  const fastify = Fastify()
+  const marko = require('marko')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      marko: marko
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('/templates/index.marko', data, { stream: true })
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    request({
+      method: 'GET',
+      uri: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-type'], 'application/octet-stream')
+      t.strictEqual(marko.load('./templates/index.marko').renderToString(data), body)
+      fastify.close()
+    })
+  })
+})

@@ -31,12 +31,19 @@
   },
   "devDependencies": {
     "ejs": "^2.5.6",
+    "express": "^4.15.2",
     "fastify": "^0.14.0",
     "handlebars": "^4.0.6",
+    "marko": "^4.2.2",
     "pre-commit": "^1.2.2",
     "pug": "^2.0.0-beta11",
     "request": "^2.81.0",
-    "standard": "^9.0.2",
+    "standard": "^10.0.0",
     "tap": "^10.3.0"
+  },
+  "standard": {
+    "ignore": [
+      "*.marko.js"
+    ]
   }
 }
