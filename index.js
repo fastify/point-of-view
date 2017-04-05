@@ -1,14 +1,12 @@
 'use strict'
 
 const fp = require('fastify-plugin')
-const fs = require('fs')
-const path = require('path')
+const readFile = require('fs').readFile
+const join = require('path').join
 const HLRU = require('hashlru')
-const supportedEngines = ['ejs', 'pug', 'handlebars']
+const supportedEngines = ['ejs', 'pug', 'handlebars', 'marko']
 
 function fastifyView (fastify, opts, next) {
-  fastify.decorateReply('view', view)
-
   if (!opts.engine) {
     next(new Error('Missing engine'))
     return
@@ -22,9 +20,11 @@ function fastifyView (fastify, opts, next) {
 
   const engine = opts.engine[type]
   const options = opts.options || {}
-  const templatesDir = path.join(process.cwd(), opts.templates || './')
+  const templatesDir = join(process.cwd(), opts.templates || './')
   const lru = HLRU(opts.maxCache || 100)
   const prod = process.env.NODE_ENV === 'production'
+
+  fastify.decorateReply('view', type === 'marko' ? viewMarko : view)
 
   function view (page, data) {
     if (!page || !data) {
@@ -39,7 +39,7 @@ function fastifyView (fastify, opts, next) {
       return
     }
 
-    fs.readFile(path.join(templatesDir, page), 'utf8', readCallback(this, page, data))
+    readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
   }
 
   function readCallback (that, page, data) {
@@ -51,6 +51,28 @@ function fastifyView (fastify, opts, next) {
 
       lru.set(page, engine.compile(html, options))
       that.header('Content-Type', 'text/html').send(lru.get(page)(data))
+    }
+  }
+
+  function viewMarko (page, data, opts) {
+    if (!page || !data) {
+      this.send(new Error('Missing data'))
+      return
+    }
+
+    const template = engine.load(join(templatesDir, page))
+
+    if (opts && opts.stream) {
+      this.send(template.stream(data))
+    } else {
+      template.renderToString(data, send(this))
+    }
+
+    function send (that) {
+      return function _send (err, html) {
+        if (err) return that.send(err)
+        that.header('Content-Type', 'text/html').send(html)
+      }
     }
   }
 
