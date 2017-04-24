@@ -50,7 +50,12 @@ function fastifyView (fastify, opts, next) {
       }
 
       lru.set(page, engine.compile(html, options))
-      that.header('Content-Type', 'text/html').send(lru.get(page)(data))
+
+      if (!that.res.getHeader('content-type')){
+        that.header('Content-Type', 'text/html');
+      }
+
+      that.send(lru.get(page)(data))
     }
   }
 
