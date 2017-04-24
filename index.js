@@ -35,7 +35,10 @@ function fastifyView (fastify, opts, next) {
     const toHtml = lru.get(page)
 
     if (toHtml && prod) {
-      this.header('Content-Type', 'text/html').send(toHtml(data))
+      if (!this.res.getHeader('content-type')) {
+        this.header('Content-Type', 'text/html')
+      }
+      this.send(toHtml(data))
       return
     }
 
