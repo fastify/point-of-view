@@ -35,7 +35,10 @@ function fastifyView (fastify, opts, next) {
     const toHtml = lru.get(page)
 
     if (toHtml && prod) {
-      this.header('Content-Type', 'text/html').send(toHtml(data))
+      if (!this.res.getHeader('content-type')) {
+        this.header('Content-Type', 'text/html')
+      }
+      this.send(toHtml(data))
       return
     }
 
@@ -50,7 +53,12 @@ function fastifyView (fastify, opts, next) {
       }
 
       lru.set(page, engine.compile(html, options))
-      that.header('Content-Type', 'text/html').send(lru.get(page)(data))
+
+      if (!that.res.getHeader('content-type')) {
+        that.header('Content-Type', 'text/html')
+      }
+
+      that.send(lru.get(page)(data))
     }
   }
 
