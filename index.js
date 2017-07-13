@@ -2,6 +2,7 @@
 
 const fp = require('fastify-plugin')
 const readFile = require('fs').readFile
+const resolve = require('path').resolve
 const join = require('path').join
 const HLRU = require('hashlru')
 const supportedEngines = ['ejs', 'pug', 'handlebars', 'marko']
@@ -20,7 +21,7 @@ function fastifyView (fastify, opts, next) {
 
   const engine = opts.engine[type]
   const options = opts.options || {}
-  const templatesDir = join(process.cwd(), opts.templates || './')
+  const templatesDir = resolve(opts.templates || './')
   const lru = HLRU(opts.maxCache || 100)
   const prod = process.env.NODE_ENV === 'production'
 
