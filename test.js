@@ -5,6 +5,7 @@ const test = t.test
 const request = require('request')
 const Fastify = require('fastify')
 const fs = require('fs')
+const path = require('path')
 
 test('reply.view exist', t => {
   t.plan(6)
@@ -99,7 +100,41 @@ test('reply.view with ejs engine and custom templates folder', t => {
     engine: {
       ejs: ejs
     },
-    templates: '/templates'
+    templates: 'templates'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('/index.ejs', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    request({
+      method: 'GET',
+      uri: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html')
+      t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body)
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with ejs engine and full path templates folder', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      ejs: ejs
+    },
+    templates: path.join(__dirname, 'templates')
   })
 
   fastify.get('/', (req, reply) => {
