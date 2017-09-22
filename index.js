@@ -80,14 +80,10 @@ function fastifyView (fastify, opts, next) {
     confs.settings.views = templatesDir
     // setting locals to pass data by
     confs.locals = Object.assign({}, confs.locals, data)
-    engine(join(templatesDir, page), confs, send(this))
-
-    function send (that, data) {
-      return function _send (err, html) {
-        if (err) return that.send(err)
-        that.header('Content-Type', 'text/html').send(html)
-      }
-    }
+    engine(join(templatesDir, page), confs, (err, html) => {
+      if (err) return this.send(err)
+      this.header('Content-Type', 'text/html').send(html)
+    })
   }
 
   function viewMarko (page, data, opts) {
