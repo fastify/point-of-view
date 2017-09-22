@@ -5,7 +5,7 @@ const readFile = require('fs').readFile
 const resolve = require('path').resolve
 const join = require('path').join
 const HLRU = require('hashlru')
-const supportedEngines = ['ejs', 'pug', 'handlebars', 'marko']
+const supportedEngines = ['ejs', 'pug', 'handlebars', 'marko', 'ejs-mate']
 
 function fastifyView (fastify, opts, next) {
   if (!opts.engine) {
@@ -24,8 +24,13 @@ function fastifyView (fastify, opts, next) {
   const templatesDir = resolve(opts.templates || './')
   const lru = HLRU(opts.maxCache || 100)
   const prod = process.env.NODE_ENV === 'production'
+  const renders = {
+    marko: viewMarko,
+    'ejs-mate': viewEjsMate,
+    _default: view
+  }
 
-  fastify.decorateReply('view', type === 'marko' ? viewMarko : view)
+  fastify.decorateReply('view', renders[type] ? renders[type] : renders._default)
 
   function view (page, data) {
     if (!page || !data) {
@@ -58,8 +63,29 @@ function fastifyView (fastify, opts, next) {
       if (!that.res.getHeader('content-type')) {
         that.header('Content-Type', 'text/html')
       }
-
       that.send(lru.get(page)(data))
+    }
+  }
+
+  function viewEjsMate (page, data) {
+    if (!page || !data) {
+      this.send(new Error('Missing data'))
+      return
+    }
+    if (!options.settings) {
+      options.settings = {}
+    }
+    // ejs-mate use views to find layouts
+    options.settings.views = templatesDir
+    // setting locals to pass data by
+    options.locals = Object.assign({}, options.locals, data)
+    engine(join(templatesDir, page), options, send(this))
+
+    function send (that, data) {
+      return function _send (err, html) {
+        if (err) return that.send(err)
+        that.header('Content-Type', 'text/html').send(html)
+      }
     }
   }
 
