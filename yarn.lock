@@ -773,6 +773,16 @@ ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
 
+ejs-mate@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/ejs-mate/-/ejs-mate-2.3.0.tgz#1b8b8fea7350d9482e9e4bbe625c4a97fd8d9bcf"
+  dependencies:
+    ejs "1.0.0"
+
+ejs@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/ejs/-/ejs-1.0.0.tgz#c9c60a48a46ee452fb32a71c317b95e5aa1fcb3d"
+
 ejs@^2.5.6:
   version "2.5.7"
   resolved "https://registry.yarnpkg.com/ejs/-/ejs-2.5.7.tgz#cc872c168880ae3c7189762fd5ffc00896c9518a"
