@@ -72,14 +72,15 @@ function fastifyView (fastify, opts, next) {
       this.send(new Error('Missing data'))
       return
     }
-    if (!options.settings) {
-      options.settings = {}
+    const confs = Object.assign({}, options)
+    if (!confs.settings) {
+      confs.settings = {}
     }
     // ejs-mate use views to find layouts
-    options.settings.views = templatesDir
+    confs.settings.views = templatesDir
     // setting locals to pass data by
-    options.locals = Object.assign({}, options.locals, data)
-    engine(join(templatesDir, page), options, send(this))
+    confs.locals = Object.assign({}, confs.locals, data)
+    engine(join(templatesDir, page), confs, send(this))
 
     function send (that, data) {
       return function _send (err, html) {
