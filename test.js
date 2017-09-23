@@ -355,3 +355,36 @@ test('reply.view with pug engine, will preserve content-type', t => {
     })
   })
 })
+
+test('reply.view with ejs-mate engine', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejsMate = require('ejs-mate')
+  const data = { text: 'text', header: 'header', footer: 'footer' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      'ejs-mate': ejsMate
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('/templates/content.ejs', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    request({
+      method: 'GET',
+      uri: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html')
+      t.strictEqual('<html><head></head><body><h1>header</h1><div>text</div><div>footer</div></body></html>', body)
+      fastify.close()
+    })
+  })
+})
