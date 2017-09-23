@@ -1,6 +1,6 @@
 {
   "name": "point-of-view",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Template plugin for Fastify",
   "main": "index.js",
   "scripts": {
@@ -26,21 +26,21 @@
   },
   "homepage": "https://github.com/fastify/point-of-view#readme",
   "dependencies": {
-    "fastify-plugin": "^0.1.0",
+    "fastify-plugin": "^0.1.1",
     "hashlru": "^2.1.0"
   },
   "devDependencies": {
-    "ejs": "^2.5.6",
+    "ejs": "^2.5.7",
     "ejs-mate": "^2.3.0",
-    "express": "^4.15.2",
-    "fastify": "^0.25.0",
+    "express": "^4.15.4",
+    "fastify": "^0.28.2",
     "handlebars": "^4.0.6",
-    "marko": "^4.2.2",
+    "marko": "^4.4.28",
     "pre-commit": "^1.2.2",
-    "pug": "^2.0.0-rc.2",
-    "request": "^2.81.0",
-    "standard": "^10.0.0",
-    "tap": "^10.3.0"
+    "pug": "^2.0.0-rc.4",
+    "request": "^2.82.0",
+    "standard": "^10.0.3",
+    "tap": "^10.7.2"
   },
   "standard": {
     "ignore": [
