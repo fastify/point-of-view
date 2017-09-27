@@ -56,7 +56,7 @@ fastify.register(require('point-of-view'), {
   engine: {
     ejs: require('ejs')
   },
-  templates: '/templates',
+  templates: 'templates',
   options: {}
 })
 ```
