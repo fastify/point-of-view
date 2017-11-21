@@ -5,7 +5,7 @@ const readFile = require('fs').readFile
 const resolve = require('path').resolve
 const join = require('path').join
 const HLRU = require('hashlru')
-const supportedEngines = ['ejs', 'pug', 'handlebars', 'marko', 'ejs-mate']
+const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'ejs-mate']
 
 function fastifyView (fastify, opts, next) {
   if (!opts.engine) {
@@ -27,6 +27,7 @@ function fastifyView (fastify, opts, next) {
   const renders = {
     marko: viewMarko,
     'ejs-mate': viewEjsMate,
+    nunjucks: viewNunjucks,
     _default: view
   }
 
@@ -81,6 +82,26 @@ function fastifyView (fastify, opts, next) {
     // setting locals to pass data by
     confs.locals = Object.assign({}, confs.locals, data)
     engine(join(templatesDir, page), confs, (err, html) => {
+      if (err) return this.send(err)
+      this.header('Content-Type', 'text/html').send(html)
+    })
+  }
+
+  function viewNunjucks (page, data) {
+    if (!page || !data) {
+      this.send(new Error('Missing data'))
+      return
+    }
+    // Create nunjucks environment with custom options.
+    // Do not pass templatesDir to nunjucks.configure(),
+    // otherwise all nunjucks function will take templatesDir as their
+    // path, and will cause error in test.
+    // (Maybe a silly bug/feature of nunjucks?)
+    const env = engine.configure(options)
+    // Must use path.join() to dealing with the '/index.njk' in test.js.
+    // All people will think that's represent index.njk under root.
+    // Why the author prefer '/index' to just 'index'? Maybe frontend style?
+    env.render(join(templatesDir, page), data, (err, html) => {
       if (err) return this.send(err)
       this.header('Content-Type', 'text/html').send(html)
     })
