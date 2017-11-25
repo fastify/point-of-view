@@ -27,6 +27,7 @@ function fastifyView (fastify, opts, next) {
   const renders = {
     marko: viewMarko,
     'ejs-mate': viewEjsMate,
+    handlebars: viewHandlebars,
     _default: view
   }
 
@@ -37,6 +38,9 @@ function fastifyView (fastify, opts, next) {
       this.send(new Error('Missing data'))
       return
     }
+
+    // append view extension
+    page = `${page}.${type}`
 
     const toHtml = lru.get(page)
 
@@ -80,6 +84,8 @@ function fastifyView (fastify, opts, next) {
     confs.settings.views = templatesDir
     // setting locals to pass data by
     confs.locals = Object.assign({}, confs.locals, data)
+    // append view extension
+    page = `${page}.ejs`
     engine(join(templatesDir, page), confs, (err, html) => {
       if (err) return this.send(err)
       this.header('Content-Type', 'text/html').send(html)
@@ -91,6 +97,9 @@ function fastifyView (fastify, opts, next) {
       this.send(new Error('Missing data'))
       return
     }
+
+    // append view extension
+    page = `${page}.${type}`
 
     const template = engine.load(join(templatesDir, page))
 
@@ -106,6 +115,25 @@ function fastifyView (fastify, opts, next) {
         that.header('Content-Type', 'text/html').send(html)
       }
     }
+  }
+
+  function viewHandlebars (page, data) {
+    if (!page || !data) {
+      this.send(new Error('Missing data'))
+      return
+    }
+
+    const toHtml = lru.get(page)
+
+    if (toHtml && prod) {
+      if (!this.res.getHeader('content-type')) {
+        this.header('Content-Type', 'text/html')
+      }
+      this.send(toHtml(data))
+      return
+    }
+
+    readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
   }
 
   next()

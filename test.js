@@ -104,7 +104,7 @@ test('reply.view with ejs engine and custom templates folder', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('/index.ejs', data)
+    reply.view('/index', data)
   })
 
   fastify.listen(0, err => {
@@ -138,7 +138,7 @@ test('reply.view with ejs engine and full path templates folder', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('/index.ejs', data)
+    reply.view('/index', data)
   })
 
   fastify.listen(0, err => {
@@ -171,7 +171,7 @@ test('reply.view with ejs engine', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('/templates/index.ejs', data)
+    reply.view('/templates/index', data)
   })
 
   fastify.listen(0, err => {
@@ -204,7 +204,7 @@ test('reply.view with pug engine', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('/templates/index.pug', data)
+    reply.view('/templates/index', data)
   })
 
   fastify.listen(0, err => {
@@ -270,7 +270,7 @@ test('reply.view with marko engine', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('/templates/index.marko', data)
+    reply.view('/templates/index', data)
   })
 
   fastify.listen(0, err => {
@@ -303,7 +303,7 @@ test('reply.view with marko engine, with stream', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('/templates/index.marko', data, { stream: true })
+    reply.view('/templates/index', data, { stream: true })
   })
 
   fastify.listen(0, err => {
@@ -336,7 +336,7 @@ test('reply.view with pug engine, will preserve content-type', t => {
 
   fastify.get('/', (req, reply) => {
     reply.header('Content-Type', 'text/xml')
-    reply.view('/templates/index.pug', data)
+    reply.view('/templates/index', data)
   })
 
   fastify.listen(0, err => {
@@ -369,7 +369,7 @@ test('reply.view with ejs-mate engine', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('/templates/content.ejs', data)
+    reply.view('/templates/content', data)
   })
 
   fastify.listen(0, err => {
