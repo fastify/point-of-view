@@ -41,7 +41,7 @@ fastify.register(require('point-of-view'), {
 })
 
 fastify.get('/', (req, reply) => {
-  reply.view('/templates/index.ejs', { text: 'text' })
+  reply.view('/templates/index', { text: 'text' })
 })
 
 fastify.listen(3000, err => {
