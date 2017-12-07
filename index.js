@@ -96,11 +96,9 @@ function fastifyView (fastify, opts, next) {
     // Do not pass templatesDir to nunjucks.configure(),
     // otherwise all nunjucks function will take templatesDir as their
     // path, and will cause error in test.
-    // (Maybe a silly bug/feature of nunjucks?)
     const env = engine.configure(options)
-    // Must use path.join() to dealing with the '/index.njk' in test.js.
-    // All people will think that's represent index.njk under root.
-    // Why the author prefer '/index' to just 'index'? Maybe frontend style?
+    // Use path.join() to dealing with path like '/index.njk'.
+    // This will let it find the correct template path.
     env.render(join(templatesDir, page), data, (err, html) => {
       if (err) return this.send(err)
       this.header('Content-Type', 'text/html').send(html)
