@@ -16,6 +16,7 @@
     "view",
     "speed",
     "ejs",
+    "nunjucks",
     "pug",
     "handlebars"
   ],
@@ -36,6 +37,7 @@
     "fastify": "^0.28.2",
     "handlebars": "^4.0.6",
     "marko": "^4.4.28",
+    "nunjucks": "^3.0.1",
     "pre-commit": "^1.2.2",
     "pug": "^2.0.0-rc.4",
     "request": "^2.82.0",
