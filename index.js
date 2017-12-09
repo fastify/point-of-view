@@ -5,7 +5,7 @@ const readFile = require('fs').readFile
 const resolve = require('path').resolve
 const join = require('path').join
 const HLRU = require('hashlru')
-const supportedEngines = ['ejs', 'pug', 'handlebars', 'marko', 'ejs-mate']
+const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'ejs-mate']
 
 function fastifyView (fastify, opts, next) {
   if (!opts.engine) {
@@ -28,6 +28,7 @@ function fastifyView (fastify, opts, next) {
     marko: viewMarko,
     'ejs-mate': viewEjsMate,
     handlebars: viewHandlebars,
+    nunjucks: viewNunjucks,
     _default: view
   }
 
@@ -87,6 +88,24 @@ function fastifyView (fastify, opts, next) {
     // append view extension
     page = `${page}.ejs`
     engine(join(templatesDir, page), confs, (err, html) => {
+      if (err) return this.send(err)
+      this.header('Content-Type', 'text/html').send(html)
+    })
+  }
+
+  function viewNunjucks (page, data) {
+    if (!page || !data) {
+      this.send(new Error('Missing data'))
+      return
+    }
+    // Create nunjucks environment with custom options.
+    // Do not pass templatesDir to nunjucks.configure(),
+    // otherwise all nunjucks function will take templatesDir as their
+    // path, and will cause error in test.
+    const env = engine.configure(options)
+    // Use path.join() to dealing with path like '/index.njk'.
+    // This will let it find the correct template path.
+    env.render(join(templatesDir, page), data, (err, html) => {
       if (err) return this.send(err)
       this.header('Content-Type', 'text/html').send(html)
     })

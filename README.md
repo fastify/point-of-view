@@ -10,6 +10,7 @@ Templates rendering plugin support for Fastify.
 Currently supports the following templates engines:
 - [`ejs`](http://www.embeddedjs.com/)
 - [`ejs-mate`](https://github.com/JacksonTian/ejs-mate)
+- [`nunjucks`](https://mozilla.github.io/nunjucks/)
 - [`pug`](https://pugjs.org/api/getting-started.html)
 - [`handlebars`](http://handlebarsjs.com/)
 - [`marko`](http://markojs.com/)
