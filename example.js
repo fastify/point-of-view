@@ -9,7 +9,7 @@ fastify.register(require('./index'), {
 })
 
 fastify.get('/', (req, reply) => {
-  reply.view('/templates/index', { text: 'text' })
+  reply.view('/templates/index.ejs', { text: 'text' })
 })
 
 fastify.listen(3000, err => {
