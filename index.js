@@ -130,4 +130,4 @@ function fastifyView (fastify, opts, next) {
   next()
 }
 
-module.exports = fp(fastifyView, '>=0.13.1')
+module.exports = fp(fastifyView, { fastify: '>=0.13.1' })
