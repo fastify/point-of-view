@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/fastify/point-of-view#readme",
   "dependencies": {
-    "fastify-plugin": "^0.2.0",
+    "fastify-plugin": "^0.2.1",
     "hashlru": "^2.2.0"
   },
   "devDependencies": {
