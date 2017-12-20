@@ -76,6 +76,22 @@ fastify.get('/', (req, reply) => {
 })
 ```
 
+Note that to use include files with ejs you also need:
+```js
+// get a reference to resolve
+const resolve = require('path').resolve
+// other code ...
+// in template engine options configure how to resolve templates folder
+  options: {
+    filename: resolve('templates')
+  }
+```
+and in templates (for example teamplates/index.ejs) to something like:
+```html
+<% include templates/header.ejs %>
+```
+
+
 ## Acknowledgements
 
 This project is kindly sponsored by:
