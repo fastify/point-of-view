@@ -86,7 +86,7 @@ const resolve = require('path').resolve
     filename: resolve('templates')
   }
 ```
-and in templates (for example teamplates/index.ejs) to something like:
+and in ejs template files (for example templates/index.ejs) use something like:
 ```html
 <% include templates/header.ejs %>
 ```
