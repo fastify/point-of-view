@@ -62,6 +62,21 @@ fastify.register(require('point-of-view'), {
   }
 })
 ```
+
+If you want to omit view extension, you can add `includeViewExtension` property as following:
+```javascript
+fastify.register(require('point-of-view'), {
+  engine: {
+    ejs: require('ejs')
+  },
+  includeViewExtension: true
+});
+
+fastify.get('/', (req, reply) => {
+  reply.view('/templates/index', { text: 'text' })
+})
+```
+
 Note that to use include files with ejs you also need:
 ```js
 // get a reference to resolve
