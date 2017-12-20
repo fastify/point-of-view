@@ -44,4 +44,8 @@ jspm_packages
 
 # marko generated files
 *.marko.js
+# yarn.lock
+
+# lock files
 yarn.lock
+package-lock.json
