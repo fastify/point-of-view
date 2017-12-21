@@ -4,6 +4,8 @@
   "description": "Template plugin for Fastify",
   "main": "index.js",
   "scripts": {
+    "example": "node example.js",
+    "example-with-options": "node example-ejs-with-some-options.js",
     "test": "standard && tap test.js"
   },
   "repository": {
