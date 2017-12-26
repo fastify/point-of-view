@@ -17,11 +17,11 @@ fastify.register(require('./index'), {
 })
 
 fastify.get('/', (req, reply) => {
-  reply.view('index', data)
+  reply.type('text/html; charset=utf-8').view('index', data)
 })
 
 fastify.get('/include-test', (req, reply) => {
-  reply.view('index-with-includes', data)
+  reply.type('text/html; charset=utf-8').view('index-with-includes', data)
 })
 
 fastify.listen(3000, err => {
