@@ -4,6 +4,9 @@
   "description": "Template plugin for Fastify",
   "main": "index.js",
   "scripts": {
+    "example": "node example.js",
+    "example-with-options": "node example-ejs-with-some-options.js",
+    "test-with-snapshot": "standard && cross-env TAP_SNAPSHOT=1 tap test-with-snapshot.js",
     "test": "standard && tap test.js"
   },
   "repository": {
@@ -31,6 +34,7 @@
     "hashlru": "^2.2.0"
   },
   "devDependencies": {
+    "cross-env": "^5.1.3",
     "ejs": "^2.5.7",
     "ejs-mate": "^2.3.0",
     "express": "^4.16.2",
