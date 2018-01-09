@@ -525,7 +525,7 @@ test('reply.view with ejs engine and includeViewExtension property as true', t =
 })
 
 test('reply.view with ejs engine, template folder specified, include files (ejs and html) used in template, includeViewExtension property as true', t => {
-  t.plan(7)
+  t.plan(8)
   const fastify = Fastify()
   const ejs = require('ejs')
   const resolve = require('path').resolve
@@ -567,7 +567,7 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
         t.error(err)
         t.strictEqual(content.length, body.length)
       })
-      // t.matchSnapshot(content, 'output')  // enable later (see requirements in its doc page)
+      t.matchSnapshot(content, 'output')
 
       fastify.close()
     })
