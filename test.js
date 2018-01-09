@@ -70,7 +70,9 @@ test('register callback should throw if the engine is missing', t => {
   t.plan(2)
   const fastify = Fastify()
 
-  fastify.register(require('./index'), {}, err => {
+  fastify.register(require('./index'))
+
+  fastify.ready(err => {
     t.ok(err instanceof Error)
     t.is(err.message, 'Missing engine')
   })
@@ -84,7 +86,7 @@ test('register callback should throw if the engine is not supported', t => {
     engine: {
       notSupported: null
     }
-  }, err => {
+  }).ready(err => {
     t.ok(err instanceof Error)
     t.is(err.message, '\'notSupported\' not yet supported, PR? :)')
   })
