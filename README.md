@@ -30,6 +30,7 @@ The data has been taken with: `autocannon -c 100 -d 5 -p 10 localhost:3000`
 ```
 npm install point-of-view --save
 ```
+
 <a name="usage"></a>
 ## Usage
 ```js
@@ -90,6 +91,12 @@ and in ejs template files (for example templates/index.ejs) use something like:
 ```html
 <% include templates/header.ejs %>
 ```
+
+<a name="note"></a>
+## Note
+
+By default views are served with the mime type 'text/html; charset=utf-8',
+but of course you can specify a different value using the type function of reply.
 
 
 ## Acknowledgements

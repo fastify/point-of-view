@@ -23,3 +23,22 @@ exports[`test-with-snapshot.js TAP reply.view with ejs engine, template folder s
 </html>
 
 `
+
+exports[`test-with-snapshot.js TAP reply.view with ejs engine, template folder specified, include files (ejs and html) used in template, includeViewExtension property as true, different mime type; requires TAP snapshots enabled > output 1`] = `
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+        <header>
+      Sample header (ejs)
+    </header>
+
+    <p>text</p>
+        <footer>
+      Sample footer (html)
+    </footer>
+
+  </body>
+</html>
+
+`

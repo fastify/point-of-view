@@ -119,7 +119,7 @@ test('reply.view with ejs engine and custom templates folder', t => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html')
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body)
       fastify.close()
     })
@@ -153,7 +153,7 @@ test('reply.view with ejs engine and full path templates folder', t => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html')
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body)
       fastify.close()
     })
@@ -186,7 +186,7 @@ test('reply.view with ejs engine', t => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html')
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body)
       fastify.close()
     })
@@ -219,7 +219,7 @@ test('reply.view with pug engine', t => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html')
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       t.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body)
       fastify.close()
     })
@@ -252,7 +252,7 @@ test('reply.view with handlebars engine', t => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html')
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body)
       fastify.close()
     })
@@ -285,7 +285,7 @@ test('reply.view with marko engine', t => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html')
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       t.strictEqual(marko.load('./templates/index.marko').renderToString(data), body)
       fastify.close()
     })
@@ -384,7 +384,7 @@ test('reply.view with ejs-mate engine', t => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html')
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       t.strictEqual('<html><head></head><body><h1>header</h1><div>text</div><div>footer</div></body></html>', body)
       fastify.close()
     })
@@ -418,7 +418,7 @@ test('reply.view with nunjucks engine and custom templates folder', t => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html')
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       t.strictEqual(nunjucks.render('./templates/index.njk', data), body)
       fastify.close()
     })
@@ -452,7 +452,7 @@ test('reply.view with nunjucks engine and full path templates folder', t => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html')
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       t.strictEqual(nunjucks.render('./templates/index.njk', data), body)
       fastify.close()
     })
@@ -485,7 +485,7 @@ test('reply.view with nunjucks engine', t => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html')
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       t.strictEqual(nunjucks.render('./templates/index.njk', data), body)
       fastify.close()
     })
@@ -519,7 +519,7 @@ test('reply.view with ejs engine and includeViewExtension property as true', t =
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html')
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body)
       fastify.close()
     })
@@ -561,6 +561,55 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+
+      let content = null
+      ejs.renderFile(templatesFolder + '/index-with-includes.ejs', data, options, function (err, str) {
+        content = str
+        t.error(err)
+        t.strictEqual(content.length, body.length)
+      })
+
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with ejs engine, template folder specified, include files (ejs and html) used in template, includeViewExtension property as true, different mime type', t => {
+  t.plan(7)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const resolve = require('path').resolve
+  const templatesFolder = 'templates'
+  const options = {
+    filename: resolve(templatesFolder),  // needed for include files to be resolved in include directive ...
+    views: [__dirname]  // must be put to make tests (with include files) working ...
+  }
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      ejs: ejs
+    },
+    includeViewExtension: true,
+    templates: templatesFolder,
+    options: options
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.type('text/html').view('index-with-includes', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    request({
+      method: 'GET',
+      uri: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-type'], 'text/html')
       t.strictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null

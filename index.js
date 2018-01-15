@@ -52,7 +52,7 @@ function fastifyView (fastify, opts, next) {
       lru.set(page, engine.compile(html, options))
 
       if (!that.res.getHeader('content-type')) {
-        that.header('Content-Type', 'text/html')
+        that.header('Content-Type', 'text/html; charset=utf-8')
       }
       that.send(lru.get(page)(data))
     }
@@ -71,7 +71,7 @@ function fastifyView (fastify, opts, next) {
 
     if (toHtml && prod) {
       if (!this.res.getHeader('content-type')) {
-        this.header('Content-Type', 'text/html')
+        this.header('Content-Type', 'text/html; charset=utf-8')
       }
       this.send(toHtml(data))
       return
@@ -97,7 +97,7 @@ function fastifyView (fastify, opts, next) {
     page = getPage(page, 'ejs')
     engine(join(templatesDir, page), confs, (err, html) => {
       if (err) return this.send(err)
-      this.header('Content-Type', 'text/html').send(html)
+      this.header('Content-Type', 'text/html; charset=utf-8').send(html)
     })
   }
 
@@ -117,7 +117,7 @@ function fastifyView (fastify, opts, next) {
     // This will let it find the correct template path.
     env.render(join(templatesDir, page), data, (err, html) => {
       if (err) return this.send(err)
-      this.header('Content-Type', 'text/html').send(html)
+      this.header('Content-Type', 'text/html; charset=utf-8').send(html)
     })
   }
 
@@ -141,7 +141,7 @@ function fastifyView (fastify, opts, next) {
     function send (that) {
       return function _send (err, html) {
         if (err) return that.send(err)
-        that.header('Content-Type', 'text/html').send(html)
+        that.header('Content-Type', 'text/html; charset=utf-8').send(html)
       }
     }
   }
@@ -156,7 +156,7 @@ function fastifyView (fastify, opts, next) {
 
     if (toHtml && prod) {
       if (!this.res.getHeader('content-type')) {
-        this.header('Content-Type', 'text/html')
+        this.header('Content-Type', 'text/html; charset=utf-8')
       }
       this.send(toHtml(data))
       return
