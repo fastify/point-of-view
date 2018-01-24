@@ -16,7 +16,7 @@ exports[`test-with-snapshot.js TAP reply.view with ejs engine, template folder s
 
     <p>text</p>
         <footer>
-      Sample footer (html)
+      Sample footer (html) - Back to <a href="/">Home</a>
     </footer>
 
   </body>

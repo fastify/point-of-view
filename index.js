@@ -49,12 +49,21 @@ function fastifyView (fastify, opts, next) {
         return
       }
 
-      lru.set(page, engine.compile(html, options))
+      try {
+        lru.set(page, engine.compile(html, options))
+      } catch (error) {
+        that.send(error)
+        return
+      }
 
       if (!that.res.getHeader('content-type')) {
         that.header('Content-Type', 'text/html')
       }
-      that.send(lru.get(page)(data))
+      try {
+        that.send(lru.get(page)(data))
+      } catch (error) {
+        that.send(error)
+      }
     }
   }
 
