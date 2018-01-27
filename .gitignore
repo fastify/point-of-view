@@ -49,3 +49,12 @@ jspm_packages
 # lock files
 yarn.lock
 package-lock.json
+
+# IDE/editors
+.vscode
+
+# temporary/work/output folders
+# build/
+out/
+temp/
+tmp/
