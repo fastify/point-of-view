@@ -574,3 +574,199 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
     })
   })
 })
+
+test('reply.view with ejs engine, templates with folder specified, include files and attributes; home', t => {
+  t.plan(7)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const resolve = require('path').resolve
+  const templatesFolder = 'templates'
+  const options = {
+    filename: resolve(templatesFolder),
+    views: [__dirname]
+  }
+  const data = { text: 'Hello from EJS Templates' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      ejs: ejs
+    },
+    includeViewExtension: true,
+    templates: templatesFolder,
+    options: options
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.type('text/html; charset=utf-8').view('index', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    request({
+      method: 'GET',
+      uri: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+
+      let content = null
+      ejs.renderFile(templatesFolder + '/index.ejs', data, options, function (err, str) {
+        content = str
+        t.error(err)
+        t.strictEqual(content.length, body.length)
+      })
+
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with ejs engine, templates with folder specified, include files and attributes; page with includes', t => {
+  t.plan(7)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const resolve = require('path').resolve
+  const templatesFolder = 'templates'
+  const options = {
+    filename: resolve(templatesFolder),
+    views: [__dirname]
+  }
+  const data = { text: 'Hello from EJS Templates' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      ejs: ejs
+    },
+    includeViewExtension: true,
+    templates: templatesFolder,
+    options: options
+  })
+
+  fastify.get('/include-test', (req, reply) => {
+    reply.type('text/html; charset=utf-8').view('index-with-includes', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    request({
+      method: 'GET',
+      uri: 'http://localhost:' + fastify.server.address().port + '/include-test'
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+
+      let content = null
+      ejs.renderFile(templatesFolder + '/index-with-includes.ejs', data, options, function (err, str) {
+        content = str
+        t.error(err)
+        t.strictEqual(content.length, body.length)
+      })
+
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with ejs engine, templates with folder specified, include files and attributes; page with one include missing', t => {
+  t.plan(7)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const resolve = require('path').resolve
+  const templatesFolder = 'templates'
+  const options = {
+    filename: resolve(templatesFolder),
+    views: [__dirname]
+  }
+  const data = { text: 'Hello from EJS Templates' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      ejs: ejs
+    },
+    includeViewExtension: true,
+    templates: templatesFolder,
+    options: options
+  })
+
+  fastify.get('/include-one-include-missing-test', (req, reply) => {
+    reply.type('text/html; charset=utf-8').view('index-with-includes-one-missing', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    request({
+      method: 'GET',
+      uri: 'http://localhost:' + fastify.server.address().port + '/include-one-include-missing-test'
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 500)
+      t.strictEqual(response.headers['content-type'], 'application/json')
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+
+      let content = null
+      ejs.renderFile(templatesFolder + '/index-with-includes-one-missing.ejs', data, options, function (err, str) {
+        content = str
+        t.type(err, Error)  // expected Error here ...
+        t.strictEqual(content, undefined)
+      })
+
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with ejs engine, templates with folder specified, include files and attributes; page with one attribute missing', t => {
+  t.plan(7)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const resolve = require('path').resolve
+  const templatesFolder = 'templates'
+  const options = {
+    filename: resolve(templatesFolder),
+    views: [__dirname]
+  }
+  const data = { text: 'Hello from EJS Templates' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      ejs: ejs
+    },
+    includeViewExtension: true,
+    templates: templatesFolder,
+    options: options
+  })
+
+  fastify.get('/include-one-attribute-missing-test', (req, reply) => {
+    reply.type('text/html; charset=utf-8').view('index-with-includes-and-attribute-missing', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    request({
+      method: 'GET',
+      uri: 'http://localhost:' + fastify.server.address().port + '/include-one-attribute-missing-test'
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 500)
+      t.strictEqual(response.headers['content-type'], 'application/json')
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+
+      let content = null
+      ejs.renderFile(templatesFolder + '/index-with-includes-and-attribute-missing.ejs', data, options, function (err, str) {
+        content = str
+        t.type(err, Error)  // expected Error here ...
+        t.strictEqual(content, undefined)
+      })
+
+      fastify.close()
+    })
+  })
+})
