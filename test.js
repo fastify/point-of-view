@@ -419,7 +419,8 @@ test('reply.view with nunjucks engine and custom templates folder', t => {
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html')
-      t.strictEqual(nunjucks.render('./templates/index.njk', data), body)
+      // Global Nunjucks templates dir changed here.
+      t.strictEqual(nunjucks.render('./index.njk', data), body)
       fastify.close()
     })
   })
@@ -453,13 +454,14 @@ test('reply.view with nunjucks engine and full path templates folder', t => {
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html')
-      t.strictEqual(nunjucks.render('./templates/index.njk', data), body)
+      // Global Nunjucks templates dir changed here.
+      t.strictEqual(nunjucks.render('./index.njk', data), body)
       fastify.close()
     })
   })
 })
 
-test('reply.view with nunjucks engine', t => {
+test('reply.view with nunjucks engine and includeViewExtension is true', t => {
   t.plan(6)
   const fastify = Fastify()
   const nunjucks = require('nunjucks')
@@ -468,11 +470,12 @@ test('reply.view with nunjucks engine', t => {
   fastify.register(require('./index'), {
     engine: {
       nunjucks: nunjucks
-    }
+    },
+    includeViewExtension: true
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('/templates/index.njk', data)
+    reply.view('/templates/index', data)
   })
 
   fastify.listen(0, err => {
@@ -486,6 +489,7 @@ test('reply.view with nunjucks engine', t => {
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html')
+      // Global Nunjucks templates dir is  `./` here.
       t.strictEqual(nunjucks.render('./templates/index.njk', data), body)
       fastify.close()
     })
