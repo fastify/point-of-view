@@ -106,15 +106,9 @@ function fastifyView (fastify, opts, next) {
       this.send(new Error('Missing data'))
       return
     }
-    // Create nunjucks environment with custom options.
-    // Do not pass templatesDir to nunjucks.configure(),
-    // otherwise all nunjucks function will take templatesDir as their
-    // path, and will cause error in test.
-    const env = engine.configure(options)
-    // append view extension
+    const env = engine.configure(templatesDir, options)
+    // Append view extension.
     page = getPage(page, 'njk')
-    // Use path.join() to dealing with path like '/index.njk'.
-    // This will let it find the correct template path.
     env.render(join(templatesDir, page), data, (err, html) => {
       if (err) return this.send(err)
       this.header('Content-Type', 'text/html').send(html)
