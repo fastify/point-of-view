@@ -16,10 +16,61 @@ exports[`test-with-snapshot.js TAP reply.view with ejs engine, template folder s
 
     <p>text</p>
         <footer>
-      Sample footer (html)
+      Sample footer (html) - Back to <a href="/">Home</a>
     </footer>
 
   </body>
 </html>
 
+`
+
+exports[`test-with-snapshot.js TAP reply.view with ejs engine, templates with folder specified, include files and attributes; requires TAP snapshots enabled; home > output 1`] = `
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <p>Hello from EJS Templates</p>
+    <br/>
+    <div>
+      <p>Other EJS pages with includes:</p>
+      <ul>
+        <li>Normal page, <a href="/include-test">here</a></li>
+        <li>One include not exist, <a href="/include-one-include-missing-test">here</a>
+          (to raise errors)
+        </li>
+        <li>One attribute not exist, <a href="/include-one-attribute-missing-test">here</a>
+          (to raise errors)
+        </li>
+      </ul>
+    <div>
+  </body>
+</html>
+
+`
+
+exports[`test-with-snapshot.js TAP reply.view with ejs engine, templates with folder specified, include files and attributes; requires TAP snapshots enabled; page with includes > output 1`] = `
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+        <header>
+      Sample header (ejs)
+    </header>
+
+    <p>Hello from EJS Templates</p>
+        <footer>
+      Sample footer (html) - Back to <a href="/">Home</a>
+    </footer>
+
+  </body>
+</html>
+
+`
+
+exports[`test-with-snapshot.js TAP reply.view with ejs engine, templates with folder specified, include files and attributes; requires TAP snapshots enabled; page with one include missing > output 1`] = `
+undefined
+`
+
+exports[`test-with-snapshot.js TAP reply.view with ejs engine, templates with folder specified, include files and attributes; requires TAP snapshots enabled; page with one attribute missing > output 1`] = `
+undefined
 `

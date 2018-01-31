@@ -49,12 +49,25 @@ function fastifyView (fastify, opts, next) {
         return
       }
 
-      lru.set(page, engine.compile(html, options))
+      let compiledPage
+      try {
+        compiledPage = engine.compile(html, options)
+      } catch (error) {
+        that.send(error)
+        return
+      }
+      lru.set(page, compiledPage)
 
       if (!that.res.getHeader('content-type')) {
         that.header('Content-Type', 'text/html')
       }
-      that.send(lru.get(page)(data))
+      let cachedPage
+      try {
+        cachedPage = lru.get(page)(data)
+      } catch (error) {
+        cachedPage = error
+      }
+      that.send(cachedPage)
     }
   }
 
