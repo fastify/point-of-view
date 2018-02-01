@@ -7,7 +7,8 @@
     "example": "node example.js",
     "example-with-options": "node example-ejs-with-some-options.js",
     "test-with-snapshot": "standard && cross-env TAP_SNAPSHOT=1 tap test-with-snapshot.js",
-    "test": "standard && tap test.js test-with-snapshot.js"
+    "test-base": "standard && tap test.js",
+    "test": "npm run test-base && npm run test-with-snapshot"
   },
   "repository": {
     "type": "git",
