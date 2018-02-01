@@ -13,23 +13,25 @@ fastify.register(require('./index'), {
   templates: templatesFolder,
   options: {
     filename: resolve(templatesFolder)
-  }
+  },
+  charset: 'utf-8'  // sample usage, but specifying the same value already used as default
 })
 
 fastify.get('/', (req, reply) => {
-  reply.type('text/html; charset=utf-8').view('index', data)
+  // reply.type('text/html; charset=utf-8').view('index-linking-other-pages', data)  // sample for specifying with type
+  reply.view('index-linking-other-pages', data)
 })
 
 fastify.get('/include-test', (req, reply) => {
-  reply.type('text/html; charset=utf-8').view('index-with-includes', data)
+  reply.view('index-with-includes', data)
 })
 
 fastify.get('/include-one-include-missing-test', (req, reply) => {
-  reply.type('text/html; charset=utf-8').view('index-with-includes-one-missing', data)
+  reply.view('index-with-includes-one-missing', data)
 })
 
 fastify.get('/include-one-attribute-missing-test', (req, reply) => {
-  reply.type('text/html; charset=utf-8').view('index-with-includes-and-attribute-missing', data)
+  reply.view('index-with-includes-and-attribute-missing', data)
 })
 
 fastify.listen(3000, err => {

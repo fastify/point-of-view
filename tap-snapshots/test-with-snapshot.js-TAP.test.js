@@ -10,26 +10,7 @@ exports[`test-with-snapshot.js TAP reply.view with ejs engine, template folder s
 <html lang="en">
   <head></head>
   <body>
-        <header>
-      Sample header (ejs)
-    </header>
-
     <p>text</p>
-        <footer>
-      Sample footer (html) - Back to <a href="/">Home</a>
-    </footer>
-
-  </body>
-</html>
-
-`
-
-exports[`test-with-snapshot.js TAP reply.view with ejs engine, templates with folder specified, include files and attributes; requires TAP snapshots enabled; home > output 1`] = `
-<!DOCTYPE html>
-<html lang="en">
-  <head></head>
-  <body>
-    <p>Hello from EJS Templates</p>
     <br/>
     <div>
       <p>Other EJS pages with includes:</p>
@@ -43,6 +24,18 @@ exports[`test-with-snapshot.js TAP reply.view with ejs engine, templates with fo
         </li>
       </ul>
     <div>
+  </body>
+</html>
+
+`
+
+exports[`test-with-snapshot.js TAP reply.view with ejs engine, templates with folder specified, include files and attributes; requires TAP snapshots enabled; home > output 1`] = `
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <p>Hello from EJS Templates</p>
+    <br/>
   </body>
 </html>
 
