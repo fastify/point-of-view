@@ -45,7 +45,7 @@
     "pre-commit": "^1.2.2",
     "pug": "^2.0.0-rc.4",
     "request": "^2.83.0",
-    "standard": "^10.0.3",
+    "standard": "^11.0.0",
     "tap": "^11.0.1"
   },
   "standard": {
