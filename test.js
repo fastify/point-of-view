@@ -537,8 +537,8 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
   const resolve = require('path').resolve
   const templatesFolder = 'templates'
   const options = {
-    filename: resolve(templatesFolder),  // needed for include files to be resolved in include directive ...
-    views: [__dirname]  // must be put to make tests (with include files) working ...
+    filename: resolve(templatesFolder), // needed for include files to be resolved in include directive ...
+    views: [__dirname] // must be put to make tests (with include files) working ...
   }
   const data = { text: 'text' }
 
@@ -552,7 +552,7 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
   })
 
   fastify.get('/', (req, reply) => {
-    reply.type('text/html; charset=utf-8').view('index-linking-other-pages', data)  // sample for specifying with type
+    reply.type('text/html; charset=utf-8').view('index-linking-other-pages', data) // sample for specifying with type
     // reply.view('index-with-includes', data)
   })
 
@@ -718,7 +718,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
       let content = null
       ejs.renderFile(templatesFolder + '/index-with-includes-one-missing.ejs', data, options, function (err, str) {
         content = str
-        t.type(err, Error)  // expected Error here ...
+        t.type(err, Error) // expected Error here ...
         t.strictEqual(content, undefined)
       })
 
@@ -767,7 +767,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
       let content = null
       ejs.renderFile(templatesFolder + '/index-with-includes-and-attribute-missing.ejs', data, options, function (err, str) {
         content = str
-        t.type(err, Error)  // expected Error here ...
+        t.type(err, Error) // expected Error here ...
         t.strictEqual(content, undefined)
       })
 

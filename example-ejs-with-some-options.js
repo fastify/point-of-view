@@ -14,7 +14,7 @@ fastify.register(require('./index'), {
   options: {
     filename: resolve(templatesFolder)
   },
-  charset: 'utf-8'  // sample usage, but specifying the same value already used as default
+  charset: 'utf-8' // sample usage, but specifying the same value already used as default
 })
 
 fastify.get('/', (req, reply) => {
