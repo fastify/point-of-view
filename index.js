@@ -59,7 +59,7 @@ function fastifyView (fastify, opts, next) {
       }
       lru.set(page, compiledPage)
 
-      if (!that.res.getHeader('content-type')) {
+      if (!that.getHeader('content-type')) {
         that.header('Content-Type', 'text/html; charset=' + charset)
       }
       let cachedPage
@@ -176,4 +176,4 @@ function fastifyView (fastify, opts, next) {
   next()
 }
 
-module.exports = fp(fastifyView, { fastify: '>=0.13.1' })
+module.exports = fp(fastifyView, { fastify: '^1.1.0' })
