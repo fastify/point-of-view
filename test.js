@@ -629,6 +629,54 @@ test('reply.view with ejs engine, templates with folder specified, include files
   })
 })
 
+test('reply.view with ejs engine, templates with folder specified, include files and attributes; page with no data', t => {
+  t.plan(7)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const resolve = require('path').resolve
+  const templatesFolder = 'templates'
+  const options = {
+    filename: resolve(templatesFolder),
+    views: [__dirname]
+  }
+
+  fastify.register(require('./index'), {
+    engine: {
+      ejs: ejs
+    },
+    includeViewExtension: true,
+    templates: templatesFolder,
+    options: options
+  })
+
+  fastify.get('/no-data-test', (req, reply) => {
+    reply.type('text/html; charset=utf-8').view('index-with-no-data')
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    request({
+      method: 'GET',
+      uri: 'http://localhost:' + fastify.server.address().port + '/no-data-test'
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+
+      let content = null
+      ejs.renderFile(templatesFolder + '/index-with-no-data.ejs', null, options, function (err, str) {
+        content = str
+        t.error(err)
+        t.strictEqual(content.length, body.length)
+      })
+
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with ejs engine, templates with folder specified, include files and attributes; page with includes', t => {
   t.plan(7)
   const fastify = Fastify()
