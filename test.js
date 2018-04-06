@@ -38,7 +38,7 @@ test('reply.view exist', t => {
   })
 })
 
-test('reply.view should return 500 if some data is missing', t => {
+test('reply.view should return 500 if page is missing', t => {
   t.plan(3)
   const fastify = Fastify()
 
