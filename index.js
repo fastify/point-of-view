@@ -73,8 +73,8 @@ function fastifyView (fastify, opts, next) {
   }
 
   function view (page, data) {
-    if (!page || !data) {
-      this.send(new Error('Missing data'))
+    if (!page) {
+      this.send(new Error('Missing page'))
       return
     }
 
