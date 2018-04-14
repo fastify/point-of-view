@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/fastify/point-of-view#readme",
   "dependencies": {
-    "fastify-plugin": "^0.2.2",
+    "fastify-plugin": "^1.0.0",
     "hashlru": "^2.2.1"
   },
   "devDependencies": {
