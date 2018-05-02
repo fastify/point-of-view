@@ -2,7 +2,7 @@
 
 const t = require('tap')
 const test = t.test
-const request = require('request')
+const sget = require('simple-get').concat
 const Fastify = require('fastify')
 const fs = require('fs')
 const path = require('path')
@@ -25,9 +25,9 @@ test('reply.view exist', t => {
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port
+      url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
@@ -55,9 +55,9 @@ test('reply.view should return 500 if page is missing', t => {
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port
+      url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 500)
@@ -112,15 +112,15 @@ test('reply.view with ejs engine and custom templates folder', t => {
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port
+      url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body)
+      t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -146,15 +146,15 @@ test('reply.view with ejs engine and full path templates folder', t => {
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port
+      url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body)
+      t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -179,15 +179,15 @@ test('reply.view with ejs engine', t => {
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port
+      url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body)
+      t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -212,15 +212,15 @@ test('reply.view with pug engine', t => {
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port
+      url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body)
+      t.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -245,15 +245,15 @@ test('reply.view with handlebars engine', t => {
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port
+      url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body)
+      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
       fastify.close()
     })
   })
@@ -278,15 +278,15 @@ test('reply.view with marko engine', t => {
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port
+      url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(marko.load('./templates/index.marko').renderToString(data), body)
+      t.strictEqual(marko.load('./templates/index.marko').renderToString(data), body.toString())
       fastify.close()
     })
   })
@@ -311,14 +311,14 @@ test('reply.view with marko engine, with stream', t => {
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port
+      url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-type'], 'application/octet-stream')
-      t.strictEqual(marko.load('./templates/index.marko').renderToString(data), body)
+      t.strictEqual(marko.load('./templates/index.marko').renderToString(data), body.toString())
       fastify.close()
     })
   })
@@ -344,15 +344,15 @@ test('reply.view with pug engine, will preserve content-type', t => {
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port
+      url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/xml')
-      t.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body)
+      t.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -377,15 +377,15 @@ test('reply.view with ejs-mate engine', t => {
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port
+      url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual('<html><head></head><body><h1>header</h1><div>text</div><div>footer</div></body></html>', body)
+      t.strictEqual('<html><head></head><body><h1>header</h1><div>text</div><div>footer</div></body></html>', body.toString())
       fastify.close()
     })
   })
@@ -411,16 +411,16 @@ test('reply.view with nunjucks engine and custom templates folder', t => {
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port
+      url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       // Global Nunjucks templates dir changed here.
-      t.strictEqual(nunjucks.render('./index.njk', data), body)
+      t.strictEqual(nunjucks.render('./index.njk', data), body.toString())
       fastify.close()
     })
   })
@@ -446,16 +446,16 @@ test('reply.view with nunjucks engine and full path templates folder', t => {
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port
+      url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       // Global Nunjucks templates dir changed here.
-      t.strictEqual(nunjucks.render('./index.njk', data), body)
+      t.strictEqual(nunjucks.render('./index.njk', data), body.toString())
       fastify.close()
     })
   })
@@ -481,16 +481,16 @@ test('reply.view with nunjucks engine and includeViewExtension is true', t => {
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port
+      url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       // Global Nunjucks templates dir is  `./` here.
-      t.strictEqual(nunjucks.render('./templates/index.njk', data), body)
+      t.strictEqual(nunjucks.render('./templates/index.njk', data), body.toString())
       fastify.close()
     })
   })
@@ -516,15 +516,15 @@ test('reply.view with ejs engine and includeViewExtension property as true', t =
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port
+      url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body)
+      t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -559,9 +559,9 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port
+      url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
@@ -608,9 +608,9 @@ test('reply.view with ejs engine, templates with folder specified, include files
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port
+      url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
@@ -656,9 +656,9 @@ test('reply.view with ejs engine, templates with folder specified, include files
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port + '/no-data-test'
+      url: 'http://localhost:' + fastify.server.address().port + '/no-data-test'
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
@@ -705,9 +705,9 @@ test('reply.view with ejs engine, templates with folder specified, include files
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port + '/include-test'
+      url: 'http://localhost:' + fastify.server.address().port + '/include-test'
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
@@ -754,9 +754,9 @@ test('reply.view with ejs engine, templates with folder specified, include files
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port + '/include-one-include-missing-test'
+      url: 'http://localhost:' + fastify.server.address().port + '/include-one-include-missing-test'
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 500)
@@ -803,9 +803,9 @@ test('reply.view with ejs engine, templates with folder specified, include files
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port + '/include-one-attribute-missing-test'
+      url: 'http://localhost:' + fastify.server.address().port + '/include-one-attribute-missing-test'
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 500)
