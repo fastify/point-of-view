@@ -2,7 +2,7 @@
 
 const t = require('tap')
 const test = t.test
-const request = require('request')
+const sget = require('simple-get').concat
 const Fastify = require('fastify')
 
 test('reply.view with ejs engine, template folder specified, include files (ejs and html) used in template, includeViewExtension property as true; requires TAP snapshots enabled', t => {
@@ -34,9 +34,9 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port
+      url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
@@ -84,9 +84,9 @@ test('reply.view with ejs engine, templates with folder specified, include files
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port
+      url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
@@ -134,9 +134,9 @@ test('reply.view with ejs engine, templates with folder specified, include files
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port + '/include-test'
+      url: 'http://localhost:' + fastify.server.address().port + '/include-test'
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 200)
@@ -184,9 +184,9 @@ test('reply.view with ejs engine, templates with folder specified, include files
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port + '/include-one-include-missing-test'
+      url: 'http://localhost:' + fastify.server.address().port + '/include-one-include-missing-test'
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 500)
@@ -234,9 +234,9 @@ test('reply.view with ejs engine, templates with folder specified, include files
   fastify.listen(0, err => {
     t.error(err)
 
-    request({
+    sget({
       method: 'GET',
-      uri: 'http://localhost:' + fastify.server.address().port + '/include-one-attribute-missing-test'
+      url: 'http://localhost:' + fastify.server.address().port + '/include-one-attribute-missing-test'
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 500)
