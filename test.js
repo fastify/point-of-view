@@ -7,6 +7,24 @@ const Fastify = require('fastify')
 const fs = require('fs')
 const path = require('path')
 
+test('fastify.view exist', t => {
+  t.plan(2)
+  const fastify = Fastify()
+
+  fastify.register(require('./index'), {
+    engine: {
+      ejs: require('ejs')
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+    t.ok(fastify.view)
+
+    fastify.close()
+  })
+})
+
 test('reply.view exist', t => {
   t.plan(6)
   const fastify = Fastify()

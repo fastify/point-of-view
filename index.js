@@ -34,6 +34,7 @@ function fastifyView (fastify, opts, next) {
     _default: view
   }
 
+  fastify.decorate('view', renders[type] ? renders[type] : renders._default)
   fastify.decorateReply('view', renders[type] ? renders[type] : renders._default)
 
   function getPage (page, extension) {
