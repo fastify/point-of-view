@@ -54,7 +54,13 @@ fastify.listen(3000, err => {
 
 Or render a template directly with the `fastify.view()` decorator:
 ```js
+// With a promise
 const html = await fastify.view('/templates/index.ejs', { text: 'text' })
+
+// or with a callback
+fastify.view('/templates/index.ejs', { text: 'text' }, (err, html) => {
+  // ...
+})
 ```
 
 If you want to set a fixed templates folder, or pass some options to the template engines:

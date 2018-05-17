@@ -132,6 +132,29 @@ test('fastify.view with handlebars engine', t => {
   })
 })
 
+test('fastify.view with handlebars engine and callback', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      handlebars: handlebars
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view('/templates/index.html', data, (err, compiled) => {
+      t.error(err)
+      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with ejs engine and custom templates folder', t => {
   t.plan(6)
   const fastify = Fastify()
