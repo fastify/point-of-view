@@ -20,7 +20,7 @@ In `production` mode, `point-of-view` will heavily cache the templates file and 
 *Note that at least Fastify `v0.13.1` is needed.*
 
 #### Benchmarks
-The benchmark were run with the files in the `benchmark` folder with the `ejs` engine.  
+The benchmark were run with the files in the `benchmark` folder with the `ejs` engine.
 The data has been taken with: `autocannon -c 100 -d 5 -p 10 localhost:3000`
 - Express: 8.8k req/sec
 - **Fastify**: 15.6k req/sec
@@ -50,6 +50,11 @@ fastify.listen(3000, err => {
   if (err) throw err
   console.log(`server listening on ${fastify.server.address().port}`)
 })
+```
+
+Or render a template directly with the `fastify.render()` decorator:
+```js
+const html = await fastify.render('/templates/index.ejs', { text: 'text' })
 ```
 
 If you want to set a fixed templates folder, or pass some options to the template engines:
