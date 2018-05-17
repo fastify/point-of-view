@@ -122,13 +122,13 @@ test('fastify.view with handlebars engine', t => {
     }
   })
 
-  fastify.ready(async err => {
+  fastify.ready(err => {
     t.error(err)
 
-    const compiled = await fastify.view('/templates/index.html', data)
-    t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
-
-    fastify.close()
+    fastify.view('/templates/index.html', data).then(compiled => {
+      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      fastify.close()
+    })
   })
 })
 

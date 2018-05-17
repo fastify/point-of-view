@@ -37,19 +37,24 @@ function fastifyView (fastify, opts, next) {
   const renderer = renders[type] ? renders[type] : renders._default
 
   fastify.decorate('view', function () {
-    return renderer.apply({
-      getHeader: () => {},
-      header: () => {}
-    }, arguments)
+    return new Promise((resolve, reject) => {
+      renderer.apply({
+        getHeader: () => {},
+        header: () => {},
+        send: result => {
+          if (result instanceof Error) {
+            reject(result)
+            return
+          }
+
+          resolve(result)
+        }
+      }, arguments)
+    })
   })
 
   fastify.decorateReply('view', function () {
     renderer.apply(this, arguments)
-      .then(page => {
-        this.send(page)
-      }).catch(err => {
-        this.send(err)
-      })
   })
 
   function getPage (page, extension) {
@@ -59,17 +64,19 @@ function fastifyView (fastify, opts, next) {
     return page
   }
 
-  function readCallback (that, page, data, resolve, reject) {
+  function readCallback (that, page, data) {
     return function _readCallback (err, html) {
       if (err) {
-        return reject(err)
+        that.send(err)
+        return
       }
 
       let compiledPage
       try {
         compiledPage = engine.compile(html, options)
       } catch (error) {
-        return reject(error)
+        that.send(error)
+        return
       }
       lru.set(page, compiledPage)
 
@@ -82,115 +89,109 @@ function fastifyView (fastify, opts, next) {
       } catch (error) {
         cachedPage = error
       }
-      resolve(cachedPage)
+      that.send(cachedPage)
     }
   }
 
   function view (page, data) {
-    return new Promise((resolve, reject) => {
-      if (!page) {
-        return reject(new Error('Missing page'))
+    if (!page) {
+      this.send(new Error('Missing page'))
+      return
+    }
+
+    // append view extension
+    page = getPage(page, type)
+
+    const toHtml = lru.get(page)
+
+    if (toHtml && prod) {
+      if (!this.res.getHeader('content-type')) {
+        this.header('Content-Type', 'text/html; charset=' + charset)
       }
+      this.send(toHtml(data))
+      return
+    }
 
-      // append view extension
-      page = getPage(page, type)
-
-      const toHtml = lru.get(page)
-
-      if (toHtml && prod) {
-        if (!this.res.getHeader('content-type')) {
-          this.header('Content-Type', 'text/html; charset=' + charset)
-        }
-        return resolve(toHtml(data))
-      }
-
-      readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data, resolve, reject))
-    })
+    readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
   }
 
   function viewEjsMate (page, data) {
-    return new Promise((resolve, reject) => {
-      if (!page || !data) {
-        return reject(new Error('Missing data'))
-      }
-      const confs = Object.assign({}, options)
-      if (!confs.settings) {
-        confs.settings = {}
-      }
-      // ejs-mate use views to find layouts
-      confs.settings.views = templatesDir
-      // setting locals to pass data by
-      confs.locals = Object.assign({}, confs.locals, data)
-      // append view extension
-      page = getPage(page, 'ejs')
-      engine(join(templatesDir, page), confs, (err, html) => {
-        if (err) return reject(err)
-        this.header('Content-Type', 'text/html; charset=' + charset)
-        resolve(html)
-      })
+    if (!page || !data) {
+      this.send(new Error('Missing data'))
+      return
+    }
+    const confs = Object.assign({}, options)
+    if (!confs.settings) {
+      confs.settings = {}
+    }
+    // ejs-mate use views to find layouts
+    confs.settings.views = templatesDir
+    // setting locals to pass data by
+    confs.locals = Object.assign({}, confs.locals, data)
+    // append view extension
+    page = getPage(page, 'ejs')
+    engine(join(templatesDir, page), confs, (err, html) => {
+      if (err) return this.send(err)
+      this.header('Content-Type', 'text/html; charset=' + charset).send(html)
     })
   }
 
   function viewNunjucks (page, data) {
-    return new Promise((resolve, reject) => {
-      if (!page || !data) {
-        return reject(new Error('Missing data'))
-      }
-      const env = engine.configure(templatesDir, options)
-      // Append view extension.
-      page = getPage(page, 'njk')
-      env.render(join(templatesDir, page), data, (err, html) => {
-        if (err) return reject(err)
-        this.header('Content-Type', 'text/html; charset=' + charset)
-        resolve(html)
-      })
+    if (!page || !data) {
+      this.send(new Error('Missing data'))
+      return
+    }
+    const env = engine.configure(templatesDir, options)
+    // Append view extension.
+    page = getPage(page, 'njk')
+    env.render(join(templatesDir, page), data, (err, html) => {
+      if (err) return this.send(err)
+      this.header('Content-Type', 'text/html; charset=' + charset).send(html)
     })
   }
 
   function viewMarko (page, data, opts) {
-    return new Promise((resolve, reject) => {
-      if (!page || !data) {
-        return reject(new Error('Missing data'))
+    if (!page || !data) {
+      this.send(new Error('Missing data'))
+      return
+    }
+
+    // append view extension
+    page = getPage(page, type)
+
+    const template = engine.load(join(templatesDir, page))
+
+    if (opts && opts.stream) {
+      this.send(template.stream(data))
+    } else {
+      template.renderToString(data, send(this))
+    }
+
+    function send (that) {
+      return function _send (err, html) {
+        if (err) return that.send(err)
+        that.header('Content-Type', 'text/html; charset=' + charset).send(html)
       }
-
-      // append view extension
-      page = getPage(page, type)
-
-      const template = engine.load(join(templatesDir, page))
-
-      if (opts && opts.stream) {
-        resolve(template.stream(data))
-      } else {
-        template.renderToString(data, send(this))
-      }
-
-      function send (that) {
-        return function _send (err, html) {
-          if (err) return reject(err)
-          that.header('Content-Type', 'text/html; charset=' + charset)
-          resolve(html)
-        }
-      }
-    })
+    }
   }
 
   function viewHandlebars (page, data) {
-    return new Promise((resolve, reject) => {
-      if (!page || !data) {
-        return reject(new Error('Missing data'))
+    if (!page || !data) {
+      this.send(new Error('Missing data'))
+      return
+    }
+
+    const toHtml = lru.get(page)
+
+    if (toHtml && prod) {
+      if (!this.res.getHeader('content-type')) {
+        this.header('Content-Type', 'text/html; charset=' + charset)
       }
+      this.send(toHtml(data))
+      return
+    }
 
-      const toHtml = lru.get(page)
-
-      if (toHtml && prod) {
-        if (!this.res.getHeader('content-type')) {
-          this.header('Content-Type', 'text/html; charset=' + charset)
-        }
-        return resolve(toHtml(data))
-      }
-
-      readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data, resolve, reject))
-    })
+    readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
   }
 
   next()
