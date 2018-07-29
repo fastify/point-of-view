@@ -14,6 +14,7 @@ Currently supports the following templates engines:
 - [`pug`](https://pugjs.org/api/getting-started.html)
 - [`handlebars`](http://handlebarsjs.com/)
 - [`marko`](http://markojs.com/)
+- [`mustache`](https://mustache.github.io/)
 
 In `production` mode, `point-of-view` will heavily cache the templates file and functions, while in `development` will reload every time the template file and function.
 
