@@ -1,7 +1,8 @@
 'use strict'
 
 const fp = require('fastify-plugin')
-const readFile = require('fs').readFile
+const fs = require('fs')
+const readFile = fs.readFile
 const resolve = require('path').resolve
 const join = require('path').join
 const HLRU = require('hashlru')
@@ -171,7 +172,17 @@ function fastifyView (fastify, opts, next) {
       return
     }
 
-    readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
+    // readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
+    let html
+    try {
+      html = fs.readFileSync(join(templatesDir, page), 'utf8')
+    } catch (err) {
+      this.send(err)
+      return
+    }
+
+    const callback = readCallback(this, page, data)
+    callback(null, html)
   }
 
   function viewMustache (page, data, opts) {
