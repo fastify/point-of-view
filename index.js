@@ -2,6 +2,7 @@
 
 const fp = require('fastify-plugin')
 const readFile = require('fs').readFile
+const promisify = require('util').promisify
 const resolve = require('path').resolve
 const join = require('path').join
 const HLRU = require('hashlru')
@@ -24,6 +25,7 @@ function fastifyView (fastify, opts, next) {
   const options = opts.options || {}
   const templatesDir = resolve(opts.templates || './')
   const lru = HLRU(opts.maxCache || 100)
+  const promisifiedReadFile = promisify(readFile)
   const includeViewExtension = opts.includeViewExtension || false
   const prod = process.env.NODE_ENV === 'production'
   const renders = {
@@ -42,6 +44,39 @@ function fastifyView (fastify, opts, next) {
       return `${page}.${extension}`
     }
     return page
+  }
+
+  // Gets template as string from LRU cache or filesystem.
+  const getTemplateString = async function (file) {
+    let templateString = lru.get(file)
+    if (!templateString || !prod) {
+      try {
+        templateString = await promisifiedReadFile(join(templatesDir, file), 'utf-8')
+      } catch (err) {
+        throw (err)
+      }
+
+      lru.set(file, templateString)
+    }
+    return templateString
+  }
+
+  // Gets partials as collection of strings from LRU cache or filesystem.
+  async function getPartials (page, partials) {
+    partials = Object.assign({}, partials)
+    let partialsObj = lru.get(`${page}-Partials`)
+    if (!partialsObj || !prod) {
+      try {
+        const promises = Object.keys(partials).map(async (key, index) => {
+          partials[key] = await promisifiedReadFile(join(templatesDir, partials[key]), 'utf-8')
+        })
+        await Promise.all(promises)
+      } catch (err) {
+        throw (err)
+      }
+      lru.set(`${page}-Partials`, partials)
+    }
+    return partials
   }
 
   function readCallback (that, page, data) {
@@ -174,22 +209,25 @@ function fastifyView (fastify, opts, next) {
     readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
   }
 
-  function viewMustache (page, data, opts) {
+  async function viewMustache (page, data, opts) {
     if (!page || !data) {
       this.send(new Error('Missing data'))
       return
     }
 
+    let template, partials, html
     const options = Object.assign({}, opts)
 
     // append view extension
     page = getPage(page, 'mustache')
-
-    readFile(join(templatesDir, page), 'utf8', (err, template) => {
-      if (err) return this.send(err)
-      let html = engine.render(template, data, options.partials)
-      this.header('Content-Type', 'text/html; charset=' + charset).send(html)
-    })
+    try {
+      template = await getTemplateString(page)
+      partials = await getPartials(page, options.partials)
+      html = engine.render(template, data, partials)
+    } catch (err) {
+      html = err
+    }
+    this.header('Content-Type', 'text/html; charset=' + charset).send(html)
   }
 
   next()

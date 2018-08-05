@@ -93,6 +93,17 @@ and in ejs template files (for example templates/index.ejs) use something like:
 <% include templates/header.ejs %>
 ```
 
+To use partials in mustache you will need to pass them in the options parameter:
+```js
+// in template engine options configure how to resolve templates folder
+  options: {
+    partials: {
+      header: 'header.mustache',
+      footer: 'footer.mustache'
+    }
+  }
+```
+
 <a name="note"></a>
 ## Note
 
