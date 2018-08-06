@@ -72,18 +72,19 @@ function fastifyView (fastify, opts, next) {
 
       if (filesToLoad === 0) {
         callback(null, {})
+        return
       }
 
+      let error = null
       Object.keys(partials).map((key, index) => {
         readFile(join(templatesDir, partials[key]), 'utf-8', (err, data) => {
           if (err) {
-            callback(err, null)
-            return
+            error = err
           }
           partials[key] = data
           if (--filesToLoad === 0) {
             lru.set(`${page}-Partials`, partials)
-            callback(null, partials)
+            callback(error, partials)
           }
         })
       })
