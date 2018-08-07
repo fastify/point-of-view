@@ -44,6 +44,53 @@ function fastifyView (fastify, opts, next) {
     return page
   }
 
+  // Gets template as string from LRU cache or filesystem.
+  const getTemplateString = function (file, callback) {
+    let data = lru.get(file)
+    if (data && prod) {
+      callback(null, data)
+    } else {
+      readFile(join(templatesDir, file), 'utf-8', (err, data) => {
+        if (err) {
+          callback(err, null)
+          return
+        }
+        lru.set(file, data)
+        callback(null, data)
+      })
+    }
+  }
+
+  // Gets partials as collection of strings from LRU cache or filesystem.
+  const getPartials = function (page, partials, callback) {
+    let partialsObj = lru.get(`${page}-Partials`)
+
+    if (partialsObj && prod) {
+      callback(null, partialsObj)
+    } else {
+      let filesToLoad = Object.keys(partials).length
+
+      if (filesToLoad === 0) {
+        callback(null, {})
+        return
+      }
+
+      let error = null
+      Object.keys(partials).map((key, index) => {
+        readFile(join(templatesDir, partials[key]), 'utf-8', (err, data) => {
+          if (err) {
+            error = err
+          }
+          partials[key] = data
+          if (--filesToLoad === 0) {
+            lru.set(`${page}-Partials`, partials)
+            callback(error, partials)
+          }
+        })
+      })
+    }
+  }
+
   function readCallback (that, page, data) {
     return function _readCallback (err, html) {
       if (err) {
@@ -184,11 +231,19 @@ function fastifyView (fastify, opts, next) {
 
     // append view extension
     page = getPage(page, 'mustache')
-
-    readFile(join(templatesDir, page), 'utf8', (err, template) => {
-      if (err) return this.send(err)
-      let html = engine.render(template, data, options.partials)
-      this.header('Content-Type', 'text/html; charset=' + charset).send(html)
+    getTemplateString(page, (err, templateString) => {
+      if (err) {
+        this.send(err)
+        return
+      }
+      getPartials(page, options.partials || {}, (err, partialsObject) => {
+        if (err) {
+          this.send(err)
+          return
+        }
+        let html = engine.render(templateString, data, partialsObject)
+        this.header('Content-Type', 'text/html; charset=' + charset).send(html)
+      })
     })
   }
 
