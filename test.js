@@ -418,7 +418,7 @@ test('reply.view with mustache engine, missing template file', t => {
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 500)
-      t.strictEqual(response.headers['content-type'], 'application/json')
+      t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
       t.strictEqual(response.headers['content-length'], '' + body.length)
       fastify.close()
     })
@@ -449,7 +449,7 @@ test('reply.view with mustache engine, with partials missing template file', t =
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 500)
-      t.strictEqual(response.headers['content-type'], 'application/json')
+      t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
       t.strictEqual(response.headers['content-length'], '' + body.length)
       fastify.close()
     })
@@ -480,7 +480,7 @@ test('reply.view with mustache engine, with partials missing partials file', t =
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 500)
-      t.strictEqual(response.headers['content-type'], 'application/json')
+      t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
       t.strictEqual(response.headers['content-length'], '' + body.length)
       fastify.close()
     })
@@ -511,7 +511,7 @@ test('reply.view with mustache engine, with partials and multiple missing partia
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 500)
-      t.strictEqual(response.headers['content-type'], 'application/json')
+      t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
       t.strictEqual(response.headers['content-length'], '' + body.length)
       fastify.close()
     })
@@ -1019,7 +1019,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 500)
-      t.strictEqual(response.headers['content-type'], 'application/json')
+      t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
       t.strictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
@@ -1068,7 +1068,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 500)
-      t.strictEqual(response.headers['content-type'], 'application/json')
+      t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
       t.strictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null

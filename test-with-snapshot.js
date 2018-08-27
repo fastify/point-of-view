@@ -190,7 +190,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 500)
-      t.strictEqual(response.headers['content-type'], 'application/json')
+      t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
       t.strictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
@@ -240,7 +240,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
     }, (err, response, body) => {
       t.error(err)
       t.strictEqual(response.statusCode, 500)
-      t.strictEqual(response.headers['content-type'], 'application/json')
+      t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
       t.strictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
