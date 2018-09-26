@@ -40,7 +40,7 @@
     "ejs": "^2.5.9",
     "ejs-mate": "^2.3.0",
     "express": "^4.16.3",
-    "fastify": "^1.12.0",
+    "fastify": "^1.12.1",
     "handlebars": "^4.0.11",
     "marko": "^4.13.3",
     "mustache": "^2.3.0",
