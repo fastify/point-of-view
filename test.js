@@ -7,6 +7,24 @@ const Fastify = require('fastify')
 const fs = require('fs')
 const path = require('path')
 
+test('fastify.view exist', t => {
+  t.plan(2)
+  const fastify = Fastify()
+
+  fastify.register(require('./index'), {
+    engine: {
+      ejs: require('ejs')
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+    t.ok(fastify.view)
+
+    fastify.close()
+  })
+})
+
 test('reply.view exist', t => {
   t.plan(6)
   const fastify = Fastify()
@@ -89,6 +107,51 @@ test('register callback should throw if the engine is not supported', t => {
   }).ready(err => {
     t.ok(err instanceof Error)
     t.is(err.message, '\'notSupported\' not yet supported, PR? :)')
+  })
+})
+
+test('fastify.view with handlebars engine', t => {
+  t.plan(2)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      handlebars: handlebars
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view('/templates/index.html', data).then(compiled => {
+      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      fastify.close()
+    })
+  })
+})
+
+test('fastify.view with handlebars engine and callback', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      handlebars: handlebars
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view('/templates/index.html', data, (err, compiled) => {
+      t.error(err)
+      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      fastify.close()
+    })
   })
 })
 

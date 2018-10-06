@@ -35,7 +35,42 @@ function fastifyView (fastify, opts, next) {
     _default: view
   }
 
-  fastify.decorateReply('view', renders[type] ? renders[type] : renders._default)
+  const renderer = renders[type] ? renders[type] : renders._default
+
+  fastify.decorate('view', function () {
+    const args = Array.from(arguments)
+
+    let done
+    if (typeof args[args.length - 1] === 'function') {
+      done = args.pop()
+    }
+
+    const promise = new Promise((resolve, reject) => {
+      renderer.apply({
+        getHeader: () => {},
+        header: () => {},
+        send: result => {
+          if (result instanceof Error) {
+            reject(result)
+            return
+          }
+
+          resolve(result)
+        }
+      }, args)
+    })
+
+    if (done && typeof done === 'function') {
+      promise.then(done.bind(null, null), done)
+      return
+    }
+
+    return promise
+  })
+
+  fastify.decorateReply('view', function () {
+    renderer.apply(this, arguments)
+  })
 
   function getPage (page, extension) {
     if (includeViewExtension) {
