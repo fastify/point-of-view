@@ -4,17 +4,18 @@ const t = require('tap')
 const test = t.test
 const sget = require('simple-get').concat
 const Fastify = require('fastify')
+const path = require('path')
+const ejs = require('ejs')
+const templatesFolder = 'templates'
+const options = {
+  filename: path.resolve(templatesFolder),
+  views: [__dirname]
+}
 
 test('reply.view with ejs engine, template folder specified, include files (ejs and html) used in template, includeViewExtension property as true; requires TAP snapshots enabled', t => {
   t.plan(8)
   const fastify = Fastify()
-  const ejs = require('ejs')
-  const resolve = require('path').resolve
-  const templatesFolder = 'templates'
-  const options = {
-    filename: resolve(templatesFolder), // needed for include files to be resolved in include directive ...
-    views: [__dirname] // must be put to make tests (with include files) working ...
-  }
+
   const data = { text: 'text' }
 
   fastify.register(require('./index'), {
@@ -28,7 +29,6 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
 
   fastify.get('/', (req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-linking-other-pages', data) // sample for specifying with type
-    // reply.view('index-linking-other-pages', data)
   })
 
   fastify.listen(0, err => {
@@ -44,12 +44,12 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
       t.strictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
-      ejs.renderFile(templatesFolder + '/index-linking-other-pages.ejs', data, options, function (err, str) {
+      ejs.renderFile(path.join(templatesFolder, 'index-linking-other-pages.ejs'), data, options, function (err, str) {
         content = str
         t.error(err)
         t.strictEqual(content.length, body.length)
       })
-      t.matchSnapshot(content, 'output')
+      t.matchSnapshot(content.replace(/\r?\n/g, ''), 'output') // normalize new lines for cross-platform
 
       fastify.close()
     })
@@ -59,13 +59,7 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
 test('reply.view with ejs engine, templates with folder specified, include files and attributes; requires TAP snapshots enabled; home', t => {
   t.plan(8)
   const fastify = Fastify()
-  const ejs = require('ejs')
-  const resolve = require('path').resolve
-  const templatesFolder = 'templates'
-  const options = {
-    filename: resolve(templatesFolder),
-    views: [__dirname]
-  }
+
   const data = { text: 'Hello from EJS Templates' }
 
   fastify.register(require('./index'), {
@@ -94,12 +88,12 @@ test('reply.view with ejs engine, templates with folder specified, include files
       t.strictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
-      ejs.renderFile(templatesFolder + '/index.ejs', data, options, function (err, str) {
+      ejs.renderFile(path.join(templatesFolder, 'index.ejs'), data, options, function (err, str) {
         content = str
         t.error(err)
         t.strictEqual(content.length, body.length)
       })
-      t.matchSnapshot(content, 'output')
+      t.matchSnapshot(content.replace(/\r?\n/g, ''), 'output') // normalize new lines for cross-platform
 
       fastify.close()
     })
@@ -109,13 +103,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
 test('reply.view with ejs engine, templates with folder specified, include files and attributes; requires TAP snapshots enabled; page with includes', t => {
   t.plan(8)
   const fastify = Fastify()
-  const ejs = require('ejs')
-  const resolve = require('path').resolve
-  const templatesFolder = 'templates'
-  const options = {
-    filename: resolve(templatesFolder),
-    views: [__dirname]
-  }
+
   const data = { text: 'Hello from EJS Templates' }
 
   fastify.register(require('./index'), {
@@ -144,12 +132,12 @@ test('reply.view with ejs engine, templates with folder specified, include files
       t.strictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
-      ejs.renderFile(templatesFolder + '/index-with-includes.ejs', data, options, function (err, str) {
+      ejs.renderFile(path.join(templatesFolder, 'index-with-includes.ejs'), data, options, function (err, str) {
         content = str
         t.error(err)
         t.strictEqual(content.length, body.length)
       })
-      t.matchSnapshot(content, 'output')
+      t.matchSnapshot(content.replace(/\r?\n/g, ''), 'output') // normalize new lines for cross-platform
 
       fastify.close()
     })
@@ -159,13 +147,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
 test('reply.view with ejs engine, templates with folder specified, include files and attributes; requires TAP snapshots enabled; page with one include missing', t => {
   t.plan(8)
   const fastify = Fastify()
-  const ejs = require('ejs')
-  const resolve = require('path').resolve
-  const templatesFolder = 'templates'
-  const options = {
-    filename: resolve(templatesFolder),
-    views: [__dirname]
-  }
+
   const data = { text: 'Hello from EJS Templates' }
 
   fastify.register(require('./index'), {
@@ -194,7 +176,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
       t.strictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
-      ejs.renderFile(templatesFolder + '/index-with-includes-one-missing.ejs', data, options, function (err, str) {
+      ejs.renderFile(path.join(templatesFolder, 'index-with-includes-one-missing.ejs'), data, options, function (err, str) {
         content = str
         t.type(err, Error) // expected Error here ...
         t.strictEqual(content, undefined)
@@ -209,13 +191,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
 test('reply.view with ejs engine, templates with folder specified, include files and attributes; requires TAP snapshots enabled; page with one attribute missing', t => {
   t.plan(8)
   const fastify = Fastify()
-  const ejs = require('ejs')
-  const resolve = require('path').resolve
-  const templatesFolder = 'templates'
-  const options = {
-    filename: resolve(templatesFolder),
-    views: [__dirname]
-  }
+
   const data = { text: 'Hello from EJS Templates' }
 
   fastify.register(require('./index'), {
@@ -244,7 +220,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
       t.strictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
-      ejs.renderFile(templatesFolder + '/index-with-includes-and-attribute-missing.ejs', data, options, function (err, str) {
+      ejs.renderFile(path.join(templatesFolder, 'index-with-includes-and-attribute-missing.ejs'), data, options, function (err, str) {
         content = str
         t.type(err, Error) // expected Error here ...
         t.strictEqual(content, undefined)
