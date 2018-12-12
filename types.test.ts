@@ -9,3 +9,11 @@ app.register<pointOfView.PointOfViewOptions>(pointOfView, {
   },
   templates: "templates",
 });
+
+app.get("/", (request, reply) => {
+  reply.view("/index.ejs");
+});
+
+app.get("/data", (request, reply) => {
+  reply.view("/data.ejs", { data: "data" });
+});
