@@ -114,6 +114,15 @@ To use partials in mustache you will need to pass the names and paths in the opt
   }
 ```
 
+To configure nunjunks environment after initialisation, you can pass callback function to options:
+```js
+  options: {
+    onConfigure: (env) => {
+      // do whatever you want on nunjunks env
+    }
+  }
+```
+
 <a name="note"></a>
 ## Note
 
