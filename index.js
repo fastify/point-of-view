@@ -243,6 +243,9 @@ function fastifyView (fastify, opts, next) {
       return
     }
 
+    // append view extension
+    page = getPage(page, type)
+
     const toHtml = lru.get(page)
 
     if (toHtml && prod) {
