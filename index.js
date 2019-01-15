@@ -241,7 +241,7 @@ function fastifyView (fastify, opts, next) {
     if (!page || !data) {
       this.send(new Error('Missing data'))
       return
-    }
+    }    
 
     // append view extension
     page = getPage(page, type)
@@ -268,7 +268,7 @@ function fastifyView (fastify, opts, next) {
     const options = Object.assign({}, opts)
 
     // append view extension
-    page = getPage(page, 'mustache')
+    page = getPage(page, type)
     getTemplateString(page, (err, templateString) => {
       if (err) {
         this.send(err)
