@@ -241,7 +241,7 @@ function fastifyView (fastify, opts, next) {
     if (!page || !data) {
       this.send(new Error('Missing data'))
       return
-    }    
+    }
 
     // append view extension
     page = getPage(page, type)
