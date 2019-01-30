@@ -18,7 +18,7 @@ Currently supports the following templates engines:
 
 In `production` mode, `point-of-view` will heavily cache the templates file and functions, while in `development` will reload every time the template file and function.
 
-*Note that at least Fastify `v0.13.1` is needed.*
+*Note that at least Fastify `v2.0.0` is needed.*
 
 #### Benchmarks
 The benchmark were run with the files in the `benchmark` folder with the `ejs` engine.
