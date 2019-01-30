@@ -49,7 +49,7 @@
     "pug": "^2.0.3",
     "simple-get": "^3.0.2",
     "standard": "^12.0.0",
-    "tap": "^12.0.0",
+    "tap": "^12.5.0",
     "typescript": "^3.2.2"
   },
   "standard": {
