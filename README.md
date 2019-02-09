@@ -8,7 +8,7 @@ Templates rendering plugin support for Fastify.
 `point-of-view` decorates the reply interface with the `view` method for manage view engines that can be used to render templates responses.
 
 Currently supports the following templates engines:
-- [`ejs`](http://www.embeddedjs.com/)
+- [`ejs`](https://ejs.co/)
 - [`ejs-mate`](https://github.com/JacksonTian/ejs-mate)
 - [`nunjucks`](https://mozilla.github.io/nunjucks/)
 - [`pug`](https://pugjs.org/api/getting-started.html)
