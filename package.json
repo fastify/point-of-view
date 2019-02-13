@@ -32,26 +32,26 @@
   },
   "homepage": "https://github.com/fastify/point-of-view#readme",
   "dependencies": {
-    "fastify-plugin": "^1.2.0",
-    "hashlru": "^2.2.1"
+    "fastify-plugin": "^1.5.0",
+    "hashlru": "^2.3.0"
   },
   "devDependencies": {
     "cross-env": "^5.2.0",
-    "ejs": "^2.5.9",
+    "ejs": "^2.6.1",
     "ejs-mate": "^2.3.0",
-    "express": "^4.16.3",
-    "fastify": "^2.0.0-rc.4",
-    "handlebars": "^4.0.11",
-    "marko": "^4.14.23",
-    "mustache": "^3.0.0",
-    "nunjucks": "^3.1.6",
+    "express": "^4.16.4",
+    "fastify": "^2.0.0-rc.6",
+    "handlebars": "^4.1.0",
+    "marko": "^4.14.25",
+    "mustache": "^3.0.1",
+    "nunjucks": "^3.1.7",
     "pre-commit": "^1.2.2",
     "pug": "^2.0.3",
-    "simple-get": "^3.0.2",
-    "standard": "^12.0.0",
-    "tap": "^12.5.0",
-    "typescript": "^3.2.2",
-    "@types/node": "^11.9.0"
+    "simple-get": "^3.0.3",
+    "standard": "^12.0.1",
+    "tap": "^12.5.2",
+    "typescript": "^3.3.3",
+    "@types/node": "^11.9.3"
   },
   "standard": {
     "ignore": [
