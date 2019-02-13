@@ -170,7 +170,11 @@ function fastifyView (fastify, opts, next) {
       if (!this.res.getHeader('content-type')) {
         this.header('Content-Type', 'text/html; charset=' + charset)
       }
-      this.send(toHtml(data))
+      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
+        this.send(options.useHtmlMinifier.minify(toHtml(data), options.htmlMinifierOptions || {}))
+      } else {
+        this.send(toHtml(data))
+      }
       return
     }
 
@@ -194,6 +198,9 @@ function fastifyView (fastify, opts, next) {
     page = getPage(page, 'ejs')
     engine(join(templatesDir, page), confs, (err, html) => {
       if (err) return this.send(err)
+      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
+        html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
+      }
       this.header('Content-Type', 'text/html; charset=' + charset).send(html)
     })
   }
@@ -208,6 +215,9 @@ function fastifyView (fastify, opts, next) {
     page = getPage(page, 'njk')
     env.render(join(templatesDir, page), data, (err, html) => {
       if (err) return this.send(err)
+      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
+        html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
+      }
       this.header('Content-Type', 'text/html; charset=' + charset).send(html)
     })
   }
@@ -232,6 +242,9 @@ function fastifyView (fastify, opts, next) {
     function send (that) {
       return function _send (err, html) {
         if (err) return that.send(err)
+        if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
+          html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
+        }
         that.header('Content-Type', 'text/html; charset=' + charset).send(html)
       }
     }
@@ -249,7 +262,11 @@ function fastifyView (fastify, opts, next) {
       if (!this.res.getHeader('content-type')) {
         this.header('Content-Type', 'text/html; charset=' + charset)
       }
-      this.send(toHtml(data))
+      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
+        this.send(options.useHtmlMinifier.minify(toHtml(data), options.htmlMinifierOptions || {}))
+      } else {
+        this.send(toHtml(data))
+      }
       return
     }
 
@@ -277,6 +294,9 @@ function fastifyView (fastify, opts, next) {
           return
         }
         let html = engine.render(templateString, data, partialsObject)
+        if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
+          html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
+        }
         this.header('Content-Type', 'text/html; charset=' + charset).send(html)
       })
     })
