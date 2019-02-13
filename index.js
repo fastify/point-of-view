@@ -245,7 +245,7 @@ function fastifyView (fastify, opts, next) {
 
     // append view extension
     page = getPage(page, 'hbs')
-    
+
     const toHtml = lru.get(page)
 
     if (toHtml && prod) {
