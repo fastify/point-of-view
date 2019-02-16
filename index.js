@@ -139,10 +139,6 @@ function fastifyView (fastify, opts, next) {
         return
       }
 
-      if ((type !== 'pug') && options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-        html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
-      }
-
       let compiledPage
       try {
         compiledPage = engine.compile(html, options)
@@ -160,6 +156,9 @@ function fastifyView (fastify, opts, next) {
         cachedPage = lru.get(page)(data)
       } catch (error) {
         cachedPage = error
+      }
+      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
+        cachedPage = options.useHtmlMinifier.minify(cachedPage, options.htmlMinifierOptions || {})
       }
       that.send(cachedPage)
     }
@@ -180,11 +179,7 @@ function fastifyView (fastify, opts, next) {
       if (!this.res.getHeader('content-type')) {
         this.header('Content-Type', 'text/html; charset=' + charset)
       }
-      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-        this.send(options.useHtmlMinifier.minify(toHtml(data), options.htmlMinifierOptions || {}))
-      } else {
-        this.send(toHtml(data))
-      }
+      this.send(toHtml(data))
       return
     }
 
@@ -244,7 +239,11 @@ function fastifyView (fastify, opts, next) {
     const template = engine.load(join(templatesDir, page))
 
     if (opts && opts.stream) {
-      this.send(template.stream(data))
+      if (typeof options.useHtmlMinifyStream === 'function') {
+        this.send(template.stream(data).pipe(options.useHtmlMinifyStream(options.htmlMinifierOptions || {})))
+      } else {
+        this.send(template.stream(data))
+      }
     } else {
       template.renderToString(data, send(this))
     }
@@ -272,11 +271,7 @@ function fastifyView (fastify, opts, next) {
       if (!this.res.getHeader('content-type')) {
         this.header('Content-Type', 'text/html; charset=' + charset)
       }
-      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-        this.send(options.useHtmlMinifier.minify(toHtml(data), options.htmlMinifierOptions || {}))
-      } else {
-        this.send(toHtml(data))
-      }
+      this.send(toHtml(data))
       return
     }
 
