@@ -211,9 +211,6 @@ function fastifyView (fastify, opts, next) {
       return
     }
     const env = engine.configure(templatesDir, options)
-    if (typeof options.onConfigure === 'function') {
-      options.onConfigure(env)
-    }
     // Append view extension.
     page = getPage(page, 'njk')
     env.render(join(templatesDir, page), data, (err, html) => {
