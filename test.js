@@ -6,6 +6,15 @@ const sget = require('simple-get').concat
 const Fastify = require('fastify')
 const fs = require('fs')
 const path = require('path')
+const minifier = require('html-minifier')
+const minifierOpts = {
+  removeComments: true,
+  removeCommentsFromCDATA: true,
+  collapseWhitespace: true,
+  collapseBooleanAttributes: true,
+  removeAttributeQuotes: true,
+  removeEmptyAttributes: true
+}
 
 test('fastify.view exist', t => {
   t.plan(2)
@@ -132,6 +141,32 @@ test('fastify.view with handlebars engine', t => {
   })
 })
 
+test('fastify.view with handlebars engine and html-minifier', t => {
+  t.plan(2)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      handlebars: handlebars
+    },
+    options: {
+      useHtmlMinifier: minifier,
+      htmlMinifierOptions: minifierOpts
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view('/templates/index.html', data).then(compiled => {
+      t.strictEqual(minifier.minify(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), minifierOpts), compiled)
+      fastify.close()
+    })
+  })
+})
+
 test('fastify.view with handlebars engine and callback', t => {
   t.plan(3)
   const fastify = Fastify()
@@ -150,6 +185,33 @@ test('fastify.view with handlebars engine and callback', t => {
     fastify.view('/templates/index.html', data, (err, compiled) => {
       t.error(err)
       t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      fastify.close()
+    })
+  })
+})
+
+test('fastify.view with handlebars engine with callback and html-minifier', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      handlebars: handlebars
+    },
+    options: {
+      useHtmlMinifier: minifier,
+      htmlMinifierOptions: minifierOpts
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view('/templates/index.html', data, (err, compiled) => {
+      t.error(err)
+      t.strictEqual(minifier.minify(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), minifierOpts), compiled)
       fastify.close()
     })
   })
@@ -256,6 +318,43 @@ test('reply.view with ejs engine', t => {
   })
 })
 
+test('reply.view with ejs engine and html-minifier', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      ejs: ejs
+    },
+    options: {
+      useHtmlMinifier: minifier,
+      htmlMinifierOptions: minifierOpts
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('/templates/index.ejs', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(minifier.minify(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), minifierOpts), body.toString())
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with pug engine', t => {
   t.plan(6)
   const fastify = Fastify()
@@ -265,6 +364,43 @@ test('reply.view with pug engine', t => {
   fastify.register(require('./index'), {
     engine: {
       pug: pug
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('/templates/index.pug', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with pug engine and html-minifier will not process', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const pug = require('pug')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      pug: pug
+    },
+    options: {
+      useHtmlMinifier: minifier,
+      htmlMinifierOptions: minifierOpts
     }
   })
 
@@ -322,6 +458,43 @@ test('reply.view with handlebars engine', t => {
   })
 })
 
+test('reply.view with handlebars engine and html-minifier', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      handlebars: handlebars
+    },
+    options: {
+      useHtmlMinifier: minifier,
+      htmlMinifierOptions: minifierOpts
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('/templates/index.html', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(minifier.minify(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), minifierOpts), body.toString())
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with mustache engine', t => {
   t.plan(6)
   const fastify = Fastify()
@@ -355,6 +528,43 @@ test('reply.view with mustache engine', t => {
   })
 })
 
+test('reply.view with mustache engine and html-minifier', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const mustache = require('mustache')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      mustache: mustache
+    },
+    options: {
+      useHtmlMinifier: minifier,
+      htmlMinifierOptions: minifierOpts
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('/templates/index.html', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(minifier.minify(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), minifierOpts), body.toString())
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with mustache engine with partials', t => {
   t.plan(6)
   const fastify = Fastify()
@@ -382,6 +592,42 @@ test('reply.view with mustache engine with partials', t => {
       t.strictEqual(response.headers['content-length'], '' + replyBody.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       t.strictEqual(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { 'body': '<p>{{ text }}</p>' }), replyBody.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with mustache engine with partials and html-minifier', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const mustache = require('mustache')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      mustache: mustache
+    },
+    options: {
+      useHtmlMinifier: minifier,
+      htmlMinifierOptions: minifierOpts
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index.mustache', data, { partials: { 'body': './templates/body.mustache' } })
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, replyBody) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + replyBody.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(minifier.minify(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { 'body': '<p>{{ text }}</p>' }), minifierOpts), replyBody.toString())
       fastify.close()
     })
   })
@@ -614,6 +860,43 @@ test('reply.view with marko engine', t => {
   })
 })
 
+test('reply.view with marko engine and html-minifier', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const marko = require('marko')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      marko: marko
+    },
+    options: {
+      useHtmlMinifier: minifier,
+      htmlMinifierOptions: minifierOpts
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('/templates/index.marko', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(minifier.minify(marko.load('./templates/index.marko').renderToString(data), minifierOpts), body.toString())
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with marko engine, with stream', t => {
   t.plan(5)
   const fastify = Fastify()
@@ -713,6 +996,43 @@ test('reply.view with ejs-mate engine', t => {
   })
 })
 
+test('reply.view with ejs-mate engine and html-minifier', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejsMate = require('ejs-mate')
+  const data = { text: 'text', header: 'header', footer: 'footer' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      'ejs-mate': ejsMate
+    },
+    options: {
+      useHtmlMinifier: minifier,
+      htmlMinifierOptions: minifierOpts
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('/templates/content.ejs', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(minifier.minify('<html><head></head><body><h1>header</h1><div>text</div><div>footer</div></body></html>', minifierOpts), body.toString())
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with nunjucks engine and custom templates folder', t => {
   t.plan(6)
   const fastify = Fastify()
@@ -778,6 +1098,45 @@ test('reply.view with nunjucks engine and full path templates folder', t => {
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       // Global Nunjucks templates dir changed here.
       t.strictEqual(nunjucks.render('./index.njk', data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with nunjucks engine, full path templates folder, and html-minifier', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const nunjucks = require('nunjucks')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      nunjucks: nunjucks
+    },
+    templates: path.join(__dirname, 'templates'),
+    options: {
+      useHtmlMinifier: minifier,
+      htmlMinifierOptions: minifierOpts
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('/index.njk', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      // Global Nunjucks templates dir changed here.
+      t.strictEqual(minifier.minify(nunjucks.render('./index.njk', data), minifierOpts), body.toString())
       fastify.close()
     })
   })

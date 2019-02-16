@@ -90,6 +90,9 @@ function fastifyView (fastify, opts, next) {
           callback(err, null)
           return
         }
+        if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
+          data = options.useHtmlMinifier.minify(data, options.htmlMinifierOptions || {})
+        }
         lru.set(file, data)
         callback(null, data)
       })
@@ -116,6 +119,9 @@ function fastifyView (fastify, opts, next) {
           if (err) {
             error = err
           }
+          if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
+            data = options.useHtmlMinifier.minify(data, options.htmlMinifierOptions || {})
+          }
           partials[key] = data
           if (--filesToLoad === 0) {
             lru.set(`${page}-Partials`, partials)
@@ -131,6 +137,10 @@ function fastifyView (fastify, opts, next) {
       if (err) {
         that.send(err)
         return
+      }
+
+      if ((type !== 'pug') && options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
+        html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
       }
 
       let compiledPage
@@ -294,9 +304,6 @@ function fastifyView (fastify, opts, next) {
           return
         }
         let html = engine.render(templateString, data, partialsObject)
-        if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-          html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
-        }
         this.header('Content-Type', 'text/html; charset=' + charset).send(html)
       })
     })
