@@ -135,7 +135,7 @@ const minifierOpts = {
   }
 ```
 To utilize [`html-minify-stream`](https://www.npmjs.com/package/html-minify-stream) in the rendering process with template engines that support streams,
- you can add the option useHtmlMinifyStream with a reference to html-minify-stream, and the optional htmlMinifierOptions option is used to specify the options just like html-minifier:
+ you can add the option `useHtmlMinifyStream` with a reference to `html-minify-stream`, and the optional `htmlMinifierOptions` option is used to specify the options just like `html-minifier`:
 ```js
 // get a reference to html-minify-stream
 const htmlMinifyStream = require('html-minify-stream')
