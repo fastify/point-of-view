@@ -115,7 +115,7 @@ To use partials in mustache you will need to pass the names and paths in the opt
 ```
 
 To utilize [`html-minifier`](https://www.npmjs.com/package/html-minifier) in the rendering process, you can add the option `useHtmlMinifier` with a reference to `html-minifier`,
- and the optional htmlMinifierOptions option is used to specify the html-minifier options:
+ and the optional `htmlMinifierOptions` option is used to specify the `html-minifier` options:
 ```js
 // get a reference to html-minifier
 const minifier = require('html-minifier')
