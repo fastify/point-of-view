@@ -307,4 +307,4 @@ function fastifyView (fastify, opts, next) {
   next()
 }
 
-module.exports = fp(fastifyView, { fastify: '^2.x' })
+module.exports = fp(fastifyView, { fastify: '^1.1.0' })
