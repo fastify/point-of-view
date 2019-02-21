@@ -90,6 +90,9 @@ function fastifyView (fastify, opts, next) {
           callback(err, null)
           return
         }
+        if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
+          data = options.useHtmlMinifier.minify(data, options.htmlMinifierOptions || {})
+        }
         lru.set(file, data)
         callback(null, data)
       })
@@ -115,6 +118,9 @@ function fastifyView (fastify, opts, next) {
         readFile(join(templatesDir, partials[key]), 'utf-8', (err, data) => {
           if (err) {
             error = err
+          }
+          if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
+            data = options.useHtmlMinifier.minify(data, options.htmlMinifierOptions || {})
           }
           partials[key] = data
           if (--filesToLoad === 0) {
@@ -150,6 +156,9 @@ function fastifyView (fastify, opts, next) {
         cachedPage = lru.get(page)(data)
       } catch (error) {
         cachedPage = error
+      }
+      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
+        cachedPage = options.useHtmlMinifier.minify(cachedPage, options.htmlMinifierOptions || {})
       }
       that.send(cachedPage)
     }
@@ -194,6 +203,9 @@ function fastifyView (fastify, opts, next) {
     page = getPage(page, 'ejs')
     engine(join(templatesDir, page), confs, (err, html) => {
       if (err) return this.send(err)
+      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
+        html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
+      }
       this.header('Content-Type', 'text/html; charset=' + charset).send(html)
     })
   }
@@ -208,6 +220,9 @@ function fastifyView (fastify, opts, next) {
     page = getPage(page, 'njk')
     env.render(join(templatesDir, page), data, (err, html) => {
       if (err) return this.send(err)
+      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
+        html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
+      }
       this.header('Content-Type', 'text/html; charset=' + charset).send(html)
     })
   }
@@ -224,7 +239,11 @@ function fastifyView (fastify, opts, next) {
     const template = engine.load(join(templatesDir, page))
 
     if (opts && opts.stream) {
-      this.send(template.stream(data))
+      if (typeof options.useHtmlMinifyStream === 'function') {
+        this.send(template.stream(data).pipe(options.useHtmlMinifyStream(options.htmlMinifierOptions || {})))
+      } else {
+        this.send(template.stream(data))
+      }
     } else {
       template.renderToString(data, send(this))
     }
@@ -232,6 +251,9 @@ function fastifyView (fastify, opts, next) {
     function send (that) {
       return function _send (err, html) {
         if (err) return that.send(err)
+        if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
+          html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
+        }
         that.header('Content-Type', 'text/html; charset=' + charset).send(html)
       }
     }

@@ -42,6 +42,8 @@
     "express": "^4.16.3",
     "fastify": "^1.13.1",
     "handlebars": "^4.0.11",
+    "html-minifier": "^3.5.21",
+    "html-minify-stream": "^1.0.0",
     "marko": "^4.13.6",
     "mustache": "^3.0.0",
     "nunjucks": "^3.1.6",
