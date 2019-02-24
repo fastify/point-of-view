@@ -8,7 +8,7 @@ Templates rendering plugin support for Fastify.
 `point-of-view` decorates the reply interface with the `view` method for manage view engines that can be used to render templates responses.
 
 Currently supports the following templates engines:
-- [`ejs`](http://www.embeddedjs.com/)
+- [`ejs`](https://ejs.co/)
 - [`ejs-mate`](https://github.com/JacksonTian/ejs-mate)
 - [`nunjucks`](https://mozilla.github.io/nunjucks/)
 - [`pug`](https://pugjs.org/api/getting-started.html)
@@ -18,7 +18,7 @@ Currently supports the following templates engines:
 
 In `production` mode, `point-of-view` will heavily cache the templates file and functions, while in `development` will reload every time the template file and function.
 
-*Note that at least Fastify `v0.13.1` is needed.*
+*Note that at least Fastify `v2.0.0` is needed.*
 
 #### Benchmarks
 The benchmark were run with the files in the `benchmark` folder with the `ejs` engine.
@@ -120,6 +120,48 @@ To configure nunjunks environment after initialisation, you can pass callback fu
     onConfigure: (env) => {
       // do whatever you want on nunjunks env
     }
+    
+  }
+```
+
+To utilize [`html-minifier`](https://www.npmjs.com/package/html-minifier) in the rendering process, you can add the option `useHtmlMinifier` with a reference to `html-minifier`,
+ and the optional `htmlMinifierOptions` option is used to specify the `html-minifier` options:
+```js
+// get a reference to html-minifier
+const minifier = require('html-minifier')
+// optionally defined the html-minifier options
+const minifierOpts = {
+  removeComments: true,
+  removeCommentsFromCDATA: true,
+  collapseWhitespace: true,
+  collapseBooleanAttributes: true,
+  removeAttributeQuotes: true,
+  removeEmptyAttributes: true
+}
+// in template engine options configure the use of html-minifier
+  options: {
+    useHtmlMinifier: minifier,
+    htmlMinifierOptions: minifierOpts
+  }
+```
+To utilize [`html-minify-stream`](https://www.npmjs.com/package/html-minify-stream) in the rendering process with template engines that support streams,
+ you can add the option `useHtmlMinifyStream` with a reference to `html-minify-stream`, and the optional `htmlMinifierOptions` option is used to specify the options just like `html-minifier`:
+```js
+// get a reference to html-minify-stream
+const htmlMinifyStream = require('html-minify-stream')
+// optionally defined the html-minifier options that are used by html-minify-stream
+const minifierOpts = {
+  removeComments: true,
+  removeCommentsFromCDATA: true,
+  collapseWhitespace: true,
+  collapseBooleanAttributes: true,
+  removeAttributeQuotes: true,
+  removeEmptyAttributes: true
+}
+// in template engine options configure the use of html-minify-stream
+  options: {
+    useHtmlMinifyStream: htmlMinifyStream,
+    htmlMinifierOptions: minifierOpts
   }
 ```
 
