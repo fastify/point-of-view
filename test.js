@@ -1214,6 +1214,46 @@ test('reply.view with nunjucks engine and includeViewExtension is true', t => {
   })
 })
 
+test('reply.view with nunjucks engine using onConfigure callback', t => {
+  t.plan(7)
+  const fastify = Fastify()
+  const nunjucks = require('nunjucks')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      nunjucks: nunjucks
+    },
+    options: {
+      onConfigure: env => {
+        env.addGlobal('myGlobalVar', 'my global var value')
+      }
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('/templates/index-with-global.njk', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      // Global Nunjucks templates dir is  `./` here.
+      t.strictEqual(nunjucks.render('./templates/index-with-global.njk', data), body.toString())
+      t.match(body.toString(), /.*<p>my global var value<\/p>/)
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with ejs engine and includeViewExtension property as true', t => {
   t.plan(6)
   const fastify = Fastify()

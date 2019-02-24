@@ -114,6 +114,16 @@ To use partials in mustache you will need to pass the names and paths in the opt
   }
 ```
 
+To configure nunjunks environment after initialisation, you can pass callback function to options:
+```js
+  options: {
+    onConfigure: (env) => {
+      // do whatever you want on nunjunks env
+    }
+    
+  }
+```
+
 To utilize [`html-minifier`](https://www.npmjs.com/package/html-minifier) in the rendering process, you can add the option `useHtmlMinifier` with a reference to `html-minifier`,
  and the optional `htmlMinifierOptions` option is used to specify the `html-minifier` options:
 ```js
