@@ -1615,3 +1615,69 @@ test('reply.view with handlebars engine and includeViewExtension property as tru
     })
   })
 })
+
+test('fastify.view with ejs engine and callback in production mode', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      ejs: ejs
+    },
+    prod: true
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view('/templates/index.ejs', data, (err, compiled) => {
+      t.error(err)
+      t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), compiled)
+
+      fastify.ready(err => {
+        t.error(err)
+
+        fastify.view('/templates/index.ejs', data, (err, compiled) => {
+          t.error(err)
+          t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), compiled)
+          fastify.close()
+        })
+      })
+    })
+  })
+})
+
+test('fastify.view with handlebars engine and callback in production mode', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      handlebars: handlebars
+    },
+    prod: true
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view('/templates/index.html', data, (err, compiled) => {
+      t.error(err)
+      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+
+      fastify.ready(err => {
+        t.error(err)
+
+        fastify.view('/templates/index.html', data, (err, compiled) => {
+          t.error(err)
+          t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+          fastify.close()
+        })
+      })
+    })
+  })
+})
