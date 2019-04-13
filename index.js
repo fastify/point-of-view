@@ -176,7 +176,7 @@ function fastifyView (fastify, opts, next) {
     const toHtml = lru.get(page)
 
     if (toHtml && prod) {
-      if (!this.res.getHeader('content-type')) {
+      if (!this.getHeader('content-type')) {
         this.header('Content-Type', 'text/html; charset=' + charset)
       }
       this.send(toHtml(data))
@@ -274,7 +274,7 @@ function fastifyView (fastify, opts, next) {
     const toHtml = lru.get(page)
 
     if (toHtml && prod) {
-      if (!this.res.getHeader('content-type')) {
+      if (!this.getHeader('content-type')) {
         this.header('Content-Type', 'text/html; charset=' + charset)
       }
       this.send(toHtml(data))
