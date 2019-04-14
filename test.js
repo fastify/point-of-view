@@ -1626,7 +1626,7 @@ test('fastify.view with ejs engine and callback in production mode', t => {
     engine: {
       ejs: ejs
     },
-    prod: true
+    production: true
   })
 
   fastify.ready(err => {
@@ -1659,7 +1659,7 @@ test('fastify.view with handlebars engine and callback in production mode', t =>
     engine: {
       handlebars: handlebars
     },
-    prod: true
+    production: true
   })
 
   fastify.ready(err => {
