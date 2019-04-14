@@ -165,6 +165,14 @@ const minifierOpts = {
   }
 ```
 
+The optional boolean property `production` will override environment variable `NODE_ENV` and force `point-of-view` into `production` or `development` mode:
+```js
+  options: {
+    // force production mode
+    production: true
+  }
+```
+
 <a name="note"></a>
 ## Note
 
