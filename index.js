@@ -25,7 +25,7 @@ function fastifyView (fastify, opts, next) {
   const templatesDir = resolve(opts.templates || './')
   const lru = HLRU(opts.maxCache || 100)
   const includeViewExtension = opts.includeViewExtension || false
-  const prod = process.env.NODE_ENV === 'production'
+  const prod = typeof opts.production === 'boolean' ? opts.production : process.env.NODE_ENV === 'production'
   const renders = {
     marko: viewMarko,
     'ejs-mate': viewEjsMate,
@@ -176,7 +176,7 @@ function fastifyView (fastify, opts, next) {
     const toHtml = lru.get(page)
 
     if (toHtml && prod) {
-      if (!this.res.getHeader('content-type')) {
+      if (!this.getHeader('content-type')) {
         this.header('Content-Type', 'text/html; charset=' + charset)
       }
       this.send(toHtml(data))
@@ -274,7 +274,7 @@ function fastifyView (fastify, opts, next) {
     const toHtml = lru.get(page)
 
     if (toHtml && prod) {
-      if (!this.res.getHeader('content-type')) {
+      if (!this.getHeader('content-type')) {
         this.header('Content-Type', 'text/html; charset=' + charset)
       }
       this.send(toHtml(data))
