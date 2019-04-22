@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>art-template</title>
+
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+<%
+   include('./header.art', {
+      title: title
+   })
+%>
+<p>{{ text }}</p>
+
+{{include './footer.art'}}
+</body>
+</html>
