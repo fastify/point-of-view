@@ -15,6 +15,7 @@ Currently supports the following templates engines:
 - [`handlebars`](http://handlebarsjs.com/)
 - [`marko`](http://markojs.com/)
 - [`mustache`](https://mustache.github.io/)
+- [`art-template`](https://aui.github.io/art-template/)
 
 In `production` mode, `point-of-view` will heavily cache the templates file and functions, while in `development` will reload every time the template file and function.
 

@@ -5,7 +5,7 @@ const readFile = require('fs').readFile
 const resolve = require('path').resolve
 const join = require('path').join
 const HLRU = require('hashlru')
-const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'ejs-mate', 'mustache']
+const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'ejs-mate', 'mustache', 'art-template']
 
 function fastifyView (fastify, opts, next) {
   if (!opts.engine) {
@@ -32,6 +32,7 @@ function fastifyView (fastify, opts, next) {
     handlebars: viewHandlebars,
     mustache: viewMustache,
     nunjucks: viewNunjucks,
+    'art-template': viewArtTemplate,
     _default: view
   }
 
@@ -208,6 +209,36 @@ function fastifyView (fastify, opts, next) {
       }
       this.header('Content-Type', 'text/html; charset=' + charset).send(html)
     })
+  }
+
+  function viewArtTemplate (page, data) {
+    if (!page || !data) {
+      this.send(new Error('Missing data'))
+      return
+    }
+    // Append view extension.
+    page = getPage(page, 'art')
+
+    const defaultSetting = {
+      debug: process.env.NODE_ENV !== 'production',
+      root: templatesDir
+    }
+
+    // merge engine options
+    const confs = Object.assign({}, defaultSetting, options)
+
+    function render (filename, data) {
+      confs.filename = join(templatesDir, filename)
+      const render = engine.compile(confs)
+      return render(data)
+    }
+
+    try {
+      const html = render(page, data)
+      this.header('Content-Type', 'text/html; charset=' + charset).send(html)
+    } catch (error) {
+      this.send(error)
+    }
   }
 
   function viewNunjucks (page, data) {
