@@ -26,6 +26,7 @@ function fastifyView (fastify, opts, next) {
   const lru = HLRU(opts.maxCache || 100)
   const includeViewExtension = opts.includeViewExtension || false
   const prod = typeof opts.production === 'boolean' ? opts.production : process.env.NODE_ENV === 'production'
+  const defaultCtx = opts.defaultContext || {}
   const renders = {
     marko: viewMarko,
     'ejs-mate': viewEjsMate,
@@ -171,6 +172,7 @@ function fastifyView (fastify, opts, next) {
       return
     }
 
+    data = Object.assign({}, defaultCtx, data)
     // append view extension
     page = getPage(page, type)
 
@@ -192,6 +194,7 @@ function fastifyView (fastify, opts, next) {
       this.send(new Error('Missing data'))
       return
     }
+    data = Object.assign({}, defaultCtx, data)
     const confs = Object.assign({}, options)
     if (!confs.settings) {
       confs.settings = {}
@@ -216,6 +219,7 @@ function fastifyView (fastify, opts, next) {
       this.send(new Error('Missing data'))
       return
     }
+    data = Object.assign({}, defaultCtx, data)
     // Append view extension.
     page = getPage(page, 'art')
 
@@ -250,6 +254,7 @@ function fastifyView (fastify, opts, next) {
     if (typeof options.onConfigure === 'function') {
       options.onConfigure(env)
     }
+    data = Object.assign({}, defaultCtx, data)
     // Append view extension.
     page = getPage(page, 'njk')
     env.render(join(templatesDir, page), data, (err, html) => {
@@ -267,6 +272,7 @@ function fastifyView (fastify, opts, next) {
       return
     }
 
+    data = Object.assign({}, defaultCtx, data)
     // append view extension
     page = getPage(page, type)
 
@@ -299,6 +305,7 @@ function fastifyView (fastify, opts, next) {
       return
     }
 
+    data = Object.assign({}, defaultCtx, data)
     // append view extension
     page = getPage(page, 'hbs')
 
@@ -322,7 +329,7 @@ function fastifyView (fastify, opts, next) {
     }
 
     const options = Object.assign({}, opts)
-
+    data = Object.assign({}, defaultCtx, data)
     // append view extension
     page = getPage(page, 'mustache')
     getTemplateString(page, (err, templateString) => {

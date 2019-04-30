@@ -141,6 +141,30 @@ test('fastify.view with handlebars engine', t => {
   })
 })
 
+test('fastify.view with handlebars engine and defaultContext', t => {
+  t.plan(2)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      handlebars: handlebars
+    },
+    defaultContext: data
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view('/templates/index.html', {}).then(compiled => {
+      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      fastify.close()
+    })
+  })
+})
+
 test('fastify.view with handlebars engine and html-minifier', t => {
   t.plan(2)
   const fastify = Fastify()
@@ -318,6 +342,40 @@ test('reply.view with ejs engine', t => {
   })
 })
 
+test('reply.view with ejs engine and defaultContext', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      ejs: ejs
+    },
+    defaultContext: data
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('/templates/index.ejs', {})
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with ejs engine and html-minifier', t => {
   t.plan(6)
   const fastify = Fastify()
@@ -369,6 +427,40 @@ test('reply.view with pug engine', t => {
 
   fastify.get('/', (req, reply) => {
     reply.view('/templates/index.pug', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with pug engine and defaultContext', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const pug = require('pug')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      pug: pug
+    },
+    defaultContext: data
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('/templates/index.pug', {})
   })
 
   fastify.listen(0, err => {
@@ -458,6 +550,40 @@ test('reply.view with handlebars engine', t => {
   })
 })
 
+test('reply.view with handlebars engine and defaultContext', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      handlebars: handlebars
+    },
+    defaultContext: data
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('/templates/index.html', {})
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with handlebars engine and html-minifier', t => {
   t.plan(6)
   const fastify = Fastify()
@@ -509,6 +635,40 @@ test('reply.view with mustache engine', t => {
 
   fastify.get('/', (req, reply) => {
     reply.view('/templates/index.html', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with mustache engine and defaultContext', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const mustache = require('mustache')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      mustache: mustache
+    },
+    defaultContext: data
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('/templates/index.html', {})
   })
 
   fastify.listen(0, err => {
@@ -860,6 +1020,40 @@ test('reply.view with marko engine', t => {
   })
 })
 
+test('reply.view with marko engine and defaultContext', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const marko = require('marko')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      marko: marko
+    },
+    defaultContext: data
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('/templates/index.marko', {})
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(marko.load('./templates/index.marko').renderToString(data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with marko engine and html-minifier', t => {
   t.plan(6)
   const fastify = Fastify()
@@ -1014,6 +1208,40 @@ test('reply.view with ejs-mate engine', t => {
 
   fastify.get('/', (req, reply) => {
     reply.view('/templates/content.ejs', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual('<html><head></head><body><h1>header</h1><div>text</div><div>footer</div></body></html>', body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with ejs-mate engine and defaultContext', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejsMate = require('ejs-mate')
+  const data = { text: 'text', header: 'header', footer: 'footer' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      'ejs-mate': ejsMate
+    },
+    defaultContext: data
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('/templates/content.ejs', {})
   })
 
   fastify.listen(0, err => {
@@ -1697,6 +1925,44 @@ test('reply.view with art-template engine and custom templates folder', t => {
 
   fastify.get('/', (req, reply) => {
     reply.view('./index.art', data)
+  })
+
+  fastify.listen(10086, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://127.0.0.1:10086/'
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+
+      const templatePath = path.join(__dirname, 'templates', 'index.art')
+
+      t.strictEqual(art(templatePath, data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with art-template engine and defaultContext', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const art = require('art-template')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      'art-template': art
+    },
+    templates: 'templates',
+    defaultContext: data
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./index.art', {})
   })
 
   fastify.listen(10086, err => {

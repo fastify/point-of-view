@@ -76,6 +76,24 @@ fastify.register(require('point-of-view'), {
 })
 ```
 
+if you want to set a default context that the variable can be using in each view:
+```js
+fastify.register(require('point-of-view'), {
+  engine: {
+    ejs: require('ejs')
+  },
+  defaultContext: {
+    dev: process.env.NODE_ENV === 'development'
+  }
+})
+```
+and in the template files like pug can use the variable like:
+```html
+link(src=dev?"link-to-dev.css":"link-to-pro.css")
+```
+Note that the data passing to the template will **override** the defaultContext
+
+
 If you want to omit view extension, you can add `includeViewExtension` property as following:
 ```javascript
 fastify.register(require('point-of-view'), {
