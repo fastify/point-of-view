@@ -76,7 +76,7 @@ fastify.register(require('point-of-view'), {
 })
 ```
 
-if you want to set a default context that the variable can be using in each view:
+If you want to set a default context that the variable can be using in each view:
 ```js
 fastify.register(require('point-of-view'), {
   engine: {
