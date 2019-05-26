@@ -323,8 +323,8 @@ function fastifyView (fastify, opts, next) {
           return
         }
 
-        Object.entries(partialsObject).forEach(([ name, partial ]) => {
-          engine.registerPartial(name, engine.compile(partial))
+        Object.keys(partialsObject).forEach((name) => {
+          engine.registerPartial(name, engine.compile(partialsObject[name]))
         })
 
         const template = engine.compile(templateString)
