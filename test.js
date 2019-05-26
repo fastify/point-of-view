@@ -1844,6 +1844,41 @@ test('reply.view with handlebars engine and includeViewExtension property as tru
   })
 })
 
+test('reply.view with handlebars engine with partials', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const data = { text: 'text' }
+
+  fastify.register(require('./index'), {
+    engine: {
+      handlebars: handlebars
+    },
+    options: {
+      partials: { 'body': './templates/body.hbs' }
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index-with-partials.hbs', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, replyBody) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + replyBody.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'))(data), replyBody.toString())
+      fastify.close()
+    })
+  })
+})
+
 test('fastify.view with ejs engine and callback in production mode', t => {
   t.plan(6)
   const fastify = Fastify()
