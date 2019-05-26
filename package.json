@@ -7,7 +7,7 @@
     "example": "node example.js",
     "example-with-options": "node example-ejs-with-some-options.js",
     "test-with-snapshot": "standard && cross-env TAP_SNAPSHOT=1 tap test-with-snapshot.js",
-    "test": "standard && tap test.js test-with-snapshot.js && tsc"
+    "test": "standard && tap test/* && tsc"
   },
   "repository": {
     "type": "git",
