@@ -133,6 +133,16 @@ To use partials in mustache you will need to pass the names and paths in the opt
   }
 ```
 
+To use partials in handlebars you will need to pass the names and paths in the options parameter:
+```js
+  options: {
+    partials: {
+      header: 'header.hbs',
+      footer: 'footer.hbs'
+    }
+  }
+```
+
 To configure nunjunks environment after initialisation, you can pass callback function to options:
 ```js
   options: {

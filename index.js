@@ -116,6 +116,7 @@ function fastifyView (fastify, opts, next) {
       }
 
       let error = null
+      const partialsHtml = {}
       Object.keys(partials).map((key, index) => {
         readFile(join(templatesDir, partials[key]), 'utf-8', (err, data) => {
           if (err) {
@@ -124,10 +125,11 @@ function fastifyView (fastify, opts, next) {
           if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
             data = options.useHtmlMinifier.minify(data, options.htmlMinifierOptions || {})
           }
-          partials[key] = data
+
+          partialsHtml[key] = data
           if (--filesToLoad === 0) {
-            lru.set(`${page}-Partials`, partials)
-            callback(error, partials)
+            lru.set(`${page}-Partials`, partialsHtml)
+            callback(error, partialsHtml)
           }
         })
       })
@@ -305,21 +307,35 @@ function fastifyView (fastify, opts, next) {
       return
     }
 
+    const options = Object.assign({}, opts.options)
     data = Object.assign({}, defaultCtx, data)
     // append view extension
     page = getPage(page, 'hbs')
-
-    const toHtml = lru.get(page)
-
-    if (toHtml && prod) {
-      if (!this.getHeader('content-type')) {
-        this.header('Content-Type', 'text/html; charset=' + charset)
+    getTemplateString(page, (err, templateString) => {
+      if (err) {
+        this.send(err)
+        return
       }
-      this.send(toHtml(data))
-      return
-    }
 
-    readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
+      getPartials(page, options.partials || {}, (err, partialsObject) => {
+        if (err) {
+          this.send(err)
+          return
+        }
+
+        Object.keys(partialsObject).forEach((name) => {
+          engine.registerPartial(name, engine.compile(partialsObject[name]))
+        })
+
+        const template = engine.compile(templateString)
+        const html = template(data)
+
+        if (!this.getHeader('content-type')) {
+          this.header('Content-Type', 'text/html; charset=' + charset)
+        }
+        this.send(html)
+      })
+    })
   }
 
   function viewMustache (page, data, opts) {
@@ -343,7 +359,11 @@ function fastifyView (fastify, opts, next) {
           return
         }
         let html = engine.render(templateString, data, partialsObject)
-        this.header('Content-Type', 'text/html; charset=' + charset).send(html)
+
+        if (!this.getHeader('content-type')) {
+          this.header('Content-Type', 'text/html; charset=' + charset)
+        }
+        this.send(html)
       })
     })
   }
