@@ -5,7 +5,7 @@ const readFile = require('fs').readFile
 const resolve = require('path').resolve
 const join = require('path').join
 const HLRU = require('hashlru')
-const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'ejs-mate', 'mustache', 'art-template']
+const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'ejs-mate', 'mustache', 'art-template', 'twig']
 
 function fastifyView (fastify, opts, next) {
   if (!opts.engine) {
@@ -34,6 +34,7 @@ function fastifyView (fastify, opts, next) {
     mustache: viewMustache,
     nunjucks: viewNunjucks,
     'art-template': viewArtTemplate,
+    twig: viewTwig,
     _default: view
   }
 
@@ -366,6 +367,30 @@ function fastifyView (fastify, opts, next) {
         this.send(html)
       })
     })
+  }
+
+  function viewTwig(page, data) {
+    if (!page || !data) {
+        this.send(new Error('Missing data'));
+        return;
+    }
+
+    const template = engine;
+    data = Object.assign({}, defaultCtx, options, data);
+
+    // Append view extension.
+    page = getPage(page, 'twig');
+    template.renderFile(join(templatesDir, page), data, (err, html) => {
+        if (err) {
+          this.send(err)
+          return
+        }
+        if (
+            options.useHtmlMinifier && typeof options.useHtmlMinifier.minify === 'function') {
+            html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {});
+        }        
+        this.header('Content-Type', 'text/html; charset=' + charset).send(html);
+    });
   }
 
   next()
