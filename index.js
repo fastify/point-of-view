@@ -49,7 +49,10 @@ function fastifyView (fastify, opts, next) {
 
     const promise = new Promise((resolve, reject) => {
       renderer.apply({
-        getHeader: () => {},
+        getHeader: () => {
+          // not need set Content-Type
+          return true;
+        },
         header: () => {},
         send: result => {
           if (result instanceof Error) {
@@ -241,7 +244,10 @@ function fastifyView (fastify, opts, next) {
 
     try {
       const html = render(page, data)
-      this.header('Content-Type', 'text/html; charset=' + charset).send(html)
+      if (!this.getHeader('content-type')) {
+        this.header('Content-Type', 'text/html; charset=' + charset)
+      }
+      this.send(html)
     } catch (error) {
       this.send(error)
     }
