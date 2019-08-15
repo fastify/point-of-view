@@ -51,7 +51,7 @@ function fastifyView (fastify, opts, next) {
       renderer.apply({
         getHeader: () => {
           // not need set Content-Type
-          return true;
+          return true
         },
         header: () => {},
         send: result => {
