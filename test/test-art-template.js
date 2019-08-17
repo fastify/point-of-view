@@ -156,3 +156,43 @@ test('reply.view with art-template engine and includeViewExtension is true', t =
     })
   })
 })
+
+test('fastify.view with art-template engine and full path templates folder', t => {
+  t.plan(6)
+
+  const fastify = Fastify()
+  const art = require('art-template')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      'art-template': art
+    },
+    templates: path.join(__dirname, '..', 'templates')
+  })
+
+  fastify.get('/', (req, reply) => {
+    fastify.view('./index', data, (err, html) => {
+      t.error(err)
+      reply.send(html)
+    })
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-type'], 'text/plain; charset=utf-8')
+
+      const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+
+      t.strictEqual(art(templatePath, data), body.toString())
+      fastify.close()
+    })
+  })
+})
