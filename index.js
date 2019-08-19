@@ -49,10 +49,7 @@ function fastifyView (fastify, opts, next) {
 
     const promise = new Promise((resolve, reject) => {
       renderer.apply({
-        getHeader: () => {
-          // not need set Content-Type
-          return true
-        },
+        getHeader: () => {},
         header: () => {},
         send: result => {
           if (result instanceof Error) {
