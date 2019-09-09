@@ -145,6 +145,7 @@ function fastifyView (fastify, opts, next) {
 
       let compiledPage
       try {
+        options.filename = options.filename || join(templatesDir, page)
         compiledPage = engine.compile(html, options)
       } catch (error) {
         that.send(error)
