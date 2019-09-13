@@ -52,7 +52,7 @@ test('reply.view with pug engine and includes', t => {
   t.plan(6)
   const fastify = Fastify()
   const pug = require('pug')
-  const data = { text: 'text', filename: './templates/sample.pug' }
+  const data = { text: 'text' }
 
   fastify.register(require('../index'), {
     engine: {
@@ -75,7 +75,7 @@ test('reply.view with pug engine and includes', t => {
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(pug.render(fs.readFileSync('./templates/sample.pug', 'utf8'), data), body.toString())
+      t.strictEqual(pug.renderFile('./templates/sample.pug', data), body.toString())
       fastify.close()
     })
   })
