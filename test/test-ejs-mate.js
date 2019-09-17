@@ -47,6 +47,40 @@ test('reply.view with ejs-mate engine', t => {
   })
 })
 
+test('reply.view for ejs-mate engine without data-parameter', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejsMate = require('ejs-mate')
+  const data = { text: 'text', header: 'header', footer: 'footer' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      'ejs-mate': ejsMate
+    },
+    defaultContext: data
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/content.ejs')
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual('<html><head></head><body><h1>header</h1><div>text</div><div>footer</div></body></html>', body.toString())
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with ejs-mate engine and defaultContext', t => {
   t.plan(6)
   const fastify = Fastify()
