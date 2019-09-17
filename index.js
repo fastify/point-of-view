@@ -81,8 +81,9 @@ function fastifyView (fastify, opts, next) {
     return page
   }
 
-  // Gets template as string from LRU cache or filesystem.
-  const getTemplateString = function (file, callback) {
+  // Gets template as string (or precompiled for Handlebars)
+  // from LRU cache or filesystem.
+  const getTemplate = function (file, callback) {
     let data = lru.get(file)
     if (data && prod) {
       callback(null, data)
@@ -94,6 +95,9 @@ function fastifyView (fastify, opts, next) {
         }
         if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
           data = options.useHtmlMinifier.minify(data, options.htmlMinifierOptions || {})
+        }
+        if (type === 'handlebars') {
+          data = engine.compile(data)
         }
         lru.set(file, data)
         callback(null, data)
@@ -311,30 +315,37 @@ function fastifyView (fastify, opts, next) {
     data = Object.assign({}, defaultCtx, data)
     // append view extension
     page = getPage(page, 'hbs')
-    getTemplateString(page, (err, templateString) => {
+    getTemplate(page, (err, template) => {
       if (err) {
         this.send(err)
         return
       }
 
-      getPartials(page, options.partials || {}, (err, partialsObject) => {
-        if (err) {
-          this.send(err)
-          return
-        }
-
-        Object.keys(partialsObject).forEach((name) => {
-          engine.registerPartial(name, engine.compile(partialsObject[name]))
-        })
-
-        const template = engine.compile(templateString)
+      if (prod) {
         const html = template(data)
-
         if (!this.getHeader('content-type')) {
           this.header('Content-Type', 'text/html; charset=' + charset)
         }
         this.send(html)
-      })
+      } else {
+        getPartials(type, options.partials || {}, (err, partialsObject) => {
+          if (err) {
+            this.send(err)
+            return
+          }
+
+          Object.keys(partialsObject).forEach((name) => {
+            engine.registerPartial(name, engine.compile(partialsObject[name]))
+          })
+
+          const html = template(data)
+
+          if (!this.getHeader('content-type')) {
+            this.header('Content-Type', 'text/html; charset=' + charset)
+          }
+          this.send(html)
+        })
+      }
     })
   }
 
@@ -348,7 +359,7 @@ function fastifyView (fastify, opts, next) {
     data = Object.assign({}, defaultCtx, data)
     // append view extension
     page = getPage(page, 'mustache')
-    getTemplateString(page, (err, templateString) => {
+    getTemplate(page, (err, templateString) => {
       if (err) {
         this.send(err)
         return
@@ -368,7 +379,20 @@ function fastifyView (fastify, opts, next) {
     })
   }
 
-  next()
+  if (prod && type === 'handlebars' && options.partials) {
+    getPartials(type, options.partials, (err, partialsObject) => {
+      if (err) {
+        next(err)
+        return
+      }
+      Object.keys(partialsObject).forEach((name) => {
+        engine.registerPartial(name, engine.compile(partialsObject[name]))
+      })
+      next()
+    })
+  } else {
+    next()
+  }
 }
 
 module.exports = fp(fastifyView, { fastify: '^2.x' })
