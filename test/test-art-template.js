@@ -43,7 +43,43 @@ test('reply.view with art-template engine and custom templates folder', t => {
   })
 })
 
-test('reply.view for art-template without data-parameter', t => {
+test('reply.view for art-template without data-parameter and defaultContext', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const art = require('art-template')
+
+  fastify.register(require('../index'), {
+    engine: {
+      'art-template': art
+    },
+    templates: 'templates'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./index.art')
+  })
+
+  fastify.listen(10086, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://127.0.0.1:10086/'
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+
+      const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+
+      t.strictEqual(art(templatePath, {}), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view for art-template without data-parameter but with defaultContext', t => {
   t.plan(6)
   const fastify = Fastify()
   const art = require('art-template')

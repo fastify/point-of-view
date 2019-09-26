@@ -50,7 +50,7 @@ test('reply.view with nunjucks engine and custom templates folder', t => {
   })
 })
 
-test('reply.view for nunjucks engine without data-parameter', t => {
+test('reply.view for nunjucks engine without data-parameter but defaultContext', t => {
   t.plan(6)
   const fastify = Fastify()
   const nunjucks = require('nunjucks')
@@ -81,6 +81,40 @@ test('reply.view for nunjucks engine without data-parameter', t => {
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       // Global Nunjucks templates dir changed here.
       t.strictEqual(nunjucks.render('./index.njk', data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view for nunjucks engine without data-parameter and without defaultContext', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const nunjucks = require('nunjucks')
+
+  fastify.register(require('../index'), {
+    engine: {
+      nunjucks: nunjucks
+    },
+    templates: 'templates'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./index.njk')
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      // Global Nunjucks templates dir changed here.
+      t.strictEqual(nunjucks.render('./index.njk'), body.toString())
       fastify.close()
     })
   })

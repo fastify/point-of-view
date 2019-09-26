@@ -37,7 +37,7 @@ test('fastify.view with handlebars engine', t => {
   })
 })
 
-test('fastify.view for handlebars without data-parameter', t => {
+test('fastify.view for handlebars without data-parameter but defaultContext', t => {
   t.plan(2)
   const fastify = Fastify()
   const handlebars = require('handlebars')
@@ -55,6 +55,27 @@ test('fastify.view for handlebars without data-parameter', t => {
 
     fastify.view('./templates/index.html').then(compiled => {
       t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      fastify.close()
+    })
+  })
+})
+
+test('fastify.view for handlebars without data-parameter and without defaultContext', t => {
+  t.plan(2)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars: handlebars
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view('./templates/index.html').then(compiled => {
+      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(), compiled)
       fastify.close()
     })
   })
