@@ -145,6 +145,7 @@ function fastifyView (fastify, opts, next) {
 
       let compiledPage
       try {
+        options.filename = join(templatesDir, page)
         compiledPage = engine.compile(html, options)
       } catch (error) {
         that.send(error)
@@ -242,7 +243,10 @@ function fastifyView (fastify, opts, next) {
 
     try {
       const html = render(page, data)
-      this.header('Content-Type', 'text/html; charset=' + charset).send(html)
+      if (!this.getHeader('content-type')) {
+        this.header('Content-Type', 'text/html; charset=' + charset)
+      }
+      this.send(html)
     } catch (error) {
       this.send(error)
     }
