@@ -193,10 +193,11 @@ function fastifyView (fastify, opts, next) {
   }
 
   function viewEjsMate (page, data) {
-    if (!page || !data) {
+    if (!page) {
       this.send(new Error('Missing data'))
       return
     }
+
     data = Object.assign({}, defaultCtx, data)
     const confs = Object.assign({}, options)
     if (!confs.settings) {
@@ -218,8 +219,8 @@ function fastifyView (fastify, opts, next) {
   }
 
   function viewArtTemplate (page, data) {
-    if (!page || !data) {
-      this.send(new Error('Missing data'))
+    if (!page) {
+      this.send(new Error('Missing page'))
       return
     }
     data = Object.assign({}, defaultCtx, data)
@@ -252,8 +253,8 @@ function fastifyView (fastify, opts, next) {
   }
 
   function viewNunjucks (page, data) {
-    if (!page || !data) {
-      this.send(new Error('Missing data'))
+    if (!page) {
+      this.send(new Error('Missing page'))
       return
     }
     const env = engine.configure(templatesDir, options)
@@ -273,8 +274,8 @@ function fastifyView (fastify, opts, next) {
   }
 
   function viewMarko (page, data, opts) {
-    if (!page || !data) {
-      this.send(new Error('Missing data'))
+    if (!page) {
+      this.send(new Error('Missing page'))
       return
     }
 
@@ -306,8 +307,8 @@ function fastifyView (fastify, opts, next) {
   }
 
   function viewHandlebars (page, data) {
-    if (!page || !data) {
-      this.send(new Error('Missing data'))
+    if (!page) {
+      this.send(new Error('Missing page'))
       return
     }
 
@@ -343,8 +344,8 @@ function fastifyView (fastify, opts, next) {
   }
 
   function viewMustache (page, data, opts) {
-    if (!page || !data) {
-      this.send(new Error('Missing data'))
+    if (!page) {
+      this.send(new Error('Missing page'))
       return
     }
 

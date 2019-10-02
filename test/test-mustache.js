@@ -48,6 +48,73 @@ test('reply.view with mustache engine', t => {
   })
 })
 
+test('reply.view for mustache without data-parameter but defaultContext', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const mustache = require('mustache')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      mustache: mustache
+    },
+    defaultContext: data
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index.html')
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view for mustache without data-parameter and without defaultContext', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const mustache = require('mustache')
+
+  fastify.register(require('../index'), {
+    engine: {
+      mustache: mustache
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    // Reusing the ejs-template is possible because it contains no tags
+    reply.view('./templates/index-bare.html')
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(mustache.render(fs.readFileSync('./templates/index-bare.html', 'utf8')), body.toString())
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with mustache engine and defaultContext', t => {
   t.plan(6)
   const fastify = Fastify()
