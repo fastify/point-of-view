@@ -181,6 +181,31 @@ test('fastify.view with handlebars engine with callback and html-minifier', t =>
   })
 })
 
+test('fastify.view with handlebars engine with layout option', t => {
+  t.plan(3)
+
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const data = { text: 'it works!' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars
+    },
+    layout: './templates/layout.hbs'
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view('./templates/index-for-layout.hbs', data, (err, compiled) => {
+      t.error(err)
+      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), compiled)
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with handlebars engine', t => {
   t.plan(6)
   const fastify = Fastify()
@@ -515,6 +540,39 @@ test('reply.view with handlebars engine with partials', t => {
       t.strictEqual(response.headers['content-length'], '' + replyBody.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'))(data), replyBody.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with handlebars engine with layout option', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars: handlebars
+    },
+    layout: './templates/layout.hbs'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index-for-layout.hbs', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, replyBody) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + replyBody.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), replyBody.toString())
       fastify.close()
     })
   })

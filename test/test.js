@@ -107,3 +107,18 @@ test('register callback should throw if the engine is not supported', t => {
     t.is(err.message, '\'notSupported\' not yet supported, PR? :)')
   })
 })
+
+test('register callback with handlebars engine should throw if layout file does not exist', t => {
+  t.plan(2)
+  const fastify = Fastify()
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars: require('handlebars')
+    },
+    layout: './templates/does-not-exist.hbs'
+  }).ready(err => {
+    t.ok(err instanceof Error)
+    t.ok(/no such file or directory/gi.test(err.message))
+  })
+})

@@ -3,7 +3,7 @@ import pointOfView = require("./");
 
 const app = fastify();
 
-app.register<pointOfView.PointOfViewOptions>(pointOfView, {
+app.register(pointOfView, {
   engine: {
     ejs: require("ejs"),
   },

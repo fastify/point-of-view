@@ -2,6 +2,7 @@
 
 const fp = require('fastify-plugin')
 const readFile = require('fs').readFile
+const readFileSync = require('fs').readFileSync
 const resolve = require('path').resolve
 const join = require('path').join
 const HLRU = require('hashlru')
@@ -27,10 +28,20 @@ function fastifyView (fastify, opts, next) {
   const includeViewExtension = opts.includeViewExtension || false
   const prod = typeof opts.production === 'boolean' ? opts.production : process.env.NODE_ENV === 'production'
   const defaultCtx = opts.defaultContext || {}
+  const layoutFileName = opts.layout
+
+  if (layoutFileName) {
+    try {
+      readFileSync(join(templatesDir, getPage(layoutFileName, 'hbs')))
+    } catch (e) {
+      next(e)
+    }
+  }
+
   const renders = {
     marko: viewMarko,
     'ejs-mate': viewEjsMate,
-    handlebars: viewHandlebars,
+    handlebars: withLayout(viewHandlebars),
     mustache: viewMustache,
     nunjucks: viewNunjucks,
     'art-template': viewArtTemplate,
@@ -397,6 +408,30 @@ function fastifyView (fastify, opts, next) {
     })
   } else {
     next()
+  }
+
+  function withLayout (render) {
+    if (layoutFileName) {
+      return function (page, data, opts) {
+        const that = this
+
+        render.call({
+          getHeader: () => {},
+          header: () => {},
+          send: (result) => {
+            if (result instanceof Error) {
+              throw result
+            }
+
+            data = Object.assign(data, { body: result })
+
+            render.call(that, layoutFileName, data, opts)
+          }
+        }, page, data, opts)
+      }
+    }
+
+    return render
   }
 }
 
