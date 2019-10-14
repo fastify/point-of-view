@@ -35,6 +35,7 @@ function fastifyView (fastify, opts, next) {
       readFileSync(join(templatesDir, getPage(layoutFileName, 'hbs')))
     } catch (e) {
       next(e)
+      return
     }
   }
 
