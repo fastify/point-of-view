@@ -2,7 +2,7 @@
 
 const fp = require('fastify-plugin')
 const readFile = require('fs').readFile
-const readFileSync = require('fs').readFileSync
+const accessSync = require('fs').accessSync
 const resolve = require('path').resolve
 const join = require('path').join
 const HLRU = require('hashlru')
@@ -30,13 +30,9 @@ function fastifyView (fastify, opts, next) {
   const defaultCtx = opts.defaultContext || {}
   const layoutFileName = opts.layout
 
-  if (layoutFileName) {
-    try {
-      readFileSync(join(templatesDir, getPage(layoutFileName, 'hbs')))
-    } catch (e) {
-      next(e)
-      return
-    }
+  if (layoutFileName && !hasAccessToLayoutFile(layoutFileName)) {
+    next(new Error(`unable to access template "${layoutFileName}"`))
+    return
   }
 
   const renders = {
@@ -433,6 +429,16 @@ function fastifyView (fastify, opts, next) {
     }
 
     return render
+  }
+
+  function hasAccessToLayoutFile (fileName) {
+    try {
+      accessSync(join(templatesDir, getPage(fileName, 'hbs')))
+
+      return true
+    } catch (e) {
+      return false
+    }
   }
 }
 

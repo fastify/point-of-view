@@ -119,6 +119,6 @@ test('register callback with handlebars engine should throw if layout file does 
     layout: './templates/does-not-exist.hbs'
   }).ready(err => {
     t.ok(err instanceof Error)
-    t.ok(/no such file or directory/gi.test(err.message))
+    t.deepEqual('unable to access template "./templates/does-not-exist.hbs"', err.message)
   })
 })
