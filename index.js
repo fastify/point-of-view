@@ -30,6 +30,10 @@ function fastifyView (fastify, opts, next) {
   const defaultCtx = opts.defaultContext || {}
   const layoutFileName = opts.layout
 
+  if (layoutFileName && type !== 'handlebars') {
+    next(new Error('"layout" option only available for handlebars engine'))
+  }
+
   if (layoutFileName && !hasAccessToLayoutFile(layoutFileName)) {
     next(new Error(`unable to access template "${layoutFileName}"`))
     return
