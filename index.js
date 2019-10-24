@@ -32,6 +32,7 @@ function fastifyView (fastify, opts, next) {
 
   if (layoutFileName && type !== 'handlebars') {
     next(new Error('"layout" option only available for handlebars engine'))
+    return
   }
 
   if (layoutFileName && !hasAccessToLayoutFile(layoutFileName)) {
