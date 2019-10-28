@@ -11,9 +11,14 @@ app.register(pointOfView, {
 });
 
 app.get("/", (request, reply) => {
-  reply.view("/index.ejs");
+  reply.view("/index-with-no-data.ejs");
 });
 
 app.get("/data", (request, reply) => {
-  reply.view("/data.ejs", { data: "data" });
+  reply.view("/index.ejs", { text: "Sample data" });
 });
+
+app.listen(3000, (err, address) => {
+  if (err) throw err
+  console.log(`server listening on ${address} ...`)
+})
