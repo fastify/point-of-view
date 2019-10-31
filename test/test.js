@@ -107,3 +107,33 @@ test('register callback should throw if the engine is not supported', t => {
     t.is(err.message, '\'notSupported\' not yet supported, PR? :)')
   })
 })
+
+test('register callback with handlebars engine should throw if layout file does not exist', t => {
+  t.plan(2)
+  const fastify = Fastify()
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars: require('handlebars')
+    },
+    layout: './templates/does-not-exist.hbs'
+  }).ready(err => {
+    t.ok(err instanceof Error)
+    t.deepEqual('unable to access template "./templates/does-not-exist.hbs"', err.message)
+  })
+})
+
+test('register callback should throw if layout option is provided and engine is not handlebars', t => {
+  t.plan(2)
+  const fastify = Fastify()
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: require('ejs')
+    },
+    layout: './templates/layout.hbs'
+  }).ready(err => {
+    t.ok(err instanceof Error)
+    t.deepEqual('"layout" option only available for handlebars engine', err.message)
+  })
+})

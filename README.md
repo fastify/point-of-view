@@ -144,6 +144,20 @@ To use partials in handlebars you will need to pass the names and paths in the o
   }
 ```
 
+To use layouts in handlebars you will need to pass the `layout` parameter:
+```js
+fastify.register(require('point-of-view'), {  
+  engine: {  
+    handlebars: require('handlebars')  
+  },
+  layout: './templates/layout.hbs'
+});  
+  
+fastify.get('/', (req, reply) => {  
+  reply.view('./templates/index.hbs', { text: 'text' })  
+})  
+```
+
 To configure nunjunks environment after initialisation, you can pass callback function to options:
 ```js
   options: {
