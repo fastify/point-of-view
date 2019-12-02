@@ -192,21 +192,23 @@ function fastifyView (fastify, opts, next) {
       return
     }
 
-    data = Object.assign({}, defaultCtx, data)
     // append view extension
     page = getPage(page, type)
-
+    let d = {
+      ...data,
+      ...this.locals
+    }
     const toHtml = lru.get(page)
 
     if (toHtml && prod) {
-      if (!this.getHeader('content-type')) {
+      if (!this.res.getHeader('content-type')) {
         this.header('Content-Type', 'text/html; charset=' + charset)
       }
-      this.send(toHtml(data))
+      this.send(toHtml(d))
       return
     }
 
-    readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
+    readFile(join(templatesDir, page), 'utf8', readCallback(this, page, d))
   }
 
   function viewEjsMate (page, data) {
