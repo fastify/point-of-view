@@ -24,7 +24,8 @@
     "nunjucks",
     "pug",
     "handlebars",
-    "mustache"
+    "mustache",
+    "twig"
   ],
   "author": "Tomas Della Vedova - @delvedor (http://delved.org)",
   "license": "MIT",
@@ -55,6 +56,7 @@
     "simple-get": "^3.1.0",
     "standard": "^12.0.1",
     "tap": "^12.7.0",
+    "twig": "^1.13.3",
     "typescript": "^3.7.3"
   },
   "standard": {
