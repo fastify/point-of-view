@@ -52,6 +52,7 @@ package-lock.json
 
 # IDE/editors
 .vscode
+.idea
 
 # temporary/work/output folders
 # build/
