@@ -5,9 +5,18 @@ const app = fastify();
 
 app.register(pointOfView, {
   engine: {
-    ejs: require("ejs"),
+    handlebars: require('handlebars'),
   },
   templates: "templates",
+  includeViewExtension: true,
+  defaultContext: {
+    dev: true,
+  },
+  options: {},
+  layout: 'layout',
+  charset: 'utf-8',
+  maxCache: 100,
+  production: false,
 });
 
 app.get("/", (request, reply) => {
