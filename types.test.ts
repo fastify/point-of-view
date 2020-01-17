@@ -5,7 +5,7 @@ const app = fastify();
 
 app.register(pointOfView, {
   engine: {
-    handlebars: require('handlebars'),
+    handlebars: require("handlebars"),
   },
   templates: "templates",
   includeViewExtension: true,
