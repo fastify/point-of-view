@@ -13,8 +13,8 @@ app.register(pointOfView, {
     dev: true,
   },
   options: {},
-  layout: 'layout',
-  charset: 'utf-8',
+  layout: "layout",
+  charset: "utf-8",
   maxCache: 100,
   production: false,
 });
