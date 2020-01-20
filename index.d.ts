@@ -12,6 +12,11 @@ interface PointOfViewOptions {
   templates?: string;
   includeViewExtension?: boolean;
   options?: object;
+  charset?: string;
+  maxCache?: number;
+  production?: boolean;
+  defaultContext?: object;
+  layout?: string;
 }
 
 declare const pointOfView: Plugin<
