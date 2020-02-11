@@ -41,25 +41,31 @@
     "art-template": "^4.13.2",
     "cross-env": "^7.0.0",
     "ejs": "^3.0.1",
-    "ejs-mate": "^3.0.0",
+    "ejs-mate": "^2.0.0",
     "express": "^4.17.1",
-    "fastify": "^2.10.0",
-    "handlebars": "^4.5.3",
+    "fastify": "^2.12.0",
+    "handlebars": "^4.7.3",
     "html-minifier": "^4.0.0",
     "html-minify-stream": "^1.0.0",
-    "marko": "^4.18.27",
+    "marko": "^4.18.44",
     "mustache": "^4.0.0",
     "nunjucks": "^3.2.0",
     "pre-commit": "^1.2.2",
     "pug": "^2.0.4",
     "simple-get": "^3.1.0",
     "standard": "^14.3.1",
-    "tap": "^14.10.6",
-    "typescript": "^3.7.3"
+    "tap": "^12.0.0",
+    "typescript": "^3.7.5"
   },
   "standard": {
     "ignore": [
       "*.marko.js"
+    ]
+  },
+  "greenkeeper": {
+    "ignore": [
+      "tap",
+      "ejs-mate"
     ]
   }
 }

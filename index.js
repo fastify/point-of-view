@@ -97,7 +97,7 @@ function fastifyView (fastify, opts, next) {
   // Gets template as string (or precompiled for Handlebars)
   // from LRU cache or filesystem.
   const getTemplate = function (file, callback) {
-    let data = lru.get(file)
+    const data = lru.get(file)
     if (data && prod) {
       callback(null, data)
     } else {
@@ -120,7 +120,7 @@ function fastifyView (fastify, opts, next) {
 
   // Gets partials as collection of strings from LRU cache or filesystem.
   const getPartials = function (page, partials, callback) {
-    let partialsObj = lru.get(`${page}-Partials`)
+    const partialsObj = lru.get(`${page}-Partials`)
 
     if (partialsObj && prod) {
       callback(null, partialsObj)
@@ -387,7 +387,7 @@ function fastifyView (fastify, opts, next) {
           this.send(err)
           return
         }
-        let html = engine.render(templateString, data, partialsObject)
+        const html = engine.render(templateString, data, partialsObject)
 
         if (!this.getHeader('content-type')) {
           this.header('Content-Type', 'text/html; charset=' + charset)
