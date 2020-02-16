@@ -199,7 +199,7 @@ test('reply.view with mustache engine with partials', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('./templates/index.mustache', data, { partials: { 'body': './templates/body.mustache' } })
+    reply.view('./templates/index.mustache', data, { partials: { body: './templates/body.mustache' } })
   })
 
   fastify.listen(0, err => {
@@ -212,7 +212,7 @@ test('reply.view with mustache engine with partials', t => {
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + replyBody.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { 'body': '<p>{{ text }}</p>' }), replyBody.toString())
+      t.strictEqual(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), replyBody.toString())
       fastify.close()
     })
   })
@@ -235,7 +235,7 @@ test('reply.view with mustache engine with partials and html-minifier', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('./templates/index.mustache', data, { partials: { 'body': './templates/body.mustache' } })
+    reply.view('./templates/index.mustache', data, { partials: { body: './templates/body.mustache' } })
   })
 
   fastify.listen(0, err => {
@@ -248,7 +248,7 @@ test('reply.view with mustache engine with partials and html-minifier', t => {
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + replyBody.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(minifier.minify(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { 'body': '<p>{{ text }}</p>' }), minifierOpts), replyBody.toString())
+      t.strictEqual(minifier.minify(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), minifierOpts), replyBody.toString())
       fastify.close()
     })
   })
@@ -304,7 +304,7 @@ test('reply.view with mustache engine, template folder specified with partials',
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('index.mustache', data, { partials: { 'body': 'body.mustache' } })
+    reply.view('index.mustache', data, { partials: { body: 'body.mustache' } })
   })
 
   fastify.listen(0, err => {
@@ -317,7 +317,7 @@ test('reply.view with mustache engine, template folder specified with partials',
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + replyBody.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { 'body': '<p>{{ text }}</p>' }), replyBody.toString())
+      t.strictEqual(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), replyBody.toString())
       fastify.close()
     })
   })
@@ -368,7 +368,7 @@ test('reply.view with mustache engine, with partials missing template file', t =
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('./templates/missing.mustache', data, { partials: { 'body': './templates/body.mustache' } })
+    reply.view('./templates/missing.mustache', data, { partials: { body: './templates/body.mustache' } })
   })
 
   fastify.listen(0, err => {
@@ -399,7 +399,7 @@ test('reply.view with mustache engine, with partials missing partials file', t =
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('./templates/index.mustache', data, { partials: { 'body': './templates/missing.mustache' } })
+    reply.view('./templates/index.mustache', data, { partials: { body: './templates/missing.mustache' } })
   })
 
   fastify.listen(0, err => {
@@ -430,7 +430,7 @@ test('reply.view with mustache engine, with partials and multiple missing partia
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('./templates/index.mustache', data, { partials: { 'body': './templates/missing.mustache', 'footer': './templates/alsomissing.mustache' } })
+    reply.view('./templates/index.mustache', data, { partials: { body: './templates/missing.mustache', footer: './templates/alsomissing.mustache' } })
   })
 
   fastify.listen(0, err => {

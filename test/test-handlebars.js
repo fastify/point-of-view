@@ -521,7 +521,7 @@ test('reply.view with handlebars engine with partials', t => {
       handlebars: handlebars
     },
     options: {
-      partials: { 'body': './templates/body.hbs' }
+      partials: { body: './templates/body.hbs' }
     }
   })
 
