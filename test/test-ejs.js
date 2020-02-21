@@ -50,6 +50,110 @@ test('reply.view with ejs engine and custom templates folder', t => {
   })
 })
 
+test('reply.view with ejs engine with layout option', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: ejs
+    },
+    root: path.join(__dirname, '../templates'),
+    layout: 'layout.html'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('index-for-layout.ejs', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with ejs engine and custom ext', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: ejs
+    },
+    templates: 'templates',
+    viewExt: 'ejs'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('index', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view for ejs without data-parameter but defaultContext', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: ejs
+    },
+    defaultContext: data,
+    templates: 'templates'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('index.ejs')
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})
 test('reply.view for ejs without data-parameter but defaultContext', t => {
   t.plan(6)
   const fastify = Fastify()
