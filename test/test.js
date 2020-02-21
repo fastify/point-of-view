@@ -123,17 +123,17 @@ test('register callback with handlebars engine should throw if layout file does 
   })
 })
 
-test('register callback should throw if layout option is provided and engine is not handlebars', t => {
+test('register callback should throw if layout option is provided and engine is not handlebars or ejs', t => {
   t.plan(2)
   const fastify = Fastify()
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: require('ejs')
+      'ejs-mate': require('ejs-mate')
     },
     layout: './templates/layout.hbs'
   }).ready(err => {
     t.ok(err instanceof Error)
-    t.deepEqual('"layout" option only available for handlebars engine', err.message)
+    t.deepEqual('"layout" option only available for handlebars and ejs engine', err.message)
   })
 })

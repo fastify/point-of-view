@@ -32,7 +32,7 @@ function fastifyView (fastify, opts, next) {
   const layoutFileName = opts.layout
 
   if (layoutFileName && type !== 'handlebars' && type !== 'ejs') {
-    next(new Error('"layout" option only available for handlebars engine'))
+    next(new Error('"layout" option only available for handlebars and ejs engine'))
     return
   }
 
@@ -43,7 +43,7 @@ function fastifyView (fastify, opts, next) {
 
   const renders = {
     marko: viewMarko,
-	 ejs: withLayout(viewEjs),
+    ejs: withLayout(viewEjs),
     'ejs-mate': viewEjsMate,
     handlebars: withLayout(viewHandlebars),
     mustache: viewMustache,
@@ -92,7 +92,7 @@ function fastifyView (fastify, opts, next) {
   function getPage (page, extension) {
     if (viewExt) {
       return `${page}.${viewExt}`
-    }else if (includeViewExtension) {
+    } else if (includeViewExtension) {
       return `${page}.${extension}`
     }
     return page
@@ -218,24 +218,24 @@ function fastifyView (fastify, opts, next) {
       this.send(new Error('Missing page'))
       return
     }
-
     data = Object.assign({}, defaultCtx, data)
     // append view extension
     page = getPage(page, type)
     getTemplate(page, (err, template) => {
-		const toHtml = lru.get(page)
-
-		if (toHtml && prod) {
-		  if (!this.getHeader('content-type')) {
-			this.header('Content-Type', 'text/html; charset=' + charset)
-		  }
-		  this.send(toHtml(data))
-		  return
-		}
-
-		readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
-	});
-
+      if (err) {
+        this.send(err)
+        return
+      }
+      const toHtml = lru.get(page)
+      if (toHtml && prod && (typeof (toHtml) === 'function')) {
+        if (!this.getHeader('content-type')) {
+          this.header('Content-Type', 'text/html; charset=' + charset)
+        }
+        this.send(toHtml(data))
+        return
+      }
+      readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
+    })
   }
 
   function viewEjsMate (page, data) {
