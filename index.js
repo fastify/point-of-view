@@ -454,7 +454,7 @@ function fastifyView (fastify, opts, next) {
               throw result
             }
 
-            data = Object.assign(data, { body: result })
+            data = Object.assign((data || {}), { body: result })
 
             render.call(that, layoutFileName, data, opts)
           }
