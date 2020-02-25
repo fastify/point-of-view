@@ -37,6 +37,25 @@ test('fastify.view with handlebars engine', t => {
   })
 })
 
+test('fastify.view with handlebars engine catches render error', t => {
+  t.plan(2)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+
+  handlebars.registerHelper('error', () => { throw new Error('kaboom') })
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars: handlebars
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+    t.rejects(fastify.view('./templates/error.hbs'), /kaboom/)
+  })
+})
+
 test('fastify.view for handlebars without data-parameter but defaultContext', t => {
   t.plan(2)
   const fastify = Fastify()
