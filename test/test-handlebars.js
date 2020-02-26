@@ -37,25 +37,6 @@ test('fastify.view with handlebars engine', t => {
   })
 })
 
-test('fastify.view with handlebars engine catches render error', t => {
-  t.plan(2)
-  const fastify = Fastify()
-  const handlebars = require('handlebars')
-
-  handlebars.registerHelper('badHelper', () => { throw new Error('kaboom') })
-
-  fastify.register(require('../index'), {
-    engine: {
-      handlebars: handlebars
-    }
-  })
-
-  fastify.ready(err => {
-    t.error(err)
-    t.rejects(fastify.view('./templates/error.hbs'), /kaboom/)
-  })
-})
-
 test('fastify.view for handlebars without data-parameter but defaultContext', t => {
   t.plan(2)
   const fastify = Fastify()
@@ -255,6 +236,33 @@ test('reply.view with handlebars engine', t => {
       t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
       fastify.close()
     })
+  })
+})
+
+test('reply.view with handlebars engine catches render error', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+
+  handlebars.registerHelper('badHelper', () => { throw new Error('kaboom') })
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars: handlebars
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/error.hbs')
+  })
+
+  fastify.inject({
+    method: 'GET',
+    url: '/'
+  }, (err, res) => {
+    t.error(err)
+    t.strictEqual(JSON.parse(res.body).message, 'kaboom')
+    t.strictEqual(res.statusCode, 500)
   })
 })
 
