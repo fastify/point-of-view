@@ -42,7 +42,7 @@ test('fastify.view with handlebars engine catches render error', t => {
   const fastify = Fastify()
   const handlebars = require('handlebars')
 
-  handlebars.registerHelper('error', () => { throw new Error('kaboom') })
+  handlebars.registerHelper('badHelper', () => { throw new Error('kaboom') })
 
   fastify.register(require('../index'), {
     engine: {
