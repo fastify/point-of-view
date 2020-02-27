@@ -340,11 +340,15 @@ function fastifyView (fastify, opts, next) {
       }
 
       if (prod) {
-        const html = template(data)
-        if (!this.getHeader('content-type')) {
-          this.header('Content-Type', 'text/html; charset=' + charset)
+        try {
+          const html = template(data)
+          if (!this.getHeader('content-type')) {
+            this.header('Content-Type', 'text/html; charset=' + charset)
+          }
+          this.send(html)
+        } catch (e) {
+          this.send(e)
         }
-        this.send(html)
       } else {
         getPartials(type, options.partials || {}, (err, partialsObject) => {
           if (err) {
@@ -352,16 +356,20 @@ function fastifyView (fastify, opts, next) {
             return
           }
 
-          Object.keys(partialsObject).forEach((name) => {
-            engine.registerPartial(name, engine.compile(partialsObject[name]))
-          })
+          try {
+            Object.keys(partialsObject).forEach((name) => {
+              engine.registerPartial(name, engine.compile(partialsObject[name]))
+            })
 
-          const html = template(data)
+            const html = template(data)
 
-          if (!this.getHeader('content-type')) {
-            this.header('Content-Type', 'text/html; charset=' + charset)
+            if (!this.getHeader('content-type')) {
+              this.header('Content-Type', 'text/html; charset=' + charset)
+            }
+            this.send(html)
+          } catch (e) {
+            this.send(e)
           }
-          this.send(html)
         })
       }
     })
