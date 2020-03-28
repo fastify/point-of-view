@@ -73,7 +73,7 @@ fastify.register(require('point-of-view'), {
   },
   root: path.join(__dirname, 'view'),
   layout: 'template',
-  viewExt: 'html',
+  viewExt: 'html', // it will add the extension to all the views
   options: {}
 })
 ```
