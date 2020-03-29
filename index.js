@@ -23,15 +23,16 @@ function fastifyView (fastify, opts, next) {
   const charset = opts.charset || 'utf-8'
   const engine = opts.engine[type]
   const options = opts.options || {}
-  const templatesDir = resolve(opts.templates || './')
+  const templatesDir = opts.root || resolve(opts.templates || './')
   const lru = HLRU(opts.maxCache || 100)
   const includeViewExtension = opts.includeViewExtension || false
+  const viewExt = opts.viewExt || ''
   const prod = typeof opts.production === 'boolean' ? opts.production : process.env.NODE_ENV === 'production'
   const defaultCtx = opts.defaultContext || {}
   const layoutFileName = opts.layout
 
-  if (layoutFileName && type !== 'handlebars') {
-    next(new Error('"layout" option only available for handlebars engine'))
+  if (layoutFileName && type !== 'handlebars' && type !== 'ejs') {
+    next(new Error('"layout" option only available for handlebars and ejs engine'))
     return
   }
 
@@ -42,6 +43,7 @@ function fastifyView (fastify, opts, next) {
 
   const renders = {
     marko: viewMarko,
+    ejs: withLayout(viewEjs),
     'ejs-mate': viewEjsMate,
     handlebars: withLayout(viewHandlebars),
     mustache: viewMustache,
@@ -88,7 +90,9 @@ function fastifyView (fastify, opts, next) {
   })
 
   function getPage (page, extension) {
-    if (includeViewExtension) {
+    if (viewExt) {
+      return `${page}.${viewExt}`
+    } else if (includeViewExtension) {
       return `${page}.${extension}`
     }
     return page
@@ -207,6 +211,31 @@ function fastifyView (fastify, opts, next) {
     }
 
     readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
+  }
+
+  function viewEjs (page, data) {
+    if (!page) {
+      this.send(new Error('Missing page'))
+      return
+    }
+    data = Object.assign({}, defaultCtx, data)
+    // append view extension
+    page = getPage(page, type)
+    getTemplate(page, (err, template) => {
+      if (err) {
+        this.send(err)
+        return
+      }
+      const toHtml = lru.get(page)
+      if (toHtml && prod && (typeof (toHtml) === 'function')) {
+        if (!this.getHeader('content-type')) {
+          this.header('Content-Type', 'text/html; charset=' + charset)
+        }
+        this.send(toHtml(data))
+        return
+      }
+      readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
+    })
   }
 
   function viewEjsMate (page, data) {
@@ -433,7 +462,7 @@ function fastifyView (fastify, opts, next) {
               throw result
             }
 
-            data = Object.assign(data, { body: result })
+            data = Object.assign((data || {}), { body: result })
 
             render.call(that, layoutFileName, data, opts)
           }
