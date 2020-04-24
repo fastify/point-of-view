@@ -8,7 +8,7 @@
     "example-with-options": "node example-ejs-with-some-options.js",
     "example-typescript": "npx ts-node types.test.ts",
     "test-with-snapshot": "standard && cross-env TAP_SNAPSHOT=1 tap test/test-ejs-with-snapshot.js",
-    "test": "standard && tap -J test/* && tsc"
+    "test": "standard && tap -J test/*.js && tsd"
   },
   "repository": {
     "type": "git",
@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/fastify/point-of-view#readme",
   "dependencies": {
-    "fastify-plugin": "^1.6.0",
+    "fastify-plugin": "^2.0.0",
     "hashlru": "^2.3.0"
   },
   "devDependencies": {
@@ -43,7 +43,7 @@
     "ejs": "^3.0.1",
     "ejs-mate": "^2.0.0",
     "express": "^4.17.1",
-    "fastify": "^2.12.0",
+    "fastify": "^3.0.0-alpha.1",
     "handlebars": "^4.7.3",
     "html-minifier": "^4.0.0",
     "html-minify-stream": "^1.0.0",
@@ -55,6 +55,7 @@
     "simple-get": "^3.1.0",
     "standard": "^14.3.1",
     "tap": "^12.0.0",
+    "tsd": "^0.11.0",
     "typescript": "^3.7.5"
   },
   "standard": {
@@ -62,10 +63,7 @@
       "*.marko.js"
     ]
   },
-  "greenkeeper": {
-    "ignore": [
-      "tap",
-      "ejs-mate"
-    ]
+  "tsd": {
+    "directory": "test"
   }
 }

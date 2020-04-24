@@ -64,8 +64,8 @@ function fastifyView (fastify, opts, next) {
 
     const promise = new Promise((resolve, reject) => {
       renderer.apply({
-        getHeader: () => {},
-        header: () => {},
+        getHeader: () => { },
+        header: () => { },
         send: result => {
           if (result instanceof Error) {
             reject(result)
@@ -455,8 +455,8 @@ function fastifyView (fastify, opts, next) {
         const that = this
 
         render.call({
-          getHeader: () => {},
-          header: () => {},
+          getHeader: () => { },
+          header: () => { },
           send: (result) => {
             if (result instanceof Error) {
               throw result
@@ -484,4 +484,4 @@ function fastifyView (fastify, opts, next) {
   }
 }
 
-module.exports = fp(fastifyView, { fastify: '^2.x' })
+module.exports = fp(fastifyView, { fastify: '>=3.x' })

@@ -1,14 +1,22 @@
-import { Plugin } from 'fastify';
-import { IncomingMessage, Server, ServerResponse } from 'http';
+import { FastifyPlugin, FastifyReply, RawServerBase } from 'fastify';
 
 declare module "fastify" {
-  interface FastifyReply<HttpResponse> {
-    view(page: string, data?: object): FastifyReply<HttpResponse>;
+  interface FastifyReplyInterface {
+    view(page: string, data?: object): FastifyReply<RawServerBase>;
   }
 }
 
-interface PointOfViewOptions {
-  engine: object;
+export interface PointOfViewOptions {
+  engine: {
+    ejs?: any;
+    nunjucks?: any;
+    pug?: any;
+    handlebars?: any;
+    marko?: any;
+    'ejs-mate'?: any;
+    mustache?: any;
+    'art-template'?: any;
+  };
   templates?: string;
   includeViewExtension?: boolean;
   options?: object;
@@ -19,11 +27,5 @@ interface PointOfViewOptions {
   layout?: string;
 }
 
-declare const pointOfView: Plugin<
-  Server,
-  IncomingMessage,
-  ServerResponse,
-  PointOfViewOptions
->;
-
-export = pointOfView;
+declare const pointOfView: FastifyPlugin<PointOfViewOptions>;
+export default pointOfView;

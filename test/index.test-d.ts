@@ -1,5 +1,5 @@
-import fastify = require("fastify");
-import pointOfView = require("./");
+import fastify from "fastify";
+import pointOfView from "..";
 
 const app = fastify();
 
