@@ -24,7 +24,8 @@
     "nunjucks",
     "pug",
     "handlebars",
-    "mustache"
+    "mustache",
+    "twig"
   ],
   "author": "Tomas Della Vedova - @delvedor (http://delved.org)",
   "license": "MIT",
@@ -53,6 +54,7 @@
     "pre-commit": "^1.2.2",
     "pug": "^2.0.4",
     "simple-get": "^3.1.0",
+    "twig": "^1.13.3",
     "standard": "^14.3.3",
     "tap": "^14.0.0",
     "tsd": "^0.11.0",
