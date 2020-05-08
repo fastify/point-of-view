@@ -7,8 +7,8 @@
     "example": "node example.js",
     "example-with-options": "node example-ejs-with-some-options.js",
     "example-typescript": "npx ts-node types.test.ts",
-    "test-with-snapshot": "standard && cross-env TAP_SNAPSHOT=1 tap test/test-ejs-with-snapshot.js",
-    "test": "standard && tap -J test/* && tsc"
+    "test-with-snapshot": "cross-env TAP_SNAPSHOT=1 tap test/test-ejs-with-snapshot.js",
+    "test": "standard && tap -J test/*.js && tsd"
   },
   "repository": {
     "type": "git",
@@ -33,39 +33,37 @@
   },
   "homepage": "https://github.com/fastify/point-of-view#readme",
   "dependencies": {
-    "fastify-plugin": "^1.6.0",
+    "fastify-plugin": "^2.0.0",
     "hashlru": "^2.3.0"
   },
   "devDependencies": {
-    "@types/node": "^13.7.0",
+    "@types/node": "^13.13.5",
     "art-template": "^4.13.2",
-    "cross-env": "^7.0.0",
-    "ejs": "^3.0.1",
+    "cross-env": "^7.0.2",
+    "ejs": "^3.1.2",
     "ejs-mate": "^2.0.0",
     "express": "^4.17.1",
-    "fastify": "^2.12.0",
-    "handlebars": "^4.7.3",
+    "fastify": "^3.0.0-rc.1",
+    "handlebars": "^4.7.6",
     "html-minifier": "^4.0.0",
     "html-minify-stream": "^1.0.0",
-    "marko": "^4.18.44",
-    "mustache": "^4.0.0",
-    "nunjucks": "^3.2.0",
+    "marko": "^4.21.8",
+    "mustache": "^4.0.1",
+    "nunjucks": "^3.2.1",
     "pre-commit": "^1.2.2",
     "pug": "^2.0.4",
     "simple-get": "^3.1.0",
-    "standard": "^14.3.1",
-    "tap": "^12.0.0",
-    "typescript": "^3.7.5"
+    "standard": "^14.3.3",
+    "tap": "^14.0.0",
+    "tsd": "^0.11.0",
+    "typescript": "^3.8.3"
   },
   "standard": {
     "ignore": [
       "*.marko.js"
     ]
   },
-  "greenkeeper": {
-    "ignore": [
-      "tap",
-      "ejs-mate"
-    ]
+  "tsd": {
+    "directory": "test"
   }
 }
