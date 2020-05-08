@@ -7,7 +7,7 @@
     "example": "node example.js",
     "example-with-options": "node example-ejs-with-some-options.js",
     "example-typescript": "npx ts-node types.test.ts",
-    "test-with-snapshot": "standard && cross-env TAP_SNAPSHOT=1 tap test/test-ejs-with-snapshot.js",
+    "test-with-snapshot": "cross-env TAP_SNAPSHOT=1 tap test/test-ejs-with-snapshot.js",
     "test": "standard && tap -J test/*.js && tsd"
   },
   "repository": {
@@ -54,7 +54,7 @@
     "pug": "^2.0.4",
     "simple-get": "^3.1.0",
     "standard": "^14.3.3",
-    "tap": "^12.0.0",
+    "tap": "^14.0.0",
     "tsd": "^0.11.0",
     "typescript": "^3.8.3"
   },
