@@ -23,15 +23,16 @@ function fastifyView (fastify, opts, next) {
   const charset = opts.charset || 'utf-8'
   const engine = opts.engine[type]
   const options = opts.options || {}
-  const templatesDir = resolve(opts.templates || './')
+  const templatesDir = opts.root || resolve(opts.templates || './')
   const lru = HLRU(opts.maxCache || 100)
   const includeViewExtension = opts.includeViewExtension || false
+  const viewExt = opts.viewExt || ''
   const prod = typeof opts.production === 'boolean' ? opts.production : process.env.NODE_ENV === 'production'
   const defaultCtx = opts.defaultContext || {}
   const layoutFileName = opts.layout
 
-  if (layoutFileName && type !== 'handlebars') {
-    next(new Error('"layout" option only available for handlebars engine'))
+  if (layoutFileName && type !== 'handlebars' && type !== 'ejs') {
+    next(new Error('"layout" option only available for handlebars and ejs engine'))
     return
   }
 
@@ -42,6 +43,7 @@ function fastifyView (fastify, opts, next) {
 
   const renders = {
     marko: viewMarko,
+    ejs: withLayout(viewEjs),
     'ejs-mate': viewEjsMate,
     handlebars: withLayout(viewHandlebars),
     mustache: viewMustache,
@@ -63,8 +65,8 @@ function fastifyView (fastify, opts, next) {
 
     const promise = new Promise((resolve, reject) => {
       renderer.apply({
-        getHeader: () => {},
-        header: () => {},
+        getHeader: () => { },
+        header: () => { },
         send: result => {
           if (result instanceof Error) {
             reject(result)
@@ -89,7 +91,9 @@ function fastifyView (fastify, opts, next) {
   })
 
   function getPage (page, extension) {
-    if (includeViewExtension) {
+    if (viewExt) {
+      return `${page}.${viewExt}`
+    } else if (includeViewExtension) {
       return `${page}.${extension}`
     }
     return page
@@ -98,7 +102,7 @@ function fastifyView (fastify, opts, next) {
   // Gets template as string (or precompiled for Handlebars)
   // from LRU cache or filesystem.
   const getTemplate = function (file, callback) {
-    let data = lru.get(file)
+    const data = lru.get(file)
     if (data && prod) {
       callback(null, data)
     } else {
@@ -121,7 +125,7 @@ function fastifyView (fastify, opts, next) {
 
   // Gets partials as collection of strings from LRU cache or filesystem.
   const getPartials = function (page, partials, callback) {
-    let partialsObj = lru.get(`${page}-Partials`)
+    const partialsObj = lru.get(`${page}-Partials`)
 
     if (partialsObj && prod) {
       callback(null, partialsObj)
@@ -208,6 +212,31 @@ function fastifyView (fastify, opts, next) {
     }
 
     readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
+  }
+
+  function viewEjs (page, data) {
+    if (!page) {
+      this.send(new Error('Missing page'))
+      return
+    }
+    data = Object.assign({}, defaultCtx, data)
+    // append view extension
+    page = getPage(page, type)
+    getTemplate(page, (err, template) => {
+      if (err) {
+        this.send(err)
+        return
+      }
+      const toHtml = lru.get(page)
+      if (toHtml && prod && (typeof (toHtml) === 'function')) {
+        if (!this.getHeader('content-type')) {
+          this.header('Content-Type', 'text/html; charset=' + charset)
+        }
+        this.send(toHtml(data))
+        return
+      }
+      readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
+    })
   }
 
   function viewEjsMate (page, data) {
@@ -341,11 +370,15 @@ function fastifyView (fastify, opts, next) {
       }
 
       if (prod) {
-        const html = template(data)
-        if (!this.getHeader('content-type')) {
-          this.header('Content-Type', 'text/html; charset=' + charset)
+        try {
+          const html = template(data)
+          if (!this.getHeader('content-type')) {
+            this.header('Content-Type', 'text/html; charset=' + charset)
+          }
+          this.send(html)
+        } catch (e) {
+          this.send(e)
         }
-        this.send(html)
       } else {
         getPartials(type, options.partials || {}, (err, partialsObject) => {
           if (err) {
@@ -353,16 +386,20 @@ function fastifyView (fastify, opts, next) {
             return
           }
 
-          Object.keys(partialsObject).forEach((name) => {
-            engine.registerPartial(name, engine.compile(partialsObject[name]))
-          })
+          try {
+            Object.keys(partialsObject).forEach((name) => {
+              engine.registerPartial(name, engine.compile(partialsObject[name]))
+            })
 
-          const html = template(data)
+            const html = template(data)
 
-          if (!this.getHeader('content-type')) {
-            this.header('Content-Type', 'text/html; charset=' + charset)
+            if (!this.getHeader('content-type')) {
+              this.header('Content-Type', 'text/html; charset=' + charset)
+            }
+            this.send(html)
+          } catch (e) {
+            this.send(e)
           }
-          this.send(html)
         })
       }
     })
@@ -388,7 +425,7 @@ function fastifyView (fastify, opts, next) {
           this.send(err)
           return
         }
-        let html = engine.render(templateString, data, partialsObject)
+        const html = engine.render(templateString, data, partialsObject)
 
         if (!this.getHeader('content-type')) {
           this.header('Content-Type', 'text/html; charset=' + charset)
@@ -444,14 +481,14 @@ function fastifyView (fastify, opts, next) {
         const that = this
 
         render.call({
-          getHeader: () => {},
-          header: () => {},
+          getHeader: () => { },
+          header: () => { },
           send: (result) => {
             if (result instanceof Error) {
               throw result
             }
 
-            data = Object.assign(data, { body: result })
+            data = Object.assign((data || {}), { body: result })
 
             render.call(that, layoutFileName, data, opts)
           }
@@ -473,4 +510,4 @@ function fastifyView (fastify, opts, next) {
   }
 }
 
-module.exports = fp(fastifyView, { fastify: '^2.x' })
+module.exports = fp(fastifyView, { fastify: '>=3.x' })

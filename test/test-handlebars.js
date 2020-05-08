@@ -239,6 +239,33 @@ test('reply.view with handlebars engine', t => {
   })
 })
 
+test('reply.view with handlebars engine catches render error', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+
+  handlebars.registerHelper('badHelper', () => { throw new Error('kaboom') })
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars: handlebars
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/error.hbs')
+  })
+
+  fastify.inject({
+    method: 'GET',
+    url: '/'
+  }, (err, res) => {
+    t.error(err)
+    t.strictEqual(JSON.parse(res.body).message, 'kaboom')
+    t.strictEqual(res.statusCode, 500)
+  })
+})
+
 test('reply.view with handlebars engine and defaultContext', t => {
   t.plan(6)
   const fastify = Fastify()
@@ -521,7 +548,7 @@ test('reply.view with handlebars engine with partials', t => {
       handlebars: handlebars
     },
     options: {
-      partials: { 'body': './templates/body.hbs' }
+      partials: { body: './templates/body.hbs' }
     }
   })
 

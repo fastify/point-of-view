@@ -1,7 +1,7 @@
 # point-of-view
 
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)
- [![Build Status](https://travis-ci.org/fastify/point-of-view.svg?branch=master)](https://travis-ci.org/fastify/point-of-view)
+![](https://github.com/fastify/point-of-view/workflows/ci/badge.svg)
 
 Templates rendering plugin support for Fastify.
 
@@ -49,6 +49,13 @@ fastify.get('/', (req, reply) => {
   reply.view('/templates/index.ejs', { text: 'text' })
 })
 
+// With async handler you must return the reply object
+fastify.get('/', async (req, reply) => {
+  const t = await something()
+  reply.view('/templates/index.ejs', { text: 'text' })
+  return reply
+})
+
 fastify.listen(3000, err => {
   if (err) throw err
   console.log(`server listening on ${fastify.server.address().port}`)
@@ -72,7 +79,9 @@ fastify.register(require('point-of-view'), {
   engine: {
     ejs: require('ejs')
   },
-  templates: 'templates',
+  root: path.join(__dirname, 'view'),
+  layout: 'template',
+  viewExt: 'html', // it will add the extension to all the views
   options: {}
 })
 ```

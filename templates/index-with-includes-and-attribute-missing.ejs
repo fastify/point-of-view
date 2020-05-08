@@ -2,9 +2,9 @@
 <html lang="en">
   <head></head>
   <body>
-    <% include fragment-header.ejs %>
+    <% include('fragment-header.ejs') %>
     <p><%= text %></p>
     <p>A not existing page attribute: <%= not_existing_text %></p>
-    <% include fragment-footer.html %>
+    <% include('fragment-footer.html') %>
   </body>
 </html>
