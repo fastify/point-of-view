@@ -6,7 +6,7 @@ const accessSync = require('fs').accessSync
 const resolve = require('path').resolve
 const join = require('path').join
 const HLRU = require('hashlru')
-const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'ejs-mate', 'mustache', 'art-template']
+const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'mustache', 'art-template']
 
 function fastifyView (fastify, opts, next) {
   if (!opts.engine) {
@@ -44,7 +44,6 @@ function fastifyView (fastify, opts, next) {
   const renders = {
     marko: viewMarko,
     ejs: withLayout(viewEjs),
-    'ejs-mate': viewEjsMate,
     handlebars: withLayout(viewHandlebars),
     mustache: viewMustache,
     nunjucks: viewNunjucks,
@@ -235,32 +234,6 @@ function fastifyView (fastify, opts, next) {
         return
       }
       readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
-    })
-  }
-
-  function viewEjsMate (page, data) {
-    if (!page) {
-      this.send(new Error('Missing data'))
-      return
-    }
-
-    data = Object.assign({}, defaultCtx, data)
-    const confs = Object.assign({}, options)
-    if (!confs.settings) {
-      confs.settings = {}
-    }
-    // ejs-mate use views to find layouts
-    confs.settings.views = templatesDir
-    // setting locals to pass data by
-    confs.locals = Object.assign({}, confs.locals, data)
-    // append view extension
-    page = getPage(page, 'ejs')
-    engine(join(templatesDir, page), confs, (err, html) => {
-      if (err) return this.send(err)
-      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-        html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
-      }
-      this.header('Content-Type', 'text/html; charset=' + charset).send(html)
     })
   }
 
