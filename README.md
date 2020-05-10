@@ -9,7 +9,6 @@ Templates rendering plugin support for Fastify.
 
 Currently supports the following templates engines:
 - [`ejs`](https://ejs.co/)
-- [`ejs-mate`](https://github.com/JacksonTian/ejs-mate)
 - [`nunjucks`](https://mozilla.github.io/nunjucks/)
 - [`pug`](https://pugjs.org/api/getting-started.html)
 - [`handlebars`](http://handlebarsjs.com/)
@@ -21,6 +20,8 @@ Currently supports the following templates engines:
 In `production` mode, `point-of-view` will heavily cache the templates file and functions, while in `development` will reload every time the template file and function.
 
 *Note that at least Fastify `v2.0.0` is needed.*
+
+*Note: [`ejs-mate`](https://github.com/JacksonTian/ejs-mate) support [has been dropped](https://github.com/fastify/point-of-view/pull/157).*
 
 #### Benchmarks
 The benchmark were run with the files in the `benchmark` folder with the `ejs` engine.
