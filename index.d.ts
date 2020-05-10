@@ -13,7 +13,6 @@ export interface PointOfViewOptions {
     pug?: any;
     handlebars?: any;
     marko?: any;
-    'ejs-mate'?: any;
     mustache?: any;
     'art-template'?: any;
   };
