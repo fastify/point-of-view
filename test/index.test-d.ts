@@ -1,5 +1,6 @@
 import fastify from "fastify";
-import pointOfView from "..";
+import pointOfView, {PointOfViewOptions} from "..";
+import {expectAssignable, expectType} from "tsd";
 
 const app = fastify();
 
@@ -31,3 +32,5 @@ app.listen(3000, (err, address) => {
   if (err) throw err
   console.log(`server listening on ${address} ...`)
 })
+
+expectAssignable<PointOfViewOptions>({engine: {twig: require('twig') } })
