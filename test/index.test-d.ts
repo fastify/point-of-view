@@ -1,6 +1,6 @@
 import fastify from "fastify";
 import pointOfView, {PointOfViewOptions} from "..";
-import {expectAssignable, expectType} from "tsd";
+import {expectAssignable} from "tsd";
 
 const app = fastify();
 
