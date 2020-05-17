@@ -1,5 +1,6 @@
 import fastify from "fastify";
 import pointOfView from "..";
+import * as path from "path";
 
 const app = fastify();
 
@@ -17,14 +18,16 @@ app.register(pointOfView, {
   charset: "utf-8",
   maxCache: 100,
   production: false,
+  root: path.resolve(__dirname, "../templates"),
+  viewExt: "ejs",
 });
 
 app.get("/", (request, reply) => {
-  reply.view("/index-with-no-data.ejs");
+  reply.view("/index-with-no-data");
 });
 
 app.get("/data", (request, reply) => {
-  reply.view("/index.ejs", { text: "Sample data" });
+  reply.view("/index", { text: "Sample data" });
 });
 
 app.listen(3000, (err, address) => {
