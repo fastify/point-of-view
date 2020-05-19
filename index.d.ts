@@ -15,6 +15,7 @@ export interface PointOfViewOptions {
     marko?: any;
     mustache?: any;
     'art-template'?: any;
+    twig?: any
   };
   templates?: string;
   includeViewExtension?: boolean;
