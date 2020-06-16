@@ -154,6 +154,7 @@ test('reply.view for ejs without data-parameter but defaultContext', t => {
     })
   })
 })
+
 test('reply.view for ejs without data-parameter but defaultContext', t => {
   t.plan(6)
   const fastify = Fastify()
@@ -217,6 +218,164 @@ test('reply.view for ejs without data-parameter and without defaultContext', t =
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       t.strictEqual(ejs.render(fs.readFileSync('./templates/index-bare.html', 'utf8')), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view for ejs engine without data-parameter and defaultContext but with reply.locals', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const localsData = { text: 'text from locals' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: ejs
+    }
+  })
+
+  fastify.addHook('preHandler', function (request, reply, done) {
+    reply.locals = localsData
+    done()
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index-bare.html')
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(ejs.render(fs.readFileSync('./templates/index-bare.html', 'utf8'), localsData), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view for ejs engine without defaultContext but with reply.locals and data-parameter', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const localsData = { text: 'text from locals' }
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: ejs
+    }
+  })
+
+  fastify.addHook('preHandler', function (request, reply, done) {
+    reply.locals = localsData
+    done()
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index-bare.html', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(ejs.render(fs.readFileSync('./templates/index-bare.html', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view for ejs engine without data-parameter but with reply.locals and defaultContext', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const localsData = { text: 'text from locals' }
+  const contextData = { text: 'text from context' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: ejs
+    },
+    defaultContext: contextData
+  })
+
+  fastify.addHook('preHandler', function (request, reply, done) {
+    reply.locals = localsData
+    done()
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index-bare.html')
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(ejs.render(fs.readFileSync('./templates/index-bare.html', 'utf8'), localsData), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view for ejs engine with data-parameter and reply.locals and defaultContext', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const localsData = { text: 'text from locals' }
+  const contextData = { text: 'text from context' }
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: ejs
+    },
+    defaultContext: contextData
+  })
+
+  fastify.addHook('preHandler', function (request, reply, done) {
+    reply.locals = localsData
+    done()
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index-bare.html', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(ejs.render(fs.readFileSync('./templates/index-bare.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })

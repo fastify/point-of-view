@@ -195,6 +195,176 @@ test('reply.view with twig engine and defaultContext', t => {
   })
 })
 
+test('reply.view for twig engine without data-parameter and defaultContext but with reply.locals', t => {
+  t.plan(7)
+  const fastify = Fastify()
+  const Twig = require('twig')
+  const localsData = { text: 'text from locals' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      twig: Twig
+    }
+  })
+
+  fastify.addHook('preHandler', function (request, reply, done) {
+    reply.locals = localsData
+    done()
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index.twig')
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      Twig.renderFile('./templates/index.twig', localsData, (err, html) => {
+        t.error(err)
+        t.strictEqual(html, body.toString())
+      })
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view for twig engine without defaultContext but with reply.locals and data-parameter', t => {
+  t.plan(7)
+  const fastify = Fastify()
+  const Twig = require('twig')
+  const localsData = { text: 'text from locals' }
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      twig: Twig
+    }
+  })
+
+  fastify.addHook('preHandler', function (request, reply, done) {
+    reply.locals = localsData
+    done()
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index.twig', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      Twig.renderFile('./templates/index.twig', data, (err, html) => {
+        t.error(err)
+        t.strictEqual(html, body.toString())
+      })
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view for twig engine without data-parameter but with reply.locals and defaultContext', t => {
+  t.plan(7)
+  const fastify = Fastify()
+  const Twig = require('twig')
+  const localsData = { text: 'text from locals' }
+  const contextData = { text: 'text from context' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      twig: Twig
+    },
+    defaultContext: contextData
+  })
+
+  fastify.addHook('preHandler', function (request, reply, done) {
+    reply.locals = localsData
+    done()
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index.twig')
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      Twig.renderFile('./templates/index.twig', localsData, (err, html) => {
+        t.error(err)
+        t.strictEqual(html, body.toString())
+      })
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view for twig engine with data-parameter and reply.locals and defaultContext', t => {
+  t.plan(7)
+  const fastify = Fastify()
+  const Twig = require('twig')
+  const localsData = { text: 'text from locals' }
+  const contextData = { text: 'text from context' }
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      twig: Twig
+    },
+    defaultContext: contextData
+  })
+
+  fastify.addHook('preHandler', function (request, reply, done) {
+    reply.locals = localsData
+    done()
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index.twig', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      Twig.renderFile('./templates/index.twig', data, (err, html) => {
+        t.error(err)
+        t.strictEqual(html, body.toString())
+      })
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with twig engine and html-minifier', t => {
   t.plan(7)
   const fastify = Fastify()

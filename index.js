@@ -196,7 +196,7 @@ function fastifyView (fastify, opts, next) {
       return
     }
 
-    data = Object.assign({}, defaultCtx, data)
+    data = Object.assign({}, defaultCtx, this.locals, data)
     // append view extension
     page = getPage(page, type)
 
@@ -218,7 +218,7 @@ function fastifyView (fastify, opts, next) {
       this.send(new Error('Missing page'))
       return
     }
-    data = Object.assign({}, defaultCtx, data)
+    data = Object.assign({}, defaultCtx, this.locals, data)
     // append view extension
     page = getPage(page, type)
     getTemplate(page, (err, template) => {
@@ -243,7 +243,7 @@ function fastifyView (fastify, opts, next) {
       this.send(new Error('Missing page'))
       return
     }
-    data = Object.assign({}, defaultCtx, data)
+    data = Object.assign({}, defaultCtx, this.locals, data)
     // Append view extension.
     page = getPage(page, 'art')
 
@@ -281,7 +281,7 @@ function fastifyView (fastify, opts, next) {
     if (typeof options.onConfigure === 'function') {
       options.onConfigure(env)
     }
-    data = Object.assign({}, defaultCtx, data)
+    data = Object.assign({}, defaultCtx, this.locals, data)
     // Append view extension.
     page = getPage(page, 'njk')
     env.render(join(templatesDir, page), data, (err, html) => {
@@ -299,7 +299,7 @@ function fastifyView (fastify, opts, next) {
       return
     }
 
-    data = Object.assign({}, defaultCtx, data)
+    data = Object.assign({}, defaultCtx, this.locals, data)
     // append view extension
     page = getPage(page, type)
 
@@ -333,7 +333,7 @@ function fastifyView (fastify, opts, next) {
     }
 
     const options = Object.assign({}, opts.options)
-    data = Object.assign({}, defaultCtx, data)
+    data = Object.assign({}, defaultCtx, this.locals, data)
     // append view extension
     page = getPage(page, 'hbs')
     getTemplate(page, (err, template) => {
@@ -385,7 +385,7 @@ function fastifyView (fastify, opts, next) {
     }
 
     const options = Object.assign({}, opts)
-    data = Object.assign({}, defaultCtx, data)
+    data = Object.assign({}, defaultCtx, this.locals, data)
     // append view extension
     page = getPage(page, 'mustache')
     getTemplate(page, (err, templateString) => {
@@ -414,8 +414,7 @@ function fastifyView (fastify, opts, next) {
       return
     }
 
-    data = Object.assign({}, defaultCtx, options, data)
-
+    data = Object.assign({}, defaultCtx, options, this.locals, data)
     // Append view extension.
     page = getPage(page, 'twig')
     engine.renderFile(join(templatesDir, page), data, (err, html) => {
