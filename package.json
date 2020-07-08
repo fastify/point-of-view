@@ -46,7 +46,7 @@
     "fastify": "^3.0.0",
     "handlebars": "^4.7.6",
     "html-minifier": "^4.0.0",
-    "html-minify-stream": "^1.0.0",
+    "html-minify-stream": "^2.0.0",
     "marko": "^4.21.8",
     "mustache": "^4.0.1",
     "nunjucks": "^3.2.1",
