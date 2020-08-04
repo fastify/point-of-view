@@ -22,8 +22,7 @@ async function something () {
 
 fastify.get('/', async (req, reply) => {
   const t = await something()
-  reply.view('/index.njk', { text: t })
-  return reply
+  return reply.view('/index.njk', { text: t })
 })
 
 fastify.listen(3000, err => {

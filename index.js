@@ -87,6 +87,7 @@ function fastifyView (fastify, opts, next) {
 
   fastify.decorateReply('view', function () {
     renderer.apply(this, arguments)
+    return this
   })
 
   function getPage (page, extension) {
