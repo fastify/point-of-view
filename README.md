@@ -50,11 +50,10 @@ fastify.get('/', (req, reply) => {
   reply.view('/templates/index.ejs', { text: 'text' })
 })
 
-// With async handler you must return the reply object
+// With async handler be sure to return the result of reply.view
 fastify.get('/', async (req, reply) => {
   const t = await something()
-  reply.view('/templates/index.ejs', { text: 'text' })
-  return reply
+  return reply.view('/templates/index.ejs', { text: 'text' })
 })
 
 fastify.listen(3000, err => {
