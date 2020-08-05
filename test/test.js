@@ -3,6 +3,8 @@
 const t = require('tap')
 const test = t.test
 const sget = require('simple-get').concat
+const path = require('path')
+const fs = require('fs')
 const Fastify = require('fastify')
 
 test('fastify.view exist', t => {
@@ -49,6 +51,41 @@ test('reply.view exist', t => {
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.deepEqual(JSON.parse(body), { hello: 'world' })
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view can be returned from async function to indicate response processing finished', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: ejs
+    },
+    root: path.join(__dirname, '../templates'),
+    layout: 'layout.html'
+  })
+
+  fastify.get('/', async (req, reply) => {
+    return reply.view('index-for-layout.ejs', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
