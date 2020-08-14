@@ -6,7 +6,7 @@ const accessSync = require('fs').accessSync
 const resolve = require('path').resolve
 const join = require('path').join
 const HLRU = require('hashlru')
-const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'mustache', 'art-template', 'twig']
+const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'mustache', 'art-template', 'twig', 'liquid']
 
 function fastifyView (fastify, opts, next) {
   if (!opts.engine) {
@@ -49,6 +49,7 @@ function fastifyView (fastify, opts, next) {
     nunjucks: viewNunjucks,
     'art-template': viewArtTemplate,
     twig: viewTwig,
+    liquid: viewLiquid,
     _default: view
   }
 
@@ -431,6 +432,26 @@ function fastifyView (fastify, opts, next) {
       }
       this.send(html)
     })
+  }
+
+  function viewLiquid (page, data, opts) {
+    if (!page) {
+      this.send(new Error('Missing page'))
+      return
+    }
+
+    data = Object.assign({}, defaultCtx, data)
+    // Append view extension.
+    page = getPage(page, 'liquid')
+
+    engine.renderFile(join(templatesDir, page), data, opts)
+      .then((html) => {
+        if (!this.getHeader('content-type')) {
+          this.header('Content-Type', 'text/html; charset=' + charset)
+        }
+        this.send(html)
+      })
+      .catch(this.send)
   }
 
   if (prod && type === 'handlebars' && options.partials) {

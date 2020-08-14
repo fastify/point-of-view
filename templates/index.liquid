@@ -1,0 +1,7 @@
+{%header content: "welcome to liquid" | capitalize%}
+
+<ul>
+  {% for todo in todos %}
+  <li>{{forloop.index}} - {{todo}}</li>
+  {% endfor %}
+</ul>
