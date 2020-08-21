@@ -16,6 +16,7 @@ Currently supports the following templates engines:
 - [`mustache`](https://mustache.github.io/)
 - [`art-template`](https://aui.github.io/art-template/)
 - [`twig`](https://twig.symfony.com/)
+- [`liquid`](https://github.com/harttle/liquidjs)
 
 In `production` mode, `point-of-view` will heavily cache the templates file and functions, while in `development` will reload every time the template file and function.
 
