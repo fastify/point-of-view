@@ -16,6 +16,7 @@ Currently supports the following templates engines:
 - [`mustache`](https://mustache.github.io/)
 - [`art-template`](https://aui.github.io/art-template/)
 - [`twig`](https://twig.symfony.com/)
+- [`liquid`](https://github.com/harttle/liquidjs)
 
 In `production` mode, `point-of-view` will heavily cache the templates file and functions, while in `development` will reload every time the template file and function.
 
@@ -156,16 +157,16 @@ To use partials in handlebars you will need to pass the names and paths in the o
 
 To use layouts in handlebars you will need to pass the `layout` parameter:
 ```js
-fastify.register(require('point-of-view'), {  
-  engine: {  
-    handlebars: require('handlebars')  
+fastify.register(require('point-of-view'), {
+  engine: {
+    handlebars: require('handlebars')
   },
   layout: './templates/layout.hbs'
-});  
-  
-fastify.get('/', (req, reply) => {  
-  reply.view('./templates/index.hbs', { text: 'text' })  
-})  
+});
+
+fastify.get('/', (req, reply) => {
+  reply.view('./templates/index.hbs', { text: 'text' })
+})
 ```
 
 To configure nunjunks environment after initialisation, you can pass callback function to options:
@@ -174,8 +175,29 @@ To configure nunjunks environment after initialisation, you can pass callback fu
     onConfigure: (env) => {
       // do whatever you want on nunjunks env
     }
-    
+
   }
+```
+
+To configure liquid you need to pass the engine instance as engine option:
+```js
+const { Liquid } = require('liquidjs')
+const path = require('path')
+
+const engine = new Liquid({
+  root: path.join(__dirname, 'templates'),
+  extname: '.liquid'
+})
+
+fastify.register(require('point-of-view'), {
+  engine: {
+    liquid: engine
+  }
+});
+
+fastify.get('/', (req, reply) => {
+  reply.view('./templates/index.liquid', { text: 'text' })
+})
 ```
 
 To utilize [`html-minifier`](https://www.npmjs.com/package/html-minifier) in the rendering process, you can add the option `useHtmlMinifier` with a reference to `html-minifier`,
