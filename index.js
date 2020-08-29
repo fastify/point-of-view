@@ -10,7 +10,7 @@ const resolve = require('path').resolve
 const join = require('path').join
 const basename = require('path').basename
 const HLRU = require('hashlru')
-const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'mustache', 'art-template', 'twig', 'liquid', 'doT']
+const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'mustache', 'art-template', 'twig', 'liquid', 'dot']
 
 function fastifyView (fastify, opts, next) {
   if (!opts.engine) {
@@ -45,7 +45,7 @@ function fastifyView (fastify, opts, next) {
     return
   }
 
-  const doTRender = type === 'doT' ? viewDoT(preProcessDoT(templatesDir, options)) : null
+  const dotRender = type === 'dot' ? viewDot(preProcessDot(templatesDir, options)) : null
 
   const renders = {
     marko: viewMarko,
@@ -56,7 +56,7 @@ function fastifyView (fastify, opts, next) {
     'art-template': viewArtTemplate,
     twig: viewTwig,
     liquid: viewLiquid,
-    doT: doTRender,
+    dot: dotRender,
     _default: view
   }
 
@@ -199,7 +199,7 @@ function fastifyView (fastify, opts, next) {
     }
   }
 
-  function preProcessDoT (templatesDir, options) {
+  function preProcessDot (templatesDir, options) {
     // Process all templates to in memory functions
     // https://github.com/olado/doT#security-considerations
     const destinationDir = options.destination || join(__dirname, 'out')
@@ -207,10 +207,14 @@ function fastifyView (fastify, opts, next) {
       mkdirSync(destinationDir)
     }
 
-    const renderer = engine.process(Object.assign({
-      path: templatesDir,
-      destination: destinationDir
-    }, opts))
+    const renderer = engine.process(Object.assign(
+      {},
+      options,
+      {
+        path: templatesDir,
+        destination: destinationDir
+      }
+    ))
 
     // .jst files are compiled to .js files so we need to require them
     for (const file of readdirSync(destinationDir, { withFileTypes: false })) {
@@ -488,8 +492,8 @@ function fastifyView (fastify, opts, next) {
       .catch(this.send)
   }
 
-  function viewDoT (renderModule) {
-    return function _viewDoT (page, data, opts) {
+  function viewDot (renderModule) {
+    return function _viewDot (page, data, opts) {
       if (!page) {
         this.send(new Error('Missing page'))
         return

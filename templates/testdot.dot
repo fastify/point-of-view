@@ -1,2 +1,2 @@
-cane {{=it && it.data}}
-{{#def.testdef}}
+foo {{=it && it.text}}
+{{#def.testdef}}  <p>foo</p>
