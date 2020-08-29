@@ -17,6 +17,7 @@ Currently supports the following templates engines:
 - [`art-template`](https://aui.github.io/art-template/)
 - [`twig`](https://twig.symfony.com/)
 - [`liquid`](https://github.com/harttle/liquidjs)
+- [`doT`](https://github.com/olado/doT)
 
 In `production` mode, `point-of-view` will heavily cache the templates file and functions, while in `development` will reload every time the template file and function.
 
