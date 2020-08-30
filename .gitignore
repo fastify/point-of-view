@@ -56,6 +56,6 @@ package-lock.json
 
 # temporary/work/output folders
 # build/
-out/
+out
 temp/
 tmp/
