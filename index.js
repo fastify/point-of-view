@@ -45,7 +45,7 @@ function fastifyView (fastify, opts, next) {
     return
   }
 
-  const dotRender = type === 'dot' ? viewDot(preProcessDot(templatesDir, options)) : null
+  const dotRender = type === 'dot' ? viewDot.call(fastify, preProcessDot(templatesDir, options)) : null
 
   const renders = {
     marko: viewMarko,
@@ -221,7 +221,7 @@ function fastifyView (fastify, opts, next) {
       renderer[basename(file, '.js')] = require(resolve(join(destinationDir, file)))
     }
     if (Object.keys(renderer).length === 0) {
-      console.warn(`WARN: no template found in ${templatesDir}`)
+      this.log.warn(`WARN: no template found in ${templatesDir}`)
     }
 
     return renderer
