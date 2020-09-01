@@ -17,6 +17,7 @@ Currently supports the following templates engines:
 - [`art-template`](https://aui.github.io/art-template/)
 - [`twig`](https://twig.symfony.com/)
 - [`liquid`](https://github.com/harttle/liquidjs)
+- [`doT`](https://github.com/olado/doT)
 
 In `production` mode, `point-of-view` will heavily cache the templates file and functions, while in `development` will reload every time the template file and function.
 
@@ -197,6 +198,29 @@ fastify.register(require('point-of-view'), {
 
 fastify.get('/', (req, reply) => {
   reply.view('./templates/index.liquid', { text: 'text' })
+})
+```
+
+When using [doT](https://github.com/olado/doT) the plugin compiles all templates when the application starts, this way all `.def` files are loaded and
+both `.jst` and `.dot` files are loaded as in-memory functions.
+This behaviour is recommended by the doT team [here](https://github.com/olado/doT#security-considerations).
+To make it possible it is necessary to provide a `root` or `templates` option with the path to the template directory.
+```js
+const path = require('path')
+
+fastify.register(require('point-of-view'), {
+  engine: {
+    dot: require('dot')
+  },
+  root: 'templates',
+  options: {
+    destination: 'dot-compiled' // path where compiled .jst files are placed (default = 'out')
+  }
+});
+
+fastify.get('/', (req, reply) => {
+  // this works both for .jst and .dot files
+  reply.view('index', { text: 'text' })
 })
 ```
 

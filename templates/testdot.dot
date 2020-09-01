@@ -1,0 +1,2 @@
+foo {{=it && it.text}}
+{{#def.testdef}}  <p>foo</p>

@@ -3,10 +3,14 @@
 const fp = require('fastify-plugin')
 const readFile = require('fs').readFile
 const accessSync = require('fs').accessSync
+const existsSync = require('fs').existsSync
+const mkdirSync = require('fs').mkdirSync
+const readdirSync = require('fs').readdirSync
 const resolve = require('path').resolve
 const join = require('path').join
+const basename = require('path').basename
 const HLRU = require('hashlru')
-const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'mustache', 'art-template', 'twig', 'liquid']
+const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'mustache', 'art-template', 'twig', 'liquid', 'dot']
 
 function fastifyView (fastify, opts, next) {
   if (!opts.engine) {
@@ -41,6 +45,8 @@ function fastifyView (fastify, opts, next) {
     return
   }
 
+  const dotRender = type === 'dot' ? viewDot.call(fastify, preProcessDot(templatesDir, options)) : null
+
   const renders = {
     marko: viewMarko,
     ejs: withLayout(viewEjs),
@@ -50,6 +56,7 @@ function fastifyView (fastify, opts, next) {
     'art-template': viewArtTemplate,
     twig: viewTwig,
     liquid: viewLiquid,
+    dot: dotRender,
     _default: view
   }
 
@@ -190,6 +197,34 @@ function fastifyView (fastify, opts, next) {
       }
       that.send(cachedPage)
     }
+  }
+
+  function preProcessDot (templatesDir, options) {
+    // Process all templates to in memory functions
+    // https://github.com/olado/doT#security-considerations
+    const destinationDir = options.destination || join(__dirname, 'out')
+    if (!existsSync(destinationDir)) {
+      mkdirSync(destinationDir)
+    }
+
+    const renderer = engine.process(Object.assign(
+      {},
+      options,
+      {
+        path: templatesDir,
+        destination: destinationDir
+      }
+    ))
+
+    // .jst files are compiled to .js files so we need to require them
+    for (const file of readdirSync(destinationDir, { withFileTypes: false })) {
+      renderer[basename(file, '.js')] = require(resolve(join(destinationDir, file)))
+    }
+    if (Object.keys(renderer).length === 0) {
+      this.log.warn(`WARN: no template found in ${templatesDir}`)
+    }
+
+    return renderer
   }
 
   function view (page, data) {
@@ -455,6 +490,24 @@ function fastifyView (fastify, opts, next) {
         this.send(html)
       })
       .catch(this.send)
+  }
+
+  function viewDot (renderModule) {
+    return function _viewDot (page, data, opts) {
+      if (!page) {
+        this.send(new Error('Missing page'))
+        return
+      }
+      data = Object.assign({}, defaultCtx, this.locals, data)
+      let html = renderModule[page](data)
+      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
+        html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
+      }
+      if (!this.getHeader('content-type')) {
+        this.header('Content-Type', 'text/html; charset=' + charset)
+      }
+      this.send(html)
+    }
   }
 
   if (prod && type === 'handlebars' && options.partials) {

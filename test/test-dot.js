@@ -14,62 +14,28 @@ const minifierOpts = {
   removeEmptyAttributes: true
 }
 
-test('reply.view with liquid engine', t => {
-  t.plan(7)
-  const fastify = Fastify()
-  const { Liquid } = require('liquidjs')
-  const data = { text: 'text' }
+const compileOptions = {
+  path: 'templates',
+  destination: 'out',
+  log: false
+}
 
-  const engine = new Liquid()
+test('reply.view with dot engine .dot file', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const data = { text: 'text' }
+  const engine = require('dot')
+  engine.log = false
 
   fastify.register(require('../index'), {
     engine: {
-      liquid: engine
-    }
-  })
-
-  fastify.get('/', (req, reply) => {
-    reply.view('./templates/index.liquid', data)
-  })
-
-  fastify.listen(0, err => {
-    t.error(err)
-
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index.liquid', data)
-        .then((html) => {
-          t.error(err)
-          t.strictEqual(html, body.toString())
-        })
-      fastify.close()
-    })
-  })
-})
-
-test('reply.view with liquid engine without data-parameter but defaultContext', t => {
-  t.plan(7)
-  const fastify = Fastify()
-  const { Liquid } = require('liquidjs')
-  const data = { text: 'text' }
-
-  const engine = new Liquid()
-
-  fastify.register(require('../index'), {
-    engine: {
-      liquid: engine
+      dot: engine
     },
-    defaultContext: data
+    root: 'templates'
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('./templates/index.liquid')
+    reply.view('testdot', data)
   })
 
   fastify.listen(0, err => {
@@ -83,31 +49,28 @@ test('reply.view with liquid engine without data-parameter but defaultContext', 
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index.liquid', data)
-        .then((html) => {
-          t.error(err)
-          t.strictEqual(html, body.toString())
-        })
+      t.strictEqual(body.toString(), engine.process({ path: 'templates', destination: 'out' }).testdot(data))
       fastify.close()
     })
   })
 })
 
-test('reply.view with liquid engine without data-parameter but without defaultContext', t => {
-  t.plan(7)
+test('reply.view with dot engine .jst file', t => {
+  t.plan(6)
   const fastify = Fastify()
-  const { Liquid } = require('liquidjs')
-
-  const engine = new Liquid()
+  const data = { text: 'text' }
+  const engine = require('dot')
+  engine.log = false
 
   fastify.register(require('../index'), {
     engine: {
-      liquid: engine
-    }
+      dot: engine
+    },
+    root: 'templates'
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('./templates/index.liquid')
+    reply.view('testjst', data)
   })
 
   fastify.listen(0, err => {
@@ -121,33 +84,31 @@ test('reply.view with liquid engine without data-parameter but without defaultCo
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index.liquid')
-        .then((html) => {
-          t.error(err)
-          t.strictEqual(html, body.toString())
-        })
+      engine.process(compileOptions)
+      t.strictEqual(body.toString(), require('../out/testjst')(data))
       fastify.close()
     })
   })
 })
 
-test('reply.view with liquid engine with data-parameter and defaultContext', t => {
-  t.plan(7)
+test('reply.view with dot engine without data-parameter but defaultContext', t => {
+  t.plan(6)
   const fastify = Fastify()
-  const { Liquid } = require('liquidjs')
   const data = { text: 'text' }
 
-  const engine = new Liquid()
+  const engine = require('dot')
+  engine.log = false
 
   fastify.register(require('../index'), {
     engine: {
-      liquid: engine
+      dot: engine
     },
-    defaultContext: data
+    defaultContext: data,
+    root: 'templates'
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('./templates/index.liquid', {})
+    reply.view('testdot')
   })
 
   fastify.listen(0, err => {
@@ -161,28 +122,98 @@ test('reply.view with liquid engine with data-parameter and defaultContext', t =
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index.liquid', data)
-        .then((html) => {
-          t.error(err)
-          t.strictEqual(html, body.toString())
-        })
+      t.strictEqual(body.toString(), engine.process(compileOptions).testdot(data))
       fastify.close()
     })
   })
 })
 
-test('reply.view for liquid engine without data-parameter and defaultContext but with reply.locals', t => {
-  t.plan(7)
+test('reply.view with dot engine without data-parameter but without defaultContext', t => {
+  t.plan(6)
   const fastify = Fastify()
-  const { Liquid } = require('liquidjs')
+
+  const engine = require('dot')
+  engine.log = false
+
+  fastify.register(require('../index'), {
+    engine: {
+      dot: engine
+    },
+    root: 'templates'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('testdot')
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      engine.process(compileOptions)
+      t.strictEqual(body.toString(), engine.process(compileOptions).testdot())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with dot engine with data-parameter and defaultContext', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const data = { text: 'text' }
+
+  const engine = require('dot')
+  engine.log = false
+
+  fastify.register(require('../index'), {
+    engine: {
+      dot: engine
+    },
+    defaultContext: data,
+    root: 'templates'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('testdot', {})
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(body.toString(), engine.process(compileOptions).testdot(data))
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view for dot engine without data-parameter and defaultContext but with reply.locals', t => {
+  t.plan(6)
+  const fastify = Fastify()
   const localsData = { text: 'text from locals' }
 
-  const engine = new Liquid()
+  const engine = require('dot')
+  engine.log = false
 
   fastify.register(require('../index'), {
     engine: {
-      liquid: engine
-    }
+      dot: engine
+    },
+    root: 'templates'
   })
 
   fastify.addHook('preHandler', function (request, reply, done) {
@@ -191,7 +222,7 @@ test('reply.view for liquid engine without data-parameter and defaultContext but
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('./templates/index.liquid', {})
+    reply.view('testdot', {})
   })
 
   fastify.listen(0, err => {
@@ -205,29 +236,26 @@ test('reply.view for liquid engine without data-parameter and defaultContext but
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index.liquid', localsData)
-        .then((html) => {
-          t.error(err)
-          t.strictEqual(html, body.toString())
-        })
+      t.strictEqual(body.toString(), engine.process(compileOptions).testdot(localsData))
       fastify.close()
     })
   })
 })
 
-test('reply.view for liquid engine without defaultContext but with reply.locals and data-parameter', t => {
-  t.plan(7)
+test('reply.view for dot engine without defaultContext but with reply.locals and data-parameter', t => {
+  t.plan(6)
   const fastify = Fastify()
-  const { Liquid } = require('liquidjs')
   const localsData = { text: 'text from locals' }
   const data = { text: 'text' }
 
-  const engine = new Liquid()
+  const engine = require('dot')
+  engine.log = false
 
   fastify.register(require('../index'), {
     engine: {
-      liquid: engine
-    }
+      dot: engine
+    },
+    root: 'templates'
   })
 
   fastify.addHook('preHandler', function (request, reply, done) {
@@ -236,7 +264,7 @@ test('reply.view for liquid engine without defaultContext but with reply.locals 
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('./templates/index.liquid', data)
+    reply.view('testdot', data)
   })
 
   fastify.listen(0, err => {
@@ -250,30 +278,27 @@ test('reply.view for liquid engine without defaultContext but with reply.locals 
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index.liquid', data)
-        .then((html) => {
-          t.error(err)
-          t.strictEqual(html, body.toString())
-        })
+      t.strictEqual(body.toString(), engine.process(compileOptions).testdot(data))
       fastify.close()
     })
   })
 })
 
-test('reply.view for liquid engine without data-parameter but with reply.locals and defaultContext', t => {
-  t.plan(7)
+test('reply.view for dot engine without data-parameter but with reply.locals and defaultContext', t => {
+  t.plan(6)
   const fastify = Fastify()
-  const { Liquid } = require('liquidjs')
   const localsData = { text: 'text from locals' }
   const defaultContext = { text: 'text' }
 
-  const engine = new Liquid()
+  const engine = require('dot')
+  engine.log = false
 
   fastify.register(require('../index'), {
     engine: {
-      liquid: engine
+      dot: engine
     },
-    defaultContext
+    defaultContext,
+    root: 'templates'
   })
 
   fastify.addHook('preHandler', function (request, reply, done) {
@@ -282,7 +307,7 @@ test('reply.view for liquid engine without data-parameter but with reply.locals 
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('./templates/index.liquid')
+    reply.view('testdot')
   })
 
   fastify.listen(0, err => {
@@ -296,31 +321,27 @@ test('reply.view for liquid engine without data-parameter but with reply.locals 
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index.liquid', localsData)
-        .then((html) => {
-          t.error(err)
-          t.strictEqual(html, body.toString())
-        })
+      t.strictEqual(body.toString(), engine.process(compileOptions).testdot(localsData))
       fastify.close()
     })
   })
 })
 
-test('reply.view for liquid engine with data-parameter and reply.locals and defaultContext', t => {
-  t.plan(7)
+test('reply.view for dot engine with data-parameter and reply.locals and defaultContext', t => {
+  t.plan(6)
   const fastify = Fastify()
-  const { Liquid } = require('liquidjs')
   const localsData = { text: 'text from locals' }
   const defaultContext = { text: 'text from context' }
   const data = { text: 'text' }
 
-  const engine = new Liquid()
+  const engine = require('dot')
 
   fastify.register(require('../index'), {
     engine: {
-      liquid: engine
+      dot: engine
     },
-    defaultContext
+    defaultContext,
+    root: 'templates'
   })
 
   fastify.addHook('preHandler', function (request, reply, done) {
@@ -329,7 +350,7 @@ test('reply.view for liquid engine with data-parameter and reply.locals and defa
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('./templates/index.liquid', data)
+    reply.view('testdot', data)
   })
 
   fastify.listen(0, err => {
@@ -343,28 +364,25 @@ test('reply.view for liquid engine with data-parameter and reply.locals and defa
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index.liquid', data)
-        .then((html) => {
-          t.error(err)
-          t.strictEqual(html, body.toString())
-        })
+      t.strictEqual(body.toString(), engine.process(compileOptions).testdot(data))
       fastify.close()
     })
   })
 })
 
-test('reply.view with liquid engine and html-minifier', t => {
-  t.plan(7)
+test('reply.view with dot engine and html-minifier', t => {
+  t.plan(6)
   const fastify = Fastify()
-  const { Liquid } = require('liquidjs')
   const data = { text: 'text' }
 
-  const engine = new Liquid()
+  const engine = require('dot')
+  engine.log = false
 
   fastify.register(require('../index'), {
     engine: {
-      liquid: engine
+      dot: engine
     },
+    root: 'templates',
     options: {
       useHtmlMinifier: minifier,
       htmlMinifierOptions: minifierOpts
@@ -372,7 +390,7 @@ test('reply.view with liquid engine and html-minifier', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('./templates/index.liquid', data)
+    reply.view('testdot', data)
   })
 
   fastify.listen(0, err => {
@@ -386,61 +404,7 @@ test('reply.view with liquid engine and html-minifier', t => {
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index.liquid', data)
-        .then((html) => {
-          t.error(err)
-          t.strictEqual(minifier.minify(html, minifierOpts), body.toString())
-        })
-      fastify.close()
-    })
-  })
-})
-
-test('reply.view with liquid engine and custom tag', t => {
-  t.plan(7)
-  const fastify = Fastify()
-  const { Liquid } = require('liquidjs')
-  const data = { text: 'text' }
-
-  const engine = new Liquid()
-
-  engine.registerTag('header', {
-    parse: function (token) {
-      const [key, val] = token.args.split(':')
-      this[key] = val
-    },
-    render: async function (scope, emitter) {
-      const title = await this.liquid.evalValue(this.content, scope)
-      emitter.write(`<h1>${title}</h1>`)
-    }
-  })
-
-  fastify.register(require('../index'), {
-    engine: {
-      liquid: engine
-    }
-  })
-
-  fastify.get('/', (req, reply) => {
-    reply.view('./templates/index-with-custom-tag.liquid', data)
-  })
-
-  fastify.listen(0, err => {
-    t.error(err)
-
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index-with-custom-tag.liquid', data)
-        .then((html) => {
-          t.error(err)
-          t.strictEqual(html, body.toString())
-        })
+      t.strictEqual(body.toString(), minifier.minify(engine.process(compileOptions).testdot(data), minifierOpts))
       fastify.close()
     })
   })
