@@ -326,7 +326,8 @@ function fastifyView (fastify, opts, next) {
       if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
         html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
       }
-      this.header('Content-Type', 'text/html; charset=' + charset).send(html)
+      this.header('Content-Type', 'text/html; charset=' + charset)
+      this.send(html)
     })
   }
 
@@ -358,7 +359,8 @@ function fastifyView (fastify, opts, next) {
         if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
           html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
         }
-        that.header('Content-Type', 'text/html; charset=' + charset).send(html)
+        that.header('Content-Type', 'text/html; charset=' + charset)
+        that.send(html)
       }
     }
   }

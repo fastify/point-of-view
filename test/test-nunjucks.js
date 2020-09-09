@@ -420,3 +420,35 @@ test('reply.view with nunjucks engine using onConfigure callback', t => {
     })
   })
 })
+
+test('fastify.view with nunjucks engine', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const nunjucks = require('nunjucks')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      nunjucks: nunjucks
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view('templates/index.njk', data, (err, compiled) => {
+      t.error(err)
+      t.strictEqual(nunjucks.render('./templates/index.njk', data), compiled)
+
+      fastify.ready(err => {
+        t.error(err)
+
+        fastify.view('templates/index.njk', data, (err, compiled) => {
+          t.error(err)
+          t.strictEqual(nunjucks.render('./templates/index.njk', data), compiled)
+          fastify.close()
+        })
+      })
+    })
+  })
+})

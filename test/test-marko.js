@@ -410,3 +410,35 @@ test('reply.view with marko engine, with stream and html-minify-stream', t => {
     })
   })
 })
+
+test('fastify.view with marko engine', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const marko = require('marko')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      marko: marko
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view('templates/index.marko', data, (err, compiled) => {
+      t.error(err)
+      t.strictEqual(marko.load('./templates/index.marko').renderToString(data), compiled)
+
+      fastify.ready(err => {
+        t.error(err)
+
+        fastify.view('templates/index.marko', data, (err, compiled) => {
+          t.error(err)
+          t.strictEqual(marko.load('./templates/index.marko').renderToString(data), compiled)
+          fastify.close()
+        })
+      })
+    })
+  })
+})
