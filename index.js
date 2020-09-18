@@ -218,7 +218,9 @@ function fastifyView (fastify, opts, next) {
 
     // .jst files are compiled to .js files so we need to require them
     for (const file of readdirSync(destinationDir, { withFileTypes: false })) {
-      renderer[basename(file, '.js')] = require(resolve(join(destinationDir, file)))
+      if (file.match(/\.js$/i)) {
+        renderer[basename(file, '.js')] = require(resolve(join(destinationDir, file)))
+      }
     }
     if (Object.keys(renderer).length === 0) {
       this.log.warn(`WARN: no template found in ${templatesDir}`)
