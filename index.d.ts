@@ -10,6 +10,7 @@ declare module "fastify" {
 export interface PointOfViewOptions {
   engine: {
     ejs?: any;
+    eta?: any;
     nunjucks?: any;
     pug?: any;
     handlebars?: any;

@@ -10,7 +10,7 @@ const resolve = require('path').resolve
 const join = require('path').join
 const basename = require('path').basename
 const HLRU = require('hashlru')
-const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'mustache', 'art-template', 'twig', 'liquid', 'dot']
+const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'mustache', 'art-template', 'twig', 'liquid', 'dot', 'eta']
 
 function fastifyView (fastify, opts, next) {
   if (!opts.engine) {
@@ -35,7 +35,7 @@ function fastifyView (fastify, opts, next) {
   const defaultCtx = opts.defaultContext || {}
   const layoutFileName = opts.layout
 
-  if (layoutFileName && type !== 'handlebars' && type !== 'ejs') {
+  if (layoutFileName && type !== 'handlebars' && type !== 'ejs' && type !== 'eta') {
     next(new Error('"layout" option only available for handlebars and ejs engine'))
     return
   }
@@ -57,6 +57,7 @@ function fastifyView (fastify, opts, next) {
     twig: viewTwig,
     liquid: viewLiquid,
     dot: dotRender,
+    eta: withLayout(viewEta),
     _default: view
   }
 
@@ -510,6 +511,39 @@ function fastifyView (fastify, opts, next) {
       }
       this.send(html)
     }
+  }
+
+  function viewEta (page, data) {
+    if (!page) {
+      this.send(new Error('Missing page'))
+      return
+    }
+
+    lru.define = lru.set
+    engine.configure({
+      templates: lru
+    })
+
+    const config = Object.assign({ views: templatesDir }, options)
+
+    data = Object.assign({}, defaultCtx, this.locals, data)
+    // Append view extension (Eta will append '.eta' by default,
+    // but this also allows custom extensions)
+    page = getPage(page, 'eta')
+    engine.renderFile(page, data, config, (err, html) => {
+      if (err) return this.send(err)
+      if (
+        config.useHtmlMinifier &&
+        typeof config.useHtmlMinifier.minify === 'function'
+      ) {
+        html = config.useHtmlMinifier.minify(
+          html,
+          config.htmlMinifierOptions || {}
+        )
+      }
+      this.header('Content-Type', 'text/html; charset=' + charset)
+      this.send(html)
+    })
   }
 
   if (prod && type === 'handlebars' && options.partials) {
