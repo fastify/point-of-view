@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <p><%= it.text %></p>
+    <br/>
+    <div>
+      <p>Other Eta pages with includes:</p>
+      <ul>
+        <li>Normal page, <a href="/include-test">here</a></li>
+        <li>One include not exist, <a href="/include-one-include-missing-test">here</a>
+          (to raise errors)
+        </li>
+        <li>One attribute not exist, <a href="/include-one-attribute-missing-test">here</a>
+          (to raise errors)
+        </li>
+      </ul>
+    <div>
+  </body>
+</html>
