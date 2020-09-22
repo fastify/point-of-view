@@ -16,13 +16,16 @@ const minifierOpts = {
   removeEmptyAttributes: true
 }
 
+const pointOfView = require('../index')
+const eta = require('eta')
+
 test('reply.view with eta engine and custom templates folder', t => {
   t.plan(6)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const data = { text: 'text' }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     },
@@ -53,10 +56,10 @@ test('reply.view with eta engine and custom templates folder', t => {
 test('reply.view with eta engine with layout option', t => {
   t.plan(6)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const data = { text: 'text' }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     },
@@ -88,10 +91,10 @@ test('reply.view with eta engine with layout option', t => {
 test('reply.view with eta engine and custom ext', t => {
   t.plan(6)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const data = { text: 'text' }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     },
@@ -123,10 +126,10 @@ test('reply.view with eta engine and custom ext', t => {
 test('reply.view for eta without data-parameter but defaultContext', t => {
   t.plan(6)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const data = { text: 'text' }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     },
@@ -158,10 +161,10 @@ test('reply.view for eta without data-parameter but defaultContext', t => {
 test('reply.view for eta without data-parameter but defaultContext', t => {
   t.plan(6)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const data = { text: 'text' }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     },
@@ -193,9 +196,8 @@ test('reply.view for eta without data-parameter but defaultContext', t => {
 test('reply.view for eta without data-parameter and without defaultContext', t => {
   t.plan(6)
   const fastify = Fastify()
-  const eta = require('eta')
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     },
@@ -226,10 +228,10 @@ test('reply.view for eta without data-parameter and without defaultContext', t =
 test('reply.view for eta engine without data-parameter and defaultContext but with reply.locals', t => {
   t.plan(6)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const localsData = { text: 'text from locals' }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     }
@@ -264,11 +266,11 @@ test('reply.view for eta engine without data-parameter and defaultContext but wi
 test('reply.view for eta engine without defaultContext but with reply.locals and data-parameter', t => {
   t.plan(6)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const localsData = { text: 'text from locals' }
   const data = { text: 'text' }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     }
@@ -303,11 +305,11 @@ test('reply.view for eta engine without defaultContext but with reply.locals and
 test('reply.view for eta engine without data-parameter but with reply.locals and defaultContext', t => {
   t.plan(6)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const localsData = { text: 'text from locals' }
   const contextData = { text: 'text from context' }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     },
@@ -343,12 +345,12 @@ test('reply.view for eta engine without data-parameter but with reply.locals and
 test('reply.view for eta engine with data-parameter and reply.locals and defaultContext', t => {
   t.plan(6)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const localsData = { text: 'text from locals' }
   const contextData = { text: 'text from context' }
   const data = { text: 'text' }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     },
@@ -384,10 +386,10 @@ test('reply.view for eta engine with data-parameter and reply.locals and default
 test('reply.view with eta engine and full path templates folder', t => {
   t.plan(6)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const data = { text: 'text' }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     },
@@ -418,10 +420,10 @@ test('reply.view with eta engine and full path templates folder', t => {
 test('reply.view with eta engine', t => {
   t.plan(6)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const data = { text: 'text' }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     }
@@ -451,10 +453,10 @@ test('reply.view with eta engine', t => {
 test('reply.view with eta engine and defaultContext', t => {
   t.plan(6)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const data = { text: 'text' }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     },
@@ -485,10 +487,10 @@ test('reply.view with eta engine and defaultContext', t => {
 test('reply.view with eta engine and html-minifier', t => {
   t.plan(6)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const data = { text: 'text' }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     },
@@ -522,10 +524,10 @@ test('reply.view with eta engine and html-minifier', t => {
 test('reply.view with eta engine and includeViewExtension property as true', t => {
   t.plan(6)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const data = { text: 'text' }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     },
@@ -556,14 +558,14 @@ test('reply.view with eta engine and includeViewExtension property as true', t =
 test('reply.view with eta engine, template folder specified, include files (eta and html) used in template, includeViewExtension property as true', t => {
   t.plan(7)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const templatesFolder = path.join(__dirname, '../templates')
   const options = {
     views: templatesFolder // must be put to make tests (with include files) working ...
   }
   const data = { text: 'text' }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     },
@@ -574,7 +576,6 @@ test('reply.view with eta engine, template folder specified, include files (eta 
 
   fastify.get('/', (req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-linking-other-pages', data) // sample for specifying with type
-    // reply.view('index-with-includes', data)
   })
 
   fastify.listen(0, err => {
@@ -604,14 +605,14 @@ test('reply.view with eta engine, template folder specified, include files (eta 
 test('reply.view with eta engine, templates with folder specified, include files and attributes; home', t => {
   t.plan(7)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const templatesFolder = path.join(__dirname, '../templates')
   const options = {
     views: templatesFolder
   }
   const data = { text: 'Hello from eta Templates' }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     },
@@ -656,13 +657,13 @@ test('reply.view with eta engine, templates with folder specified, include files
 test('reply.view with eta engine, templates with folder specified, include files and attributes; page with no data', t => {
   t.plan(7)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const templatesFolder = path.join(__dirname, '../templates')
   const options = {
     views: templatesFolder
   }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     },
@@ -707,7 +708,7 @@ test('reply.view with eta engine, templates with folder specified, include files
 test('reply.view with eta engine, templates with folder specified, include files and attributes; page with includes', t => {
   t.plan(7)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const templatesFolder = path.join(__dirname, '../templates')
   const options = {
     views: templatesFolder
@@ -715,7 +716,7 @@ test('reply.view with eta engine, templates with folder specified, include files
 
   const data = { text: 'Hello from eta Templates' }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     },
@@ -760,14 +761,14 @@ test('reply.view with eta engine, templates with folder specified, include files
 test('reply.view with eta engine, templates with folder specified, include files and attributes; page with one include missing', t => {
   t.plan(7)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const templatesFolder = path.join(__dirname, '../templates')
   const options = {
     views: templatesFolder
   }
   const data = { text: 'Hello from eta Templates' }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     },
@@ -812,10 +813,10 @@ test('reply.view with eta engine, templates with folder specified, include files
 test('fastify.view with eta engine and callback in production mode', t => {
   t.plan(6)
   const fastify = Fastify()
-  const eta = require('eta')
+
   const data = { text: 'text' }
 
-  fastify.register(require('../index'), {
+  fastify.register(pointOfView, {
     engine: {
       eta: eta
     },
