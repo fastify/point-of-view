@@ -36,7 +36,7 @@ function fastifyView (fastify, opts, next) {
   const layoutFileName = opts.layout
 
   if (layoutFileName && type !== 'handlebars' && type !== 'ejs' && type !== 'eta') {
-    next(new Error('"layout" option only available for handlebars and ejs engine'))
+    next(new Error('Only Handlebars, EJS, and Eta support the "layout" option'))
     return
   }
 
