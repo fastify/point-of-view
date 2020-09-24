@@ -1,0 +1,1 @@
+<html><head></head><body><h1><%= it.header %></h1><%~ it.body -%><div><%= it.footer %></div></body></html>
