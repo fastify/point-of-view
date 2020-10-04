@@ -445,3 +445,42 @@ test('reply.view with liquid engine and custom tag', t => {
     })
   })
 })
+
+test('reply.view with liquid engine and double quoted variable', t => {
+  t.plan(7)
+  const fastify = Fastify()
+  const { Liquid } = require('liquidjs')
+  const data = { text: 'foo' }
+
+  const engine = new Liquid()
+
+  fastify.register(require('../index'), {
+    engine: {
+      liquid: engine
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/double-quotes-variable.liquid', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      engine.renderFile('./templates/double-quotes-variable.liquid', data)
+        .then((html) => {
+          t.error(err)
+          t.strictEqual(html, body.toString())
+        })
+      fastify.close()
+    })
+  })
+})
