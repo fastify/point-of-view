@@ -274,7 +274,7 @@ The optional boolean property `production` will override environment variable `N
   }
 ```
 
-If you want to provide data which will be dependand on e.g. request and available in all views you have to add propert `locals` to `reply` object, like in the example below:
+If you want to provide data which will be depended on e.g. request and available in all views you have to add property `locals` to `reply` object, like in the example below:
 ```js
 fastify.addHook('preHandler', function (request, reply, done) {
   reply.locals = {
@@ -284,7 +284,7 @@ fastify.addHook('preHandler', function (request, reply, done) {
   done()
 })
 ```
-Properites from `reply.locals` will override those from `defaultContext`, but not from `data` parameter provided to `reply.view(template, data)` function.
+Properties from `reply.locals` will override those from `defaultContext`, but not from `data` parameter provided to `reply.view(template, data)` function.
 
 <a name="note"></a>
 ## Note
