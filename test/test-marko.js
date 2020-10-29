@@ -442,3 +442,48 @@ test('fastify.view with marko engine', t => {
     })
   })
 })
+
+test('fastify.view to load template from memory with marko engine', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const marko = require('marko')
+  const data = { text: 'marko' }
+  const templateSrc = `
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <p>\${data.text}</p>
+  </body>
+</html>
+`
+
+  const opts = { templateSrc }
+
+  fastify.register(require('../index'), {
+    engine: {
+      marko: marko
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view('templates/index.marko', data, opts, (err, compiled) => {
+      t.error(err)
+      const markoLoaded = marko.load('./templates/index.marko', opts).renderToString(data)
+
+      t.strictEqual(markoLoaded, compiled)
+      fastify.ready(err => {
+        t.error(err)
+
+        fastify.view('templates/index.marko', data, (err, compiled) => {
+          t.error(err)
+          const markoLoaded = marko.load('./templates/index.marko', opts).renderToString(data)
+          t.strictEqual(markoLoaded, compiled)
+          fastify.close()
+        })
+      })
+    })
+  })
+})
