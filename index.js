@@ -148,7 +148,7 @@ function fastifyView (fastify, opts, next) {
 
       let error = null
       const partialsHtml = {}
-      Object.keys(partials).map((key, index) => {
+      Object.keys(partials).forEach((key, index) => {
         readFile(join(templatesDir, partials[key]), 'utf-8', (err, data) => {
           if (err) {
             error = err
