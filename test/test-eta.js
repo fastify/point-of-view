@@ -848,7 +848,7 @@ test('fastify.view with eta engine and custom cache', t => {
   const fastify = Fastify()
 
   const tplPath = 'templates/index.eta'
-  const tplAbsPath = path.normalize(path.join(process.cwd(), '/', tplPath))
+  const tplAbsPath = path.resolve(tplPath)
   const data = { text: 'text' }
 
   // Custom cache
