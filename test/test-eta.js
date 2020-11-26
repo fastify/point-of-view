@@ -855,6 +855,7 @@ test('fastify.view with eta engine and custom cache', t => {
   const pseudoCache = {
     cache: {},
     get: function (k) {
+      t.pass('the cache is set')
       return this.cache[k]
     },
     define: function (k, v) {
