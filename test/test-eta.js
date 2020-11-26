@@ -844,7 +844,7 @@ test('fastify.view with eta engine and callback in production mode', t => {
 })
 
 test('fastify.view with eta engine and custom cache', t => {
-  t.plan(7)
+  t.plan(8)
   const fastify = Fastify()
 
   const tplPath = 'templates/index.eta'
