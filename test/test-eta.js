@@ -842,3 +842,70 @@ test('fastify.view with eta engine and callback in production mode', t => {
     })
   })
 })
+
+test('fastify.view with eta engine and custom cache', t => {
+  t.plan(9)
+  const fastify = Fastify()
+
+  const tplPath = 'templates/index.eta'
+  const tplAbsPath = path.resolve(tplPath)
+  const data = { text: 'text' }
+
+  // Custom cache
+  const pseudoCache = {
+    cache: {},
+    get: function (k) {
+      t.pass('the cache is set')
+      return this.cache[k]
+    },
+    define: function (k, v) {
+      this.cache[k] = v
+    }
+  }
+
+  const etaOptions = {
+    cache: true,
+    templates: pseudoCache
+  }
+
+  eta.configure(etaOptions)
+
+  fastify.register(pointOfView, {
+    engine: {
+      eta: eta
+    },
+    options: etaOptions
+  })
+
+  // pre-cache
+  const tplFn = eta.loadFile(tplAbsPath, { filename: tplAbsPath })
+
+  fastify.get('/', (req, reply) => {
+    try {
+      const res = reply.view(tplPath, data)
+      t.strictEqual(eta.config.templates, pseudoCache,
+        'Cache instance should be equal to the pre-defined one')
+      t.notStrictEqual(eta.config.templates.get(tplAbsPath), undefined,
+        'Template should be pre-cached')
+      return res
+    } catch (e) {
+      t.error(e)
+    }
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200, 'Response should be 200')
+      tplFn(data, eta.config, (err, str) => {
+        t.error(err)
+        t.strictEqual(str, body.toString(), 'Route should return the same result as cached template function')
+      })
+      fastify.close()
+    })
+  })
+})

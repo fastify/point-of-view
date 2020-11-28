@@ -525,7 +525,7 @@ function fastifyView (fastify, opts, next) {
 
     lru.define = lru.set
     engine.configure({
-      templates: lru
+      templates: options.templates ? options.templates : lru
     })
 
     const config = Object.assign({ views: templatesDir }, options)
