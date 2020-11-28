@@ -45,7 +45,7 @@ function fastifyView (fastify, opts, next) {
     return
   }
 
-  const dotRender = type === 'dot' ? viewDot.call(fastify, preProcessDot(templatesDir, options)) : null
+  const dotRender = type === 'dot' ? viewDot.call(fastify, preProcessDot.call(fastify, templatesDir, options)) : null
 
   const renders = {
     marko: viewMarko,

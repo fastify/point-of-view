@@ -5,15 +5,11 @@ const test = t.test
 const sget = require('simple-get').concat
 const Fastify = require('fastify')
 const fs = require('fs')
-const minifier = require('html-minifier')
-const minifierOpts = {
-  removeComments: true,
-  removeCommentsFromCDATA: true,
-  collapseWhitespace: true,
-  collapseBooleanAttributes: true,
-  removeAttributeQuotes: true,
-  removeEmptyAttributes: true
-}
+const { join } = require('path')
+const proxyquire = require('proxyquire')
+
+require('./helper').handleBarsHtmlMinifierTests(t, true)
+require('./helper').handleBarsHtmlMinifierTests(t, false)
 
 test('fastify.view with handlebars engine', t => {
   t.plan(2)
@@ -263,32 +259,6 @@ test('reply.view for handlebars engine with data-parameter and reply.locals and 
   })
 })
 
-test('fastify.view with handlebars engine and html-minifier', t => {
-  t.plan(2)
-  const fastify = Fastify()
-  const handlebars = require('handlebars')
-  const data = { text: 'text' }
-
-  fastify.register(require('../index'), {
-    engine: {
-      handlebars: handlebars
-    },
-    options: {
-      useHtmlMinifier: minifier,
-      htmlMinifierOptions: minifierOpts
-    }
-  })
-
-  fastify.ready(err => {
-    t.error(err)
-
-    fastify.view('./templates/index.html', data).then(compiled => {
-      t.strictEqual(minifier.minify(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), minifierOpts), compiled)
-      fastify.close()
-    })
-  })
-})
-
 test('fastify.view with handlebars engine and callback', t => {
   t.plan(3)
   const fastify = Fastify()
@@ -307,33 +277,6 @@ test('fastify.view with handlebars engine and callback', t => {
     fastify.view('./templates/index.html', data, (err, compiled) => {
       t.error(err)
       t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
-      fastify.close()
-    })
-  })
-})
-
-test('fastify.view with handlebars engine with callback and html-minifier', t => {
-  t.plan(3)
-  const fastify = Fastify()
-  const handlebars = require('handlebars')
-  const data = { text: 'text' }
-
-  fastify.register(require('../index'), {
-    engine: {
-      handlebars: handlebars
-    },
-    options: {
-      useHtmlMinifier: minifier,
-      htmlMinifierOptions: minifierOpts
-    }
-  })
-
-  fastify.ready(err => {
-    t.error(err)
-
-    fastify.view('./templates/index.html', data, (err, compiled) => {
-      t.error(err)
-      t.strictEqual(minifier.minify(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), minifierOpts), compiled)
       fastify.close()
     })
   })
@@ -453,43 +396,6 @@ test('reply.view with handlebars engine and defaultContext', t => {
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
-      fastify.close()
-    })
-  })
-})
-
-test('reply.view with handlebars engine and html-minifier', t => {
-  t.plan(6)
-  const fastify = Fastify()
-  const handlebars = require('handlebars')
-  const data = { text: 'text' }
-
-  fastify.register(require('../index'), {
-    engine: {
-      handlebars: handlebars
-    },
-    options: {
-      useHtmlMinifier: minifier,
-      htmlMinifierOptions: minifierOpts
-    }
-  })
-
-  fastify.get('/', (req, reply) => {
-    reply.view('./templates/index.html', data)
-  })
-
-  fastify.listen(0, err => {
-    t.error(err)
-
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(minifier.minify(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), minifierOpts), body.toString())
       fastify.close()
     })
   })
@@ -730,11 +636,100 @@ test('reply.view with handlebars engine with partials', t => {
   })
 })
 
+test('reply.view with handlebars engine with missing partials path', t => {
+  t.plan(5)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars: handlebars
+    },
+    options: {
+      partials: { body: './non-existent' }
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index-with-partials.hbs', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, replyBody) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 500)
+      t.strictEqual(response.headers['content-length'], String(replyBody.length))
+      t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
+
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with handlebars engine with partials in production mode should use cache', t => {
+  t.plan(4)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const POV = proxyquire('..', {
+    hashlru: function () {
+      return {
+        get: (key) => {
+          t.is(key, 'handlebars-Partials')
+        },
+        set: (key, value) => {
+          t.is(key, 'handlebars-Partials')
+          t.strictDeepEqual(value, { body: fs.readFileSync('./templates/body.hbs', 'utf8') })
+        }
+      }
+    }
+  })
+
+  fastify.register(POV, {
+    engine: {
+      handlebars: handlebars
+    },
+    options: {
+      partials: { body: './templates/body.hbs' }
+    },
+    production: true
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+    fastify.close()
+  })
+})
+
+test('fastify.view with handlebars engine with missing partials path in production mode does not start', t => {
+  t.plan(2)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars: handlebars
+    },
+    options: {
+      partials: { body: './non-existent' }
+    },
+    production: true
+  })
+
+  fastify.ready(err => {
+    t.ok(err instanceof Error)
+    t.is(err.message, `ENOENT: no such file or directory, open '${join(__dirname, '../non-existent')}'`)
+  })
+})
+
 test('reply.view with handlebars engine with layout option', t => {
   t.plan(6)
   const fastify = Fastify()
   const handlebars = require('handlebars')
-  const data = { text: 'text' }
 
   fastify.register(require('../index'), {
     engine: {
@@ -744,7 +739,7 @@ test('reply.view with handlebars engine with layout option', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('./templates/index-for-layout.hbs', data)
+    reply.view('./templates/index-for-layout.hbs')
   })
 
   fastify.listen(0, err => {
@@ -757,7 +752,95 @@ test('reply.view with handlebars engine with layout option', t => {
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-length'], '' + replyBody.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), replyBody.toString())
+      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))({}), replyBody.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('fastify.view with handlebars engine, missing template file', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars: handlebars
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view('./missing.html', {}, err => {
+      t.ok(err instanceof Error)
+      t.is(err.message, `ENOENT: no such file or directory, open '${join(__dirname, '../missing.html')}'`)
+      fastify.close()
+    })
+  })
+})
+
+test('fastify.view with handlebars engine should throw page missing', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars: handlebars
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view(null, {}, err => {
+      t.ok(err instanceof Error)
+      t.is(err.message, 'Missing page')
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with handlebars engine should return 500 if template fails in production mode', t => {
+  t.plan(4)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const POV = proxyquire('..', {
+    hashlru: function () {
+      return {
+        get: () => {
+          return () => { throw Error('Template Error') }
+        },
+        set: () => { }
+      }
+    }
+  })
+
+  fastify.register(POV, {
+    engine: {
+      handlebars: handlebars
+    },
+    layout: './templates/layout.hbs',
+    production: true
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index.hbs')
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      const { message } = JSON.parse(body.toString())
+      t.error(err)
+      t.strictEqual(response.statusCode, 500)
+      t.strictEqual('Template Error', message)
+
       fastify.close()
     })
   })

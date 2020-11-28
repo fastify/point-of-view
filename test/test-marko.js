@@ -342,6 +342,33 @@ test('reply.view with marko engine and html-minifier', t => {
   })
 })
 
+test('fastify.view with marko engine and html-minifier without htmlMinifierOptions', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const marko = require('marko')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      marko: marko
+    },
+    options: {
+      useHtmlMinifier: minifier
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view('templates/index.marko', data, (err, compiled) => {
+      t.error(err)
+      t.strictEqual(minifier.minify(marko.load('./templates/index.marko').renderToString(data)), compiled)
+
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with marko engine, with stream', t => {
   t.plan(5)
   const fastify = Fastify()
@@ -406,6 +433,42 @@ test('reply.view with marko engine, with stream and html-minify-stream', t => {
       t.strictEqual(response.statusCode, 200)
       t.strictEqual(response.headers['content-type'], 'application/octet-stream')
       t.strictEqual(minifier.minify(marko.load('./templates/index.marko').renderToString(data), minifierOpts), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with marko engine, with stream and html-minify-stream without htmlMinifierOptions', t => {
+  t.plan(5)
+  const fastify = Fastify()
+  const marko = require('marko')
+  const data = { text: 'text' }
+  const htmlMinifyStream = require('html-minify-stream')
+
+  fastify.register(require('../index'), {
+    engine: {
+      marko: marko
+    },
+    options: {
+      useHtmlMinifyStream: htmlMinifyStream
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index.marko', data, { stream: true })
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-type'], 'application/octet-stream')
+      t.strictEqual(minifier.minify(marko.load('./templates/index.marko').renderToString(data)), body.toString())
       fastify.close()
     })
   })
@@ -484,6 +547,64 @@ test('fastify.view to load template from memory with marko engine', t => {
           fastify.close()
         })
       })
+    })
+  })
+})
+
+test('fastify.view with marko should throw page missing', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const marko = require('marko')
+
+  fastify.register(require('../index'), {
+    engine: {
+      marko: marko
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view(null, {}, err => {
+      t.ok(err instanceof Error)
+      t.is(err.message, 'Missing page')
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with marko engine should return 500 if renderToString fails', t => {
+  t.plan(4)
+  const fastify = Fastify()
+  const marko = {
+    load: () => ({
+      renderToString: (_, callback) => { callback(Error('RenderToString Error')) }
+    })
+  }
+
+  fastify.register(require('../index'), {
+    engine: {
+      marko: marko
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index.marko')
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      const { message } = JSON.parse(body.toString())
+      t.error(err)
+      t.strictEqual(response.statusCode, 500)
+      t.strictEqual('RenderToString Error', message)
+
+      fastify.close()
     })
   })
 })

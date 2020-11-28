@@ -6,18 +6,12 @@ const sget = require('simple-get').concat
 const Fastify = require('fastify')
 const fs = require('fs')
 const path = require('path')
-const minifier = require('html-minifier')
-const minifierOpts = {
-  removeComments: true,
-  removeCommentsFromCDATA: true,
-  collapseWhitespace: true,
-  collapseBooleanAttributes: true,
-  removeAttributeQuotes: true,
-  removeEmptyAttributes: true
-}
 
 const pointOfView = require('../index')
 const eta = require('eta')
+
+require('./helper').etaHtmlMinifierTests(t, true)
+require('./helper').etaHtmlMinifierTests(t, false)
 
 test('reply.view with eta engine and custom templates folder', t => {
   t.plan(6)
@@ -484,43 +478,6 @@ test('reply.view with eta engine and defaultContext', t => {
   })
 })
 
-test('reply.view with eta engine and html-minifier', t => {
-  t.plan(6)
-  const fastify = Fastify()
-
-  const data = { text: 'text' }
-
-  fastify.register(pointOfView, {
-    engine: {
-      eta: eta
-    },
-    options: {
-      useHtmlMinifier: minifier,
-      htmlMinifierOptions: minifierOpts
-    }
-  })
-
-  fastify.get('/', (req, reply) => {
-    reply.view('templates/index.eta', data)
-  })
-
-  fastify.listen(0, err => {
-    t.error(err)
-
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(minifier.minify(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), minifierOpts), body.toString())
-      fastify.close()
-    })
-  })
-})
-
 test('reply.view with eta engine and includeViewExtension property as true', t => {
   t.plan(6)
   const fastify = Fastify()
@@ -905,6 +862,27 @@ test('fastify.view with eta engine and custom cache', t => {
         t.error(err)
         t.strictEqual(str, body.toString(), 'Route should return the same result as cached template function')
       })
+      fastify.close()
+    })
+  })
+})
+
+test('fastify.view with eta engine, should throw page missing', t => {
+  t.plan(3)
+  const fastify = Fastify()
+
+  fastify.register(require('../index'), {
+    engine: {
+      eta: eta
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view(null, {}, err => {
+      t.ok(err instanceof Error)
+      t.is(err.message, 'Missing page')
       fastify.close()
     })
   })

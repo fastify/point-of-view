@@ -159,3 +159,18 @@ test('register callback with handlebars engine should throw if layout file does 
     t.deepEqual('unable to access template "./templates/does-not-exist.hbs"', err.message)
   })
 })
+
+test('register callback should throw if layout option provided with wrong engine', t => {
+  t.plan(2)
+  const fastify = Fastify()
+
+  fastify.register(require('../index'), {
+    engine: {
+      pug: require('pug')
+    },
+    layout: 'template'
+  }).ready(err => {
+    t.ok(err instanceof Error)
+    t.is(err.message, 'Only Handlebars, EJS, and Eta support the "layout" option')
+  })
+})

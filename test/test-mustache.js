@@ -6,6 +6,7 @@ const sget = require('simple-get').concat
 const Fastify = require('fastify')
 const fs = require('fs')
 const minifier = require('html-minifier')
+const proxyquire = require('proxyquire')
 const minifierOpts = {
   removeComments: true,
   removeCommentsFromCDATA: true,
@@ -307,43 +308,6 @@ test('reply.view for mustache engine with data-parameter and reply.locals and de
   })
 })
 
-test('reply.view with mustache engine and html-minifier', t => {
-  t.plan(6)
-  const fastify = Fastify()
-  const mustache = require('mustache')
-  const data = { text: 'text' }
-
-  fastify.register(require('../index'), {
-    engine: {
-      mustache: mustache
-    },
-    options: {
-      useHtmlMinifier: minifier,
-      htmlMinifierOptions: minifierOpts
-    }
-  })
-
-  fastify.get('/', (req, reply) => {
-    reply.view('./templates/index.html', data)
-  })
-
-  fastify.listen(0, err => {
-    t.error(err)
-
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(minifier.minify(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), minifierOpts), body.toString())
-      fastify.close()
-    })
-  })
-})
-
 test('reply.view with mustache engine with partials', t => {
   t.plan(6)
   const fastify = Fastify()
@@ -371,6 +335,49 @@ test('reply.view with mustache engine with partials', t => {
       t.strictEqual(response.headers['content-length'], '' + replyBody.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       t.strictEqual(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), replyBody.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with mustache engine with partials in production mode should use cache', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const mustache = require('mustache')
+  const data = { text: 'text' }
+  const POV = proxyquire('..', {
+    hashlru: function () {
+      return {
+        get: () => {
+          return '<div>Cached Response</div>'
+        },
+        set: () => { }
+      }
+    }
+  })
+
+  fastify.register(POV, {
+    engine: {
+      mustache: mustache
+    },
+    production: true
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index.mustache', data, { partials: { body: './templates/body.mustache' } })
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, replyBody) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], String(replyBody.length))
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual('<div>Cached Response</div>', replyBody.toString())
       fastify.close()
     })
   })
@@ -601,6 +608,28 @@ test('reply.view with mustache engine, with partials and multiple missing partia
       t.strictEqual(response.statusCode, 500)
       t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
       t.strictEqual(response.headers['content-length'], '' + body.length)
+      fastify.close()
+    })
+  })
+})
+
+test('fastify.view with mustache engine, should throw page missing', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const mustache = require('mustache')
+
+  fastify.register(require('../index'), {
+    engine: {
+      mustache: mustache
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view(null, {}, err => {
+      t.ok(err instanceof Error)
+      t.is(err.message, 'Missing page')
       fastify.close()
     })
   })
