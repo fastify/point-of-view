@@ -19,6 +19,7 @@ export interface PointOfViewOptions {
     'art-template'?: any;
     twig?: any;
     liquid?: any;
+    dot?: any;
   };
   templates?: string;
   includeViewExtension?: boolean;
