@@ -848,6 +848,28 @@ test('reply.view with ejs engine, templates with folder specified, include files
   })
 })
 
+test('fastify.view with ejs engine, missing template file', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: ejs
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view('./missing.html', {}, err => {
+      t.ok(err instanceof Error)
+      t.is(err.message, `ENOENT: no such file or directory, open '${path.join(__dirname, '../missing.html')}'`)
+      fastify.close()
+    })
+  })
+})
+
 test('fastify.view with ejs engine and callback in production mode', t => {
   t.plan(6)
   const fastify = Fastify()

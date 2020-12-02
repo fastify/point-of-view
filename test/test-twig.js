@@ -4,15 +4,9 @@ const t = require('tap')
 const test = t.test
 const sget = require('simple-get').concat
 const Fastify = require('fastify')
-const minifier = require('html-minifier')
-const minifierOpts = {
-  removeComments: true,
-  removeCommentsFromCDATA: true,
-  collapseWhitespace: true,
-  collapseBooleanAttributes: true,
-  removeAttributeQuotes: true,
-  removeEmptyAttributes: true
-}
+
+require('./helper').twigHtmlMinifierTests(t, true)
+require('./helper').twigHtmlMinifierTests(t, false)
 
 test('reply.view with twig engine', t => {
   t.plan(7)
@@ -365,46 +359,6 @@ test('reply.view for twig engine with data-parameter and reply.locals and defaul
   })
 })
 
-test('reply.view with twig engine and html-minifier', t => {
-  t.plan(7)
-  const fastify = Fastify()
-  const Twig = require('twig')
-  const data = { title: 'fastify', text: 'text' }
-
-  fastify.register(require('../index'), {
-    engine: {
-      twig: Twig
-    },
-    options: {
-      useHtmlMinifier: minifier,
-      htmlMinifierOptions: minifierOpts
-    }
-  })
-
-  fastify.get('/', (req, reply) => {
-    reply.view('./templates/index.twig', data)
-  })
-
-  fastify.listen(0, err => {
-    t.error(err)
-
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      Twig.renderFile('./templates/index.twig', data, (err, html) => {
-        t.error(err)
-        t.strictEqual(minifier.minify(html, minifierOpts), body.toString())
-      })
-      fastify.close()
-    })
-  })
-})
-
 test('reply.view with twig engine, will preserve content-type', t => {
   t.plan(7)
   const fastify = Fastify()
@@ -437,6 +391,62 @@ test('reply.view with twig engine, will preserve content-type', t => {
         t.error(err)
         t.strictEqual(html, body.toString())
       })
+      fastify.close()
+    })
+  })
+})
+
+test('fastify.view with twig engine, should throw page missing', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const Twig = require('twig')
+
+  fastify.register(require('../index'), {
+    engine: {
+      twig: Twig
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view(null, {}, err => {
+      t.ok(err instanceof Error)
+      t.is(err.message, 'Missing page')
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with twig engine should return 500 if renderFile fails', t => {
+  t.plan(4)
+  const fastify = Fastify()
+  const Twig = {
+    renderFile: (_, __, callback) => { callback(Error('RenderFile Error')) }
+  }
+
+  fastify.register(require('../index'), {
+    engine: {
+      twig: Twig
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index.twig')
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      const { message } = JSON.parse(body.toString())
+      t.error(err)
+      t.strictEqual(response.statusCode, 500)
+      t.strictEqual('RenderFile Error', message)
+
       fastify.close()
     })
   })

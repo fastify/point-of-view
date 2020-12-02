@@ -440,3 +440,59 @@ test('fastify.view with art-template engine and full path templates folder', t =
     })
   })
 })
+
+test('fastify.view with art-template should throw page missing', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const art = require('art-template')
+
+  fastify.register(require('../index'), {
+    engine: {
+      'art-template': art
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view(null, {}, err => {
+      t.ok(err instanceof Error)
+      t.is(err.message, 'Missing page')
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with art-template should return 500 if render fails', t => {
+  t.plan(4)
+  const fastify = Fastify()
+  const art = {
+    compile: () => { throw Error('Compile Error') }
+  }
+
+  fastify.register(require('../index'), {
+    engine: {
+      'art-template': art
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index')
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      const { message } = JSON.parse(body.toString())
+      t.error(err)
+      t.strictEqual(response.statusCode, 500)
+      t.strictEqual('Compile Error', message)
+
+      fastify.close()
+    })
+  })
+})
