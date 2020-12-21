@@ -286,6 +286,14 @@ fastify.addHook('preHandler', function (request, reply, done) {
 ```
 Properties from `reply.locals` will override those from `defaultContext`, but not from `data` parameter provided to `reply.view(template, data)` function.
 
+To require `point-of-view` as a dependency to a [fastify-plugin](https://github.com/fastify/fastify-plugin) add the name `point-of-view` to the depencencies array in the [plugin's opts](https://github.com/fastify/fastify-plugin#dependencies).
+
+```
+  {
+    dependencies: ['point-of-view] 
+  }
+```
+
 <a name="note"></a>
 ## Note
 

@@ -174,3 +174,24 @@ test('register callback should throw if layout option provided with wrong engine
     t.is(err.message, 'Only Handlebars, EJS, and Eta support the "layout" option')
   })
 })
+
+test('plugin is registered with "point-of-view" name', t => {
+  t.plan(2)
+  const fastify = Fastify()
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: require('ejs')
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    const kRegistedPlugins = Symbol.for('registered-plugin')
+    const registeredPlugins = fastify[kRegistedPlugins]
+    t.ok(registeredPlugins.find(name => name === 'point-of-view'))
+
+    fastify.close()
+  })
+})

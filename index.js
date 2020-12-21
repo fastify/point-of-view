@@ -600,4 +600,7 @@ function fastifyView (fastify, opts, next) {
   }
 }
 
-module.exports = fp(fastifyView, { fastify: '>=3.x' })
+module.exports = fp(fastifyView, {
+  fastify: '>=3.x',
+  name: 'point-of-view'
+})
