@@ -63,7 +63,7 @@ function fastifyView (fastify, opts, next) {
 
   const renderer = renders[type] ? renders[type] : renders._default
 
-  const viewDecorator = function () {
+  function viewDecorator () {
     const args = Array.from(arguments)
 
     let done

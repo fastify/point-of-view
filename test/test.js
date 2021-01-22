@@ -1,5 +1,6 @@
 'use strict'
 
+const os = require('os')
 const t = require('tap')
 const test = t.test
 const sget = require('simple-get').concat
@@ -44,8 +45,8 @@ test('fastify.view.clearCache exist', t => {
 })
 
 test('fastify.view.clearCache clears cache', t => {
-  t.plan(10)
-  const templatesFolder = path.join(__dirname, '..', 'tmp')
+  t.plan(9)
+  const templatesFolder = path.join(os.tmpdir(), 'fastify')
   try {
     fs.mkdirSync(templatesFolder)
   } catch {}
@@ -67,7 +68,6 @@ test('fastify.view.clearCache clears cache', t => {
 
   fastify.listen(0, err => {
     t.error(err)
-    t.ok(fastify.view.clearCache)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port + '/view-cache-test'
