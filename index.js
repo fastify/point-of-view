@@ -63,7 +63,7 @@ function fastifyView (fastify, opts, next) {
 
   const renderer = renders[type] ? renders[type] : renders._default
 
-  fastify.decorate('view', function () {
+  const viewDecorator = function () {
     const args = Array.from(arguments)
 
     let done
@@ -92,7 +92,13 @@ function fastifyView (fastify, opts, next) {
     }
 
     return promise
-  })
+  }
+
+  viewDecorator.clearCache = function () {
+    lru.clear()
+  }
+
+  fastify.decorate('view', viewDecorator)
 
   fastify.decorateReply('view', function () {
     renderer.apply(this, arguments)
