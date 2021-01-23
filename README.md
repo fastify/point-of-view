@@ -294,7 +294,7 @@ fastify.register(myViewRendererPlugin,   {
 })
 ```
 
-To forcefully clear cache when in production mode, call the ```view.clearCache()``` function.
+To forcefully clear cache when in production mode, call the `view.clearCache()` function.
 
 ```js
 fastify.view.clearCache()

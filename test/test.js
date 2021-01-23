@@ -45,7 +45,7 @@ test('fastify.view.clearCache exist', t => {
 })
 
 test('fastify.view.clearCache clears cache', t => {
-  t.plan(9)
+  t.plan(13)
   const templatesFolder = path.join(os.tmpdir(), 'fastify')
   try {
     fs.mkdirSync(templatesFolder)
@@ -76,7 +76,6 @@ test('fastify.view.clearCache clears cache', t => {
       t.strictEqual(response.headers['content-length'], '' + body.length)
       t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       fs.writeFileSync(path.join(templatesFolder, 'cache_clear_test.ejs'), '<html><body><span>456</span></body></<html>')
-      fastify.view.clearCache()
       const output = body.toString()
       sget({
         method: 'GET',
@@ -85,9 +84,19 @@ test('fastify.view.clearCache clears cache', t => {
         t.error(err)
         t.strictEqual(response.headers['content-length'], '' + body.length)
         t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.notStrictEqual(output, body.toString())
-        t.contains(body.toString(), '456')
-        fastify.close()
+        t.strictEqual(output, body.toString())
+        fastify.view.clearCache()
+        sget({
+          method: 'GET',
+          url: 'http://localhost:' + fastify.server.address().port + '/view-cache-test'
+        }, (err, response, body) => {
+          t.error(err)
+          t.strictEqual(response.headers['content-length'], '' + body.length)
+          t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+          t.notStrictEqual(output, body.toString())
+          t.contains(body.toString(), '456')
+          fastify.close()
+        })
       })
     })
   })
