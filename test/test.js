@@ -1,5 +1,6 @@
 'use strict'
 
+const os = require('os')
 const t = require('tap')
 const test = t.test
 const sget = require('simple-get').concat
@@ -22,6 +23,82 @@ test('fastify.view exist', t => {
     t.ok(fastify.view)
 
     fastify.close()
+  })
+})
+
+test('fastify.view.clearCache exist', t => {
+  t.plan(2)
+  const fastify = Fastify()
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: require('ejs')
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+    t.ok(fastify.view.clearCache)
+
+    fastify.close()
+  })
+})
+
+test('fastify.view.clearCache clears cache', t => {
+  t.plan(13)
+  const templatesFolder = path.join(os.tmpdir(), 'fastify')
+  try {
+    fs.mkdirSync(templatesFolder)
+  } catch {}
+  fs.writeFileSync(path.join(templatesFolder, 'cache_clear_test.ejs'), '<html><body><span>123</span></body></<html>')
+  const fastify = Fastify()
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: require('ejs')
+    },
+    includeViewExtension: true,
+    templates: templatesFolder,
+    production: true
+  })
+
+  fastify.get('/view-cache-test', (req, reply) => {
+    reply.type('text/html; charset=utf-8').view('cache_clear_test')
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port + '/view-cache-test'
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      fs.writeFileSync(path.join(templatesFolder, 'cache_clear_test.ejs'), '<html><body><span>456</span></body></<html>')
+      const output = body.toString()
+      sget({
+        method: 'GET',
+        url: 'http://localhost:' + fastify.server.address().port + '/view-cache-test'
+      }, (err, response, body) => {
+        t.error(err)
+        t.strictEqual(response.headers['content-length'], '' + body.length)
+        t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.strictEqual(output, body.toString())
+        fastify.view.clearCache()
+        sget({
+          method: 'GET',
+          url: 'http://localhost:' + fastify.server.address().port + '/view-cache-test'
+        }, (err, response, body) => {
+          t.error(err)
+          t.strictEqual(response.headers['content-length'], '' + body.length)
+          t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+          t.notStrictEqual(output, body.toString())
+          t.contains(body.toString(), '456')
+          fastify.close()
+        })
+      })
+    })
   })
 })
 
