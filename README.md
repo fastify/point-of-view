@@ -76,6 +76,17 @@ fastify.view('/templates/index.ejs', { text: 'text' }, (err, html) => {
 })
 ```
 
+If you want to change the decorator:
+```js
+fastify.register(require('point-of-view'), {
+  engine: {
+    ejs: require('ejs')
+  },
+  propertyName: 'otherView'
+})
+const html = await fastify.otherView('/templates/index.ejs', { text: 'text' })
+```
+
 If you want to set a fixed templates folder, or pass some options to the template engines:
 ```js
 fastify.register(require('point-of-view'), {
