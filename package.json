@@ -51,7 +51,7 @@
     "html-minifier": "^4.0.0",
     "html-minify-stream": "^2.0.0",
     "liquidjs": "^9.15.1",
-    "marko": "^4.21.8",
+    "marko": "^5.1.2",
     "mustache": "^4.0.1",
     "nunjucks": "^3.2.1",
     "pino": "^6.7.0",
