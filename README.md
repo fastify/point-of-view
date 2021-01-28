@@ -76,7 +76,7 @@ fastify.view('/templates/index.ejs', { text: 'text' }, (err, html) => {
 })
 ```
 
-Like having 2 different declarations with different propertynames calling different partials?
+Like having 2 different declarations with different propertynames calling different partials:
 ```js
 fastify.register(require('../index'), {
   engine: { ejs: ejs },
