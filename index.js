@@ -25,6 +25,7 @@ function fastifyView (fastify, opts, next) {
   }
 
   const charset = opts.charset || 'utf-8'
+  const propertyName = opts.propertyName || 'view'
   const engine = opts.engine[type]
   const options = opts.options || {}
   const templatesDir = opts.root || resolve(opts.templates || './')
@@ -98,9 +99,9 @@ function fastifyView (fastify, opts, next) {
     lru.clear()
   }
 
-  fastify.decorate('view', viewDecorator)
+  fastify.decorate(propertyName, viewDecorator)
 
-  fastify.decorateReply('view', function () {
+  fastify.decorateReply(propertyName, function () {
     renderer.apply(this, arguments)
     return this
   })

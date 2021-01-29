@@ -168,6 +168,62 @@ test('reply.view can be returned from async function to indicate response proces
   })
 })
 
+test('reply.view with ejs engine and custom propertyName', t => {
+  t.plan(11)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: ejs
+    },
+    root: path.join(__dirname, '../templates'),
+    layout: 'layout.html',
+    propertyName: 'mobile'
+  })
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: ejs
+    },
+    root: path.join(__dirname, '../templates'),
+    layout: 'layout.html',
+    propertyName: 'desktop'
+  })
+
+  fastify.get('/', async (req, reply) => {
+    const text = req.headers['user-agent']
+    return reply[text]('index-for-layout.ejs', { text })
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port,
+      headers: { 'user-agent': 'mobile' }
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), { text: 'mobile' }), body.toString())
+      sget({
+        method: 'GET',
+        url: 'http://localhost:' + fastify.server.address().port,
+        headers: { 'user-agent': 'desktop' }
+      }, (err, response, body) => {
+        t.error(err)
+        t.strictEqual(response.statusCode, 200)
+        t.strictEqual(response.headers['content-length'], '' + body.length)
+        t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), { text: 'desktop' }), body.toString())
+        fastify.close()
+      })
+    })
+  })
+})
+
 test('reply.view should return 500 if page is missing', t => {
   t.plan(3)
   const fastify = Fastify()

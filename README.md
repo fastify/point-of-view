@@ -76,6 +76,20 @@ fastify.view('/templates/index.ejs', { text: 'text' }, (err, html) => {
 })
 ```
 
+Like having 2 different declarations with different propertynames calling different partials:
+```js
+fastify.register(require('../index'), {
+  engine: { ejs: ejs },
+  layout: './templates/layout-mobile.ejs'
+  propertyName: 'mobile'
+})
+fastify.register(require('../index'), {
+  engine: { ejs: ejs },
+  layout: './templates/layout-desktop.ejs'
+  propertyName: 'desktop'
+})
+```
+
 If you want to set a fixed templates folder, or pass some options to the template engines:
 ```js
 fastify.register(require('point-of-view'), {
