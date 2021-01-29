@@ -183,6 +183,13 @@ function fastifyView (fastify, opts, next) {
 
       let compiledPage
       try {
+        if ((type === 'ejs') && viewExt && !options.includer) {
+          options.includer = (originalPath, parsedPath) => {
+            return {
+              filename: parsedPath || join(templatesDir, originalPath + '.' + viewExt)
+            }
+          }
+        }
         options.filename = join(templatesDir, page)
         compiledPage = engine.compile(html, options)
       } catch (error) {
