@@ -3,6 +3,9 @@
   "version": "4.11.0",
   "description": "Template plugin for Fastify",
   "main": "index.js",
+  "files": [
+    "index.js"
+  ],
   "scripts": {
     "example": "node example.js",
     "example-with-options": "node example-ejs-with-some-options.js",
