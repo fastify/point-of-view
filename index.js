@@ -595,7 +595,7 @@ function fastifyView (fastify, opts, next) {
             }
 
             data = Object.assign((data || {}), { body: result })
-            
+
             render.call(that, layoutFileName, data, opts)
           }
         }, page, data, opts)
