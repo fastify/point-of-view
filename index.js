@@ -584,6 +584,8 @@ function fastifyView (fastify, opts, next) {
       return function (page, data, opts) {
         const that = this
 
+        data = Object.assign({}, defaultCtx, this.locals, data)
+        
         render.call({
           getHeader: () => { },
           header: () => { },
