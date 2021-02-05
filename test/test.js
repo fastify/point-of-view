@@ -168,6 +168,46 @@ test('reply.view can be returned from async function to indicate response proces
   })
 })
 
+test('Possibility to access res.locals variable across all views', t => {
+  t.plan(6)
+  const fastify = Fastify()
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: require('ejs')
+    },
+    root: path.join(__dirname, '../templates'),
+    layout: 'index-layout-body',
+    viewExt: 'ejs'
+  })
+
+  fastify.addHook('preHandler', async function (req, reply) {
+    reply.locals = {
+      content: 'ok'
+    }
+  })
+
+  fastify.get('/', async (req, reply) => {
+    return reply.view('index-layout-content')
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual('ok', body.toString().trim())
+      fastify.close()
+    })
+  })
+})
+
 test('Default extension for ejs', t => {
   t.plan(6)
   const fastify = Fastify()
