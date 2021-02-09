@@ -377,7 +377,7 @@ test('register callback should throw if layout option provided with wrong engine
     layout: 'template'
   }).ready(err => {
     t.ok(err instanceof Error)
-    t.is(err.message, 'Only Handlebars, EJS, and Eta support the "layout" option')
+    t.is(err.message, 'Only Dot, Handlebars, EJS, and Eta support the "layout" option')
   })
 })
 

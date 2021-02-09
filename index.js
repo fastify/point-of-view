@@ -36,12 +36,12 @@ function fastifyView (fastify, opts, next) {
   const defaultCtx = opts.defaultContext || {}
   const layoutFileName = opts.layout
 
-  if (layoutFileName && type !== 'handlebars' && type !== 'ejs' && type !== 'eta') {
-    next(new Error('Only Handlebars, EJS, and Eta support the "layout" option'))
+  if (layoutFileName && type !== 'dot' && type !== 'handlebars' && type !== 'ejs' && type !== 'eta') {
+    next(new Error('Only Dot, Handlebars, EJS, and Eta support the "layout" option'))
     return
   }
 
-  if (layoutFileName && !hasAccessToLayoutFile(layoutFileName)) {
+  if (layoutFileName && !hasAccessToLayoutFile(layoutFileName + ((type === 'dot') ? '.dot' : ''))) {
     next(new Error(`unable to access template "${layoutFileName}"`))
     return
   }
@@ -57,7 +57,7 @@ function fastifyView (fastify, opts, next) {
     'art-template': viewArtTemplate,
     twig: viewTwig,
     liquid: viewLiquid,
-    dot: dotRender,
+    dot: withLayout(dotRender),
     eta: withLayout(viewEta),
     _default: view
   }

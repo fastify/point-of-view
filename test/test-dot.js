@@ -447,3 +447,38 @@ test('fastify.view with dot engine, should throw page missing', t => {
     })
   })
 })
+
+test('reply.view with dot engine with layout option', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const engine = require('dot')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      dot: engine
+    },
+    root: 'templates',
+    layout: 'layout'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('testdot', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.strictEqual(response.statusCode, 200)
+      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.strictEqual('header: textfoo text1 <p>foo</p>footer', body.toString())
+      fastify.close()
+    })
+  })
+})
