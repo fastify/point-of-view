@@ -31,6 +31,7 @@ export interface PointOfViewOptions {
   layout?: string;
   root?: string;
   viewExt?: string;
+  propertyName?: string;
 }
 
 declare const pointOfView: FastifyPlugin<PointOfViewOptions>;
