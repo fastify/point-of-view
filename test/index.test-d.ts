@@ -36,4 +36,4 @@ app.listen(3000, (err, address) => {
   console.log(`server listening on ${address} ...`)
 })
 
-expectAssignable<PointOfViewOptions>({engine: {twig: require('twig') } })
+expectAssignable<PointOfViewOptions>({engine: {twig: require('twig') }, propertyName: 'mobile' })
