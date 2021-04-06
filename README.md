@@ -11,8 +11,8 @@ Currently supports the following templates engines:
 - [`ejs`](https://ejs.co/)
 - [`nunjucks`](https://mozilla.github.io/nunjucks/)
 - [`pug`](https://pugjs.org/api/getting-started.html)
-- [`handlebars`](http://handlebarsjs.com/)
-- [`marko`](http://markojs.com/)
+- [`handlebars`](https://handlebarsjs.com/)
+- [`marko`](https://markojs.com/)
 - [`mustache`](https://mustache.github.io/)
 - [`art-template`](https://aui.github.io/art-template/)
 - [`twig`](https://twig.symfony.com/)
@@ -324,8 +324,8 @@ but you can specify a different value using the type function of reply, or by sp
 ## Acknowledgements
 
 This project is kindly sponsored by:
-- [nearForm](http://nearform.com)
-- [LetzDoIt](http://www.letzdoitapp.com/)
+- [nearForm](https://nearform.com)
+- [LetzDoIt](https://www.letzdoitapp.com/)
 
 ## License
 
