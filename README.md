@@ -1,7 +1,9 @@
 # point-of-view
 
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)
-![](https://github.com/fastify/point-of-view/workflows/ci/badge.svg)
+![CI](https://github.com/fastify/point-of-view/workflows/CI/badge.svg)
+[![NPM version](https://img.shields.io/npm/v/point-of-view.svg?style=flat)](https://www.npmjs.com/package/point-of-view)
+[![Known Vulnerabilities](https://snyk.io/test/github/fastify/point-of-view/badge.svg)](https://snyk.io/test/github/fastify/point-of-view)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
 Templates rendering plugin support for Fastify.
 
@@ -11,8 +13,8 @@ Currently supports the following templates engines:
 - [`ejs`](https://ejs.co/)
 - [`nunjucks`](https://mozilla.github.io/nunjucks/)
 - [`pug`](https://pugjs.org/api/getting-started.html)
-- [`handlebars`](http://handlebarsjs.com/)
-- [`marko`](http://markojs.com/)
+- [`handlebars`](https://handlebarsjs.com/)
+- [`marko`](https://markojs.com/)
 - [`mustache`](https://mustache.github.io/)
 - [`art-template`](https://aui.github.io/art-template/)
 - [`twig`](https://twig.symfony.com/)
@@ -288,7 +290,7 @@ The optional boolean property `production` will override environment variable `N
   }
 ```
 
-If you want to provide data which will be depended on e.g. request and available in all views you have to add property `locals` to `reply` object, like in the example below:
+If you want to provide data, which will be depended on by a request and available in all views, you have to add property `locals` to `reply` object, like in the example below:
 ```js
 fastify.addHook('preHandler', function (request, reply, done) {
   reply.locals = {
@@ -324,8 +326,8 @@ but you can specify a different value using the type function of reply, or by sp
 ## Acknowledgements
 
 This project is kindly sponsored by:
-- [nearForm](http://nearform.com)
-- [LetzDoIt](http://www.letzdoitapp.com/)
+- [nearForm](https://nearform.com)
+- [LetzDoIt](https://www.letzdoitapp.com/)
 
 ## License
 
