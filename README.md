@@ -1,7 +1,9 @@
 # point-of-view
 
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)
-![](https://github.com/fastify/point-of-view/workflows/ci/badge.svg)
+![CI](https://github.com/fastify/point-of-view/workflows/CI/badge.svg)
+[![NPM version](https://img.shields.io/npm/v/point-of-view.svg?style=flat)](https://www.npmjs.com/package/point-of-view)
+[![Known Vulnerabilities](https://snyk.io/test/github/fastify/point-of-view/badge.svg)](https://snyk.io/test/github/fastify/point-of-view)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
 Templates rendering plugin support for Fastify.
 
