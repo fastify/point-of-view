@@ -94,7 +94,7 @@ test('fastify.view.clearCache clears cache', t => {
           t.equal(response.headers['content-length'], '' + body.length)
           t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
           t.not(output, body.toString())
-          t.contains(body.toString(), '456')
+          t.match(body.toString(), '456')
           fastify.close()
         })
       })
