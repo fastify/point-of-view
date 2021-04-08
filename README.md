@@ -187,11 +187,11 @@ fastify.get('/', (req, reply) => {
 })
 ```
 
-To configure nunjunks environment after initialisation, you can pass callback function to options:
+To configure nunjucks environment after initialisation, you can pass callback function to options:
 ```js
   options: {
     onConfigure: (env) => {
-      // do whatever you want on nunjunks env
+      // do whatever you want on nunjucks env
     }
 
   }
