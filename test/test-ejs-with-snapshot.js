@@ -39,15 +39,15 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.headers['content-length'], '' + body.length)
 
       let content = null
       ejs.renderFile(path.join(templatesFolder, 'index-linking-other-pages.ejs'), data, options, function (err, str) {
         content = str
         t.error(err)
-        t.strictEqual(content.length, body.length)
+        t.equal(content.length, body.length)
       })
       t.matchSnapshot(content.replace(/\r?\n/g, ''), 'output') // normalize new lines for cross-platform
 
@@ -83,15 +83,15 @@ test('reply.view with ejs engine, templates with folder specified, include files
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.headers['content-length'], '' + body.length)
 
       let content = null
       ejs.renderFile(path.join(templatesFolder, 'index.ejs'), data, options, function (err, str) {
         content = str
         t.error(err)
-        t.strictEqual(content.length, body.length)
+        t.equal(content.length, body.length)
       })
       t.matchSnapshot(content.replace(/\r?\n/g, ''), 'output') // normalize new lines for cross-platform
 
@@ -127,15 +127,15 @@ test('reply.view with ejs engine, templates with folder specified, include files
       url: 'http://localhost:' + fastify.server.address().port + '/include-test'
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.headers['content-length'], '' + body.length)
 
       let content = null
       ejs.renderFile(path.join(templatesFolder, 'index-with-includes.ejs'), data, options, function (err, str) {
         content = str
         t.error(err)
-        t.strictEqual(content.length, body.length)
+        t.equal(content.length, body.length)
       })
       t.matchSnapshot(content.replace(/\r?\n/g, ''), 'output') // normalize new lines for cross-platform
 
@@ -171,15 +171,15 @@ test('reply.view with ejs engine, templates with folder specified, include files
       url: 'http://localhost:' + fastify.server.address().port + '/include-one-include-missing-test'
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 500)
-      t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
-      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.equal(response.statusCode, 500)
+      t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
+      t.equal(response.headers['content-length'], '' + body.length)
 
       let content = null
       ejs.renderFile(path.join(templatesFolder, 'index-with-includes-one-missing.ejs'), data, options, function (err, str) {
         content = str
         t.type(err, Error) // expected Error here ...
-        t.strictEqual(content, undefined)
+        t.equal(content, undefined)
       })
       t.matchSnapshot(content, 'output')
 
@@ -215,15 +215,15 @@ test('reply.view with ejs engine, templates with folder specified, include files
       url: 'http://localhost:' + fastify.server.address().port + '/include-one-attribute-missing-test'
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 500)
-      t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
-      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.equal(response.statusCode, 500)
+      t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
+      t.equal(response.headers['content-length'], '' + body.length)
 
       let content = null
       ejs.renderFile(path.join(templatesFolder, 'index-with-includes-and-attribute-missing.ejs'), data, options, function (err, str) {
         content = str
         t.type(err, Error) // expected Error here ...
-        t.strictEqual(content, undefined)
+        t.equal(content, undefined)
       })
       t.matchSnapshot(content, 'output')
 

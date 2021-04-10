@@ -31,13 +31,13 @@ test('reply.view with art-template engine and custom templates folder', t => {
       url: 'http://127.0.0.1:10086/'
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
 
       const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-      t.strictEqual(art(templatePath, data), body.toString())
+      t.equal(art(templatePath, data), body.toString())
       fastify.close()
     })
   })
@@ -67,13 +67,13 @@ test('reply.view for art-template without data-parameter and defaultContext', t 
       url: 'http://127.0.0.1:10086/'
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
 
       const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-      t.strictEqual(art(templatePath, {}), body.toString())
+      t.equal(art(templatePath, {}), body.toString())
       fastify.close()
     })
   })
@@ -105,13 +105,13 @@ test('reply.view for art-template without data-parameter but with defaultContext
       url: 'http://127.0.0.1:10086/'
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
 
       const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-      t.strictEqual(art(templatePath, data), body.toString())
+      t.equal(art(templatePath, data), body.toString())
       fastify.close()
     })
   })
@@ -143,13 +143,13 @@ test('reply.view with art-template engine and defaultContext', t => {
       url: 'http://127.0.0.1:10086/'
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
 
       const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-      t.strictEqual(art(templatePath, data), body.toString())
+      t.equal(art(templatePath, data), body.toString())
       fastify.close()
     })
   })
@@ -184,13 +184,13 @@ test('reply.view for art-template engine without data-parameter and defaultConte
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
 
       const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-      t.strictEqual(art(templatePath, localsData), body.toString())
+      t.equal(art(templatePath, localsData), body.toString())
       fastify.close()
     })
   })
@@ -226,13 +226,13 @@ test('reply.view for art-template engine without defaultContext but with reply.l
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
 
       const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-      t.strictEqual(art(templatePath, data), body.toString())
+      t.equal(art(templatePath, data), body.toString())
       fastify.close()
     })
   })
@@ -269,13 +269,13 @@ test('reply.view for art-template engine without data-parameter but with reply.l
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
 
       const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-      t.strictEqual(art(templatePath, localsData), body.toString())
+      t.equal(art(templatePath, localsData), body.toString())
       fastify.close()
     })
   })
@@ -313,13 +313,13 @@ test('reply.view for art-template engine with data-parameter and reply.locals an
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
 
       const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-      t.strictEqual(art(templatePath, data), body.toString())
+      t.equal(art(templatePath, data), body.toString())
       fastify.close()
     })
   })
@@ -351,13 +351,13 @@ test('reply.view with art-template engine and full path templates folder', t => 
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
 
       const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-      t.strictEqual(art(templatePath, data), body.toString())
+      t.equal(art(templatePath, data), body.toString())
       fastify.close()
     })
   })
@@ -389,13 +389,13 @@ test('reply.view with art-template engine and includeViewExtension is true', t =
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
 
       const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-      t.strictEqual(art(templatePath, data), body.toString())
+      t.equal(art(templatePath, data), body.toString())
       fastify.close()
     })
   })
@@ -430,12 +430,12 @@ test('fastify.view with art-template engine and full path templates folder', t =
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-type'], 'text/plain; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-type'], 'text/plain; charset=utf-8')
 
       const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-      t.strictEqual(art(templatePath, data), body.toString())
+      t.equal(art(templatePath, data), body.toString())
       fastify.close()
     })
   })
@@ -457,7 +457,7 @@ test('fastify.view with art-template should throw page missing', t => {
 
     fastify.view(null, {}, err => {
       t.ok(err instanceof Error)
-      t.is(err.message, 'Missing page')
+      t.equal(err.message, 'Missing page')
       fastify.close()
     })
   })
@@ -489,8 +489,8 @@ test('reply.view with art-template should return 500 if render fails', t => {
     }, (err, response, body) => {
       const { message } = JSON.parse(body.toString())
       t.error(err)
-      t.strictEqual(response.statusCode, 500)
-      t.strictEqual('Compile Error', message)
+      t.equal(response.statusCode, 500)
+      t.equal('Compile Error', message)
 
       fastify.close()
     })

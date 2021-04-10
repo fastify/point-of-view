@@ -1,6 +1,6 @@
-esm: false
 ts: false
 jsx: false
 flow: false
 coverage: true
 nyc-arg: [--exclude=out]
+check-coverage: false

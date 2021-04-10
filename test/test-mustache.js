@@ -40,10 +40,10 @@ test('reply.view with mustache engine', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -74,10 +74,10 @@ test('reply.view for mustache without data-parameter but defaultContext', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -107,10 +107,10 @@ test('reply.view for mustache without data-parameter and without defaultContext'
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(mustache.render(fs.readFileSync('./templates/index-bare.html', 'utf8')), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(mustache.render(fs.readFileSync('./templates/index-bare.html', 'utf8')), body.toString())
       fastify.close()
     })
   })
@@ -141,10 +141,10 @@ test('reply.view with mustache engine and defaultContext', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -179,10 +179,10 @@ test('reply.view for mustache engine without data-parameter and defaultContext b
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), localsData), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), localsData), body.toString())
       fastify.close()
     })
   })
@@ -218,10 +218,10 @@ test('reply.view for mustache engine without defaultContext but with reply.local
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -258,10 +258,10 @@ test('reply.view for mustache engine without data-parameter but with reply.local
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), localsData), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), localsData), body.toString())
       fastify.close()
     })
   })
@@ -299,10 +299,10 @@ test('reply.view for mustache engine with data-parameter and reply.locals and de
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -331,10 +331,10 @@ test('reply.view with mustache engine with partials', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, replyBody) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + replyBody.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), replyBody.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + replyBody.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), replyBody.toString())
       fastify.close()
     })
   })
@@ -374,10 +374,10 @@ test('reply.view with mustache engine with partials in production mode should us
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, replyBody) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], String(replyBody.length))
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual('<div>Cached Response</div>', replyBody.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], String(replyBody.length))
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal('<div>Cached Response</div>', replyBody.toString())
       fastify.close()
     })
   })
@@ -410,10 +410,10 @@ test('reply.view with mustache engine with partials and html-minifier', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, replyBody) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + replyBody.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(minifier.minify(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), minifierOpts), replyBody.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + replyBody.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(minifier.minify(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), minifierOpts), replyBody.toString())
       fastify.close()
     })
   })
@@ -445,10 +445,10 @@ test('reply.view with mustache engine, template folder specified', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -479,10 +479,10 @@ test('reply.view with mustache engine, template folder specified with partials',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, replyBody) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + replyBody.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), replyBody.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + replyBody.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), replyBody.toString())
       fastify.close()
     })
   })
@@ -512,9 +512,9 @@ test('reply.view with mustache engine, missing template file', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 500)
-      t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
-      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.equal(response.statusCode, 500)
+      t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
+      t.equal(response.headers['content-length'], '' + body.length)
       fastify.close()
     })
   })
@@ -543,9 +543,9 @@ test('reply.view with mustache engine, with partials missing template file', t =
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 500)
-      t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
-      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.equal(response.statusCode, 500)
+      t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
+      t.equal(response.headers['content-length'], '' + body.length)
       fastify.close()
     })
   })
@@ -574,9 +574,9 @@ test('reply.view with mustache engine, with partials missing partials file', t =
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 500)
-      t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
-      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.equal(response.statusCode, 500)
+      t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
+      t.equal(response.headers['content-length'], '' + body.length)
       fastify.close()
     })
   })
@@ -605,9 +605,9 @@ test('reply.view with mustache engine, with partials and multiple missing partia
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 500)
-      t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
-      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.equal(response.statusCode, 500)
+      t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
+      t.equal(response.headers['content-length'], '' + body.length)
       fastify.close()
     })
   })
@@ -629,7 +629,7 @@ test('fastify.view with mustache engine, should throw page missing', t => {
 
     fastify.view(null, {}, err => {
       t.ok(err instanceof Error)
-      t.is(err.message, 'Missing page')
+      t.equal(err.message, 'Missing page')
       fastify.close()
     })
   })

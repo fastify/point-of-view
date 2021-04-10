@@ -43,10 +43,10 @@ test('reply.view with dot engine .dot file', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(body.toString(), engine.process({ path: 'templates', destination: 'out' }).testdot(data))
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(body.toString(), engine.process({ path: 'templates', destination: 'out' }).testdot(data))
       fastify.close()
     })
   })
@@ -67,7 +67,7 @@ test('reply.view with dot engine .dot file should create non-existent destinatio
     }
   })
 
-  t.tearDown(() => rmdirSync('non-existent'))
+  t.teardown(() => rmdirSync('non-existent'))
 
   fastify.get('/', (req, reply) => {
     reply.view('testdot')
@@ -75,7 +75,7 @@ test('reply.view with dot engine .dot file should create non-existent destinatio
 
   fastify.listen(0, err => {
     t.error(err)
-    t.true(existsSync('non-existent'))
+    t.ok(existsSync('non-existent'))
     fastify.close()
   })
 })
@@ -84,7 +84,7 @@ test('reply.view with dot engine .dot file should log WARN if template not found
   t.plan(2)
   const splitStream = split(JSON.parse)
   splitStream.on('data', (line) => {
-    t.is(line.msg, `WARN: no template found in ${join(__dirname, '..')}`)
+    t.equal(line.msg, `WARN: no template found in ${join(__dirname, '..')}`)
   })
   const logger = pino({ level: 'warn' }, splitStream)
   const fastify = Fastify({
@@ -93,7 +93,7 @@ test('reply.view with dot engine .dot file should log WARN if template not found
   const engine = require('dot')
   engine.log = false
 
-  t.tearDown(() => rmdirSync('empty'))
+  t.teardown(() => rmdirSync('empty'))
 
   fastify.register(require('../index'), {
     engine: {
@@ -105,7 +105,7 @@ test('reply.view with dot engine .dot file should log WARN if template not found
   })
 
   fastify.listen(0, err => {
-    t.is(err, err)
+    t.equal(err, err)
     fastify.close()
   })
 })
@@ -136,11 +136,11 @@ test('reply.view with dot engine .jst file', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.process(compileOptions)
-      t.strictEqual(body.toString(), require('../out/testjst')(data))
+      t.equal(body.toString(), require('../out/testjst')(data))
       fastify.close()
     })
   })
@@ -174,10 +174,10 @@ test('reply.view with dot engine without data-parameter but defaultContext', t =
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(body.toString(), engine.process(compileOptions).testdot(data))
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(body.toString(), engine.process(compileOptions).testdot(data))
       fastify.close()
     })
   })
@@ -209,11 +209,11 @@ test('reply.view with dot engine without data-parameter but without defaultConte
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.process(compileOptions)
-      t.strictEqual(body.toString(), engine.process(compileOptions).testdot())
+      t.equal(body.toString(), engine.process(compileOptions).testdot())
       fastify.close()
     })
   })
@@ -247,10 +247,10 @@ test('reply.view with dot engine with data-parameter and defaultContext', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(body.toString(), engine.process(compileOptions).testdot(data))
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(body.toString(), engine.process(compileOptions).testdot(data))
       fastify.close()
     })
   })
@@ -288,10 +288,10 @@ test('reply.view for dot engine without data-parameter and defaultContext but wi
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(body.toString(), engine.process(compileOptions).testdot(localsData))
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(body.toString(), engine.process(compileOptions).testdot(localsData))
       fastify.close()
     })
   })
@@ -330,10 +330,10 @@ test('reply.view for dot engine without defaultContext but with reply.locals and
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(body.toString(), engine.process(compileOptions).testdot(data))
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(body.toString(), engine.process(compileOptions).testdot(data))
       fastify.close()
     })
   })
@@ -373,10 +373,10 @@ test('reply.view for dot engine without data-parameter but with reply.locals and
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(body.toString(), engine.process(compileOptions).testdot(localsData))
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(body.toString(), engine.process(compileOptions).testdot(localsData))
       fastify.close()
     })
   })
@@ -416,10 +416,10 @@ test('reply.view for dot engine with data-parameter and reply.locals and default
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(body.toString(), engine.process(compileOptions).testdot(data))
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(body.toString(), engine.process(compileOptions).testdot(data))
       fastify.close()
     })
   })
@@ -442,7 +442,7 @@ test('fastify.view with dot engine, should throw page missing', t => {
 
     fastify.view(null, {}, err => {
       t.ok(err instanceof Error)
-      t.is(err.message, 'Missing page')
+      t.equal(err.message, 'Missing page')
       fastify.close()
     })
   })
@@ -474,10 +474,10 @@ test('reply.view with dot engine with layout option', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual('header: textfoo text1 <p>foo</p>footer', body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal('header: textfoo text1 <p>foo</p>footer', body.toString())
       fastify.close()
     })
   })

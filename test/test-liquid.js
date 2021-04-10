@@ -34,13 +34,13 @@ test('reply.view with liquid engine', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/index.liquid', data)
         .then((html) => {
           t.error(err)
-          t.strictEqual(html, body.toString())
+          t.equal(html, body.toString())
         })
       fastify.close()
     })
@@ -74,13 +74,13 @@ test('reply.view with liquid engine without data-parameter but defaultContext', 
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/index.liquid', data)
         .then((html) => {
           t.error(err)
-          t.strictEqual(html, body.toString())
+          t.equal(html, body.toString())
         })
       fastify.close()
     })
@@ -112,13 +112,13 @@ test('reply.view with liquid engine without data-parameter but without defaultCo
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/index.liquid')
         .then((html) => {
           t.error(err)
-          t.strictEqual(html, body.toString())
+          t.equal(html, body.toString())
         })
       fastify.close()
     })
@@ -152,13 +152,13 @@ test('reply.view with liquid engine with data-parameter and defaultContext', t =
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/index.liquid', data)
         .then((html) => {
           t.error(err)
-          t.strictEqual(html, body.toString())
+          t.equal(html, body.toString())
         })
       fastify.close()
     })
@@ -196,13 +196,13 @@ test('reply.view for liquid engine without data-parameter and defaultContext but
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/index.liquid', localsData)
         .then((html) => {
           t.error(err)
-          t.strictEqual(html, body.toString())
+          t.equal(html, body.toString())
         })
       fastify.close()
     })
@@ -241,13 +241,13 @@ test('reply.view for liquid engine without defaultContext but with reply.locals 
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/index.liquid', data)
         .then((html) => {
           t.error(err)
-          t.strictEqual(html, body.toString())
+          t.equal(html, body.toString())
         })
       fastify.close()
     })
@@ -287,13 +287,13 @@ test('reply.view for liquid engine without data-parameter but with reply.locals 
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/index.liquid', localsData)
         .then((html) => {
           t.error(err)
-          t.strictEqual(html, body.toString())
+          t.equal(html, body.toString())
         })
       fastify.close()
     })
@@ -334,13 +334,13 @@ test('reply.view for liquid engine with data-parameter and reply.locals and defa
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/index.liquid', data)
         .then((html) => {
           t.error(err)
-          t.strictEqual(html, body.toString())
+          t.equal(html, body.toString())
         })
       fastify.close()
     })
@@ -384,13 +384,13 @@ test('reply.view with liquid engine and custom tag', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/index-with-custom-tag.liquid', data)
         .then((html) => {
           t.error(err)
-          t.strictEqual(html, body.toString())
+          t.equal(html, body.toString())
         })
       fastify.close()
     })
@@ -423,13 +423,13 @@ test('reply.view with liquid engine and double quoted variable', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/double-quotes-variable.liquid', data)
         .then((html) => {
           t.error(err)
-          t.strictEqual(html, body.toString())
+          t.equal(html, body.toString())
         })
       fastify.close()
     })
@@ -453,7 +453,7 @@ test('fastify.view with liquid engine, should throw page missing', t => {
 
     fastify.view(null, {}, err => {
       t.ok(err instanceof Error)
-      t.is(err.message, 'Missing page')
+      t.equal(err.message, 'Missing page')
       fastify.close()
     })
   })

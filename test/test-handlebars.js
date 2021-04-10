@@ -27,7 +27,7 @@ test('fastify.view with handlebars engine', t => {
     t.error(err)
 
     fastify.view('./templates/index.html', data).then(compiled => {
-      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
       fastify.close()
     })
   })
@@ -50,7 +50,7 @@ test('fastify.view for handlebars without data-parameter but defaultContext', t 
     t.error(err)
 
     fastify.view('./templates/index.html').then(compiled => {
-      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
       fastify.close()
     })
   })
@@ -71,7 +71,7 @@ test('fastify.view for handlebars without data-parameter and without defaultCont
     t.error(err)
 
     fastify.view('./templates/index.html').then(compiled => {
-      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(), compiled)
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(), compiled)
       fastify.close()
     })
   })
@@ -95,7 +95,7 @@ test('fastify.view with handlebars engine and defaultContext', t => {
     t.error(err)
 
     fastify.view('./templates/index.html', {}).then(compiled => {
-      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
       fastify.close()
     })
   })
@@ -130,10 +130,10 @@ test('reply.view for handlebars engine without data-parameter and defaultContext
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(localsData), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(localsData), body.toString())
       fastify.close()
     })
   })
@@ -169,10 +169,10 @@ test('reply.view for handlebars engine without defaultContext but with reply.loc
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
       fastify.close()
     })
   })
@@ -209,10 +209,10 @@ test('reply.view for handlebars engine without data-parameter but with reply.loc
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(localsData), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(localsData), body.toString())
       fastify.close()
     })
   })
@@ -250,10 +250,10 @@ test('reply.view for handlebars engine with data-parameter and reply.locals and 
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
       fastify.close()
     })
   })
@@ -276,7 +276,7 @@ test('fastify.view with handlebars engine and callback', t => {
 
     fastify.view('./templates/index.html', data, (err, compiled) => {
       t.error(err)
-      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
       fastify.close()
     })
   })
@@ -301,7 +301,7 @@ test('fastify.view with handlebars engine with layout option', t => {
 
     fastify.view('./templates/index-for-layout.hbs', data, (err, compiled) => {
       t.error(err)
-      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), compiled)
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), compiled)
       fastify.close()
     })
   })
@@ -331,10 +331,10 @@ test('reply.view with handlebars engine', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
       fastify.close()
     })
   })
@@ -362,8 +362,8 @@ test('reply.view with handlebars engine catches render error', t => {
     url: '/'
   }, (err, res) => {
     t.error(err)
-    t.strictEqual(JSON.parse(res.body).message, 'kaboom')
-    t.strictEqual(res.statusCode, 500)
+    t.equal(JSON.parse(res.body).message, 'kaboom')
+    t.equal(res.statusCode, 500)
   })
 })
 
@@ -392,10 +392,10 @@ test('reply.view with handlebars engine and defaultContext', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
       fastify.close()
     })
   })
@@ -426,10 +426,10 @@ test('reply.view with ejs engine and includeViewExtension property as true', t =
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -469,15 +469,15 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.headers['content-length'], '' + body.length)
 
       let content = null
       ejs.renderFile(templatesFolder + '/index-linking-other-pages.ejs', data, options, function (err, str) {
         content = str
         t.error(err)
-        t.strictEqual(content.length, body.length)
+        t.equal(content.length, body.length)
       })
 
       fastify.close()
@@ -518,15 +518,15 @@ test('reply.view with ejs engine, templates with folder specified, include files
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(response.headers['content-length'], '' + body.length)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.headers['content-length'], '' + body.length)
 
       let content = null
       ejs.renderFile(templatesFolder + '/index.ejs', data, options, function (err, str) {
         content = str
         t.error(err)
-        t.strictEqual(content.length, body.length)
+        t.equal(content.length, body.length)
       })
 
       fastify.close()
@@ -559,10 +559,10 @@ test('reply.view with handlebars engine and includeViewExtension property as tru
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), body.toString())
       fastify.close()
     })
   })
@@ -586,14 +586,14 @@ test('fastify.view with handlebars engine and callback in production mode', t =>
 
     fastify.view('./templates/index.html', data, (err, compiled) => {
       t.error(err)
-      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
 
       fastify.ready(err => {
         t.error(err)
 
         fastify.view('./templates/index.html', data, (err, compiled) => {
           t.error(err)
-          t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+          t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
           fastify.close()
         })
       })
@@ -627,10 +627,10 @@ test('reply.view with handlebars engine with partials', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, replyBody) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + replyBody.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'))(data), replyBody.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + replyBody.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'))(data), replyBody.toString())
       fastify.close()
     })
   })
@@ -662,9 +662,9 @@ test('reply.view with handlebars engine with missing partials path', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, replyBody) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 500)
-      t.strictEqual(response.headers['content-length'], String(replyBody.length))
-      t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
+      t.equal(response.statusCode, 500)
+      t.equal(response.headers['content-length'], String(replyBody.length))
+      t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
 
       fastify.close()
     })
@@ -679,11 +679,11 @@ test('reply.view with handlebars engine with partials in production mode should 
     hashlru: function () {
       return {
         get: (key) => {
-          t.is(key, 'handlebars-Partials')
+          t.equal(key, 'handlebars-Partials')
         },
         set: (key, value) => {
-          t.is(key, 'handlebars-Partials')
-          t.strictDeepEqual(value, { body: fs.readFileSync('./templates/body.hbs', 'utf8') })
+          t.equal(key, 'handlebars-Partials')
+          t.strictSame(value, { body: fs.readFileSync('./templates/body.hbs', 'utf8') })
         }
       }
     }
@@ -722,7 +722,7 @@ test('fastify.view with handlebars engine with missing partials path in producti
 
   fastify.ready(err => {
     t.ok(err instanceof Error)
-    t.is(err.message, `ENOENT: no such file or directory, open '${join(__dirname, '../non-existent')}'`)
+    t.equal(err.message, `ENOENT: no such file or directory, open '${join(__dirname, '../non-existent')}'`)
   })
 })
 
@@ -749,10 +749,10 @@ test('reply.view with handlebars engine with layout option', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, replyBody) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + replyBody.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))({}), replyBody.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + replyBody.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))({}), replyBody.toString())
       fastify.close()
     })
   })
@@ -774,7 +774,7 @@ test('fastify.view with handlebars engine, missing template file', t => {
 
     fastify.view('./missing.html', {}, err => {
       t.ok(err instanceof Error)
-      t.is(err.message, `ENOENT: no such file or directory, open '${join(__dirname, '../missing.html')}'`)
+      t.equal(err.message, `ENOENT: no such file or directory, open '${join(__dirname, '../missing.html')}'`)
       fastify.close()
     })
   })
@@ -796,7 +796,7 @@ test('fastify.view with handlebars engine should throw page missing', t => {
 
     fastify.view(null, {}, err => {
       t.ok(err instanceof Error)
-      t.is(err.message, 'Missing page')
+      t.equal(err.message, 'Missing page')
       fastify.close()
     })
   })
@@ -838,8 +838,8 @@ test('reply.view with handlebars engine should return 500 if template fails in p
     }, (err, response, body) => {
       const { message } = JSON.parse(body.toString())
       t.error(err)
-      t.strictEqual(response.statusCode, 500)
-      t.strictEqual('Template Error', message)
+      t.equal(response.statusCode, 500)
+      t.equal('Template Error', message)
 
       fastify.close()
     })

@@ -34,10 +34,10 @@ test('reply.view with pug engine', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -77,10 +77,10 @@ test('reply.view with pug engine in production mode should use cache', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], String(body.length))
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual('<div>Cached Response</div>', body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], String(body.length))
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal('<div>Cached Response</div>', body.toString())
       fastify.close()
     })
   })
@@ -110,10 +110,10 @@ test('reply.view with pug engine and includes', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(pug.renderFile('./templates/sample.pug', data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(pug.renderFile('./templates/sample.pug', data), body.toString())
       fastify.close()
     })
   })
@@ -144,10 +144,10 @@ test('reply.view for pug without data-parameter but defaultContext', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -176,10 +176,10 @@ test('reply.view for pug without data-parameter and without defaultContext', t =
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8')), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8')), body.toString())
       fastify.close()
     })
   })
@@ -210,10 +210,10 @@ test('reply.view with pug engine and defaultContext', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -248,10 +248,10 @@ test('reply.view for pug engine without data-parameter and defaultContext but wi
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), localsData), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), localsData), body.toString())
       fastify.close()
     })
   })
@@ -287,10 +287,10 @@ test('reply.view for pug engine without defaultContext but with reply.locals and
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -327,10 +327,10 @@ test('reply.view for pug engine without data-parameter but with reply.locals and
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), localsData), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), localsData), body.toString())
       fastify.close()
     })
   })
@@ -368,10 +368,10 @@ test('reply.view for pug engine with data-parameter and reply.locals and default
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -402,10 +402,10 @@ test('reply.view with pug engine, will preserve content-type', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/xml')
-      t.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/xml')
+      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -427,7 +427,7 @@ test('fastify.view with pug engine, should throw page missing', t => {
 
     fastify.view(null, {}, err => {
       t.ok(err instanceof Error)
-      t.is(err.message, 'Missing page')
+      t.equal(err.message, 'Missing page')
       fastify.close()
     })
   })
@@ -457,9 +457,9 @@ test('reply.view with pug engine, should throw error if non existent template pa
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 500)
-      t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
-      t.strictEqual(response.headers['content-length'], String(body.length))
+      t.equal(response.statusCode, 500)
+      t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
+      t.equal(response.headers['content-length'], String(body.length))
       fastify.close()
     })
   })
@@ -491,8 +491,8 @@ test('reply.view with pug engine should return 500 if compile fails', t => {
     }, (err, response, body) => {
       const { message } = JSON.parse(body.toString())
       t.error(err)
-      t.strictEqual(response.statusCode, 500)
-      t.strictEqual('Compile Error', message)
+      t.equal(response.statusCode, 500)
+      t.equal('Compile Error', message)
 
       fastify.close()
     })

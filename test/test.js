@@ -73,8 +73,8 @@ test('fastify.view.clearCache clears cache', t => {
       url: 'http://localhost:' + fastify.server.address().port + '/view-cache-test'
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
       fs.writeFileSync(path.join(templatesFolder, 'cache_clear_test.ejs'), '<html><body><span>456</span></body></<html>')
       const output = body.toString()
       sget({
@@ -82,19 +82,19 @@ test('fastify.view.clearCache clears cache', t => {
         url: 'http://localhost:' + fastify.server.address().port + '/view-cache-test'
       }, (err, response, body) => {
         t.error(err)
-        t.strictEqual(response.headers['content-length'], '' + body.length)
-        t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.strictEqual(output, body.toString())
+        t.equal(response.headers['content-length'], '' + body.length)
+        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.equal(output, body.toString())
         fastify.view.clearCache()
         sget({
           method: 'GET',
           url: 'http://localhost:' + fastify.server.address().port + '/view-cache-test'
         }, (err, response, body) => {
           t.error(err)
-          t.strictEqual(response.headers['content-length'], '' + body.length)
-          t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-          t.notStrictEqual(output, body.toString())
-          t.contains(body.toString(), '456')
+          t.equal(response.headers['content-length'], '' + body.length)
+          t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+          t.not(output, body.toString())
+          t.match(body.toString(), '456')
           fastify.close()
         })
       })
@@ -125,9 +125,9 @@ test('reply.view exist', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.deepEqual(JSON.parse(body), { hello: 'world' })
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.same(JSON.parse(body), { hello: 'world' })
       fastify.close()
     })
   })
@@ -159,10 +159,10 @@ test('reply.view can be returned from async function to indicate response proces
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -199,10 +199,10 @@ test('Possibility to access res.locals variable across all views', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual('ok', body.toString().trim())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal('ok', body.toString().trim())
       fastify.close()
     })
   })
@@ -232,10 +232,10 @@ test('Default extension for ejs', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual('ok', body.toString().trim())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal('ok', body.toString().trim())
       fastify.close()
     })
   })
@@ -277,20 +277,20 @@ test('reply.view with ejs engine and custom propertyName', t => {
       headers: { 'user-agent': 'mobile' }
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), { text: 'mobile' }), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), { text: 'mobile' }), body.toString())
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port,
         headers: { 'user-agent': 'desktop' }
       }, (err, response, body) => {
         t.error(err)
-        t.strictEqual(response.statusCode, 200)
-        t.strictEqual(response.headers['content-length'], '' + body.length)
-        t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), { text: 'desktop' }), body.toString())
+        t.equal(response.statusCode, 200)
+        t.equal(response.headers['content-length'], '' + body.length)
+        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), { text: 'desktop' }), body.toString())
         fastify.close()
       })
     })
@@ -319,7 +319,7 @@ test('reply.view should return 500 if page is missing', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 500)
+      t.equal(response.statusCode, 500)
       fastify.close()
     })
   })
@@ -333,7 +333,7 @@ test('register callback should throw if the engine is missing', t => {
 
   fastify.ready(err => {
     t.ok(err instanceof Error)
-    t.is(err.message, 'Missing engine')
+    t.equal(err.message, 'Missing engine')
   })
 })
 
@@ -347,7 +347,7 @@ test('register callback should throw if the engine is not supported', t => {
     }
   }).ready(err => {
     t.ok(err instanceof Error)
-    t.is(err.message, '\'notSupported\' not yet supported, PR? :)')
+    t.equal(err.message, '\'notSupported\' not yet supported, PR? :)')
   })
 })
 
@@ -362,7 +362,7 @@ test('register callback with handlebars engine should throw if layout file does 
     layout: './templates/does-not-exist.hbs'
   }).ready(err => {
     t.ok(err instanceof Error)
-    t.deepEqual('unable to access template "./templates/does-not-exist.hbs"', err.message)
+    t.same('unable to access template "./templates/does-not-exist.hbs"', err.message)
   })
 })
 
@@ -377,7 +377,7 @@ test('register callback should throw if layout option provided with wrong engine
     layout: 'template'
   }).ready(err => {
     t.ok(err instanceof Error)
-    t.is(err.message, 'Only Dot, Handlebars, EJS, and Eta support the "layout" option')
+    t.equal(err.message, 'Only Dot, Handlebars, EJS, and Eta support the "layout" option')
   })
 })
 

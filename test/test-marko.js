@@ -38,10 +38,10 @@ test('reply.view with marko engine', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(marko.load('./templates/index.marko').renderToString(data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(marko.load('./templates/index.marko').renderToString(data), body.toString())
       fastify.close()
     })
   })
@@ -72,10 +72,10 @@ test('reply.view for marko without data-parameter but defaultContext', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(marko.load('./templates/index.marko').renderToString(data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(marko.load('./templates/index.marko').renderToString(data), body.toString())
       fastify.close()
     })
   })
@@ -104,10 +104,10 @@ test('reply.view for marko without data-parameter but without defaultContext', t
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(marko.load('./templates/index.marko').renderToString(), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(marko.load('./templates/index.marko').renderToString(), body.toString())
       fastify.close()
     })
   })
@@ -138,10 +138,10 @@ test('reply.view with marko engine and defaultContext', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(marko.load('./templates/index.marko').renderToString(data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(marko.load('./templates/index.marko').renderToString(data), body.toString())
       fastify.close()
     })
   })
@@ -176,10 +176,10 @@ test('reply.view for marko engine without data-parameter and defaultContext but 
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(marko.load('./templates/index.marko').renderToString(localsData), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(marko.load('./templates/index.marko').renderToString(localsData), body.toString())
       fastify.close()
     })
   })
@@ -215,10 +215,10 @@ test('reply.view for marko engine without defaultContext but with reply.locals a
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(marko.load('./templates/index.marko').renderToString(data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(marko.load('./templates/index.marko').renderToString(data), body.toString())
       fastify.close()
     })
   })
@@ -255,10 +255,10 @@ test('reply.view for marko engine without data-parameter but with reply.locals a
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(marko.load('./templates/index.marko').renderToString(localsData), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(marko.load('./templates/index.marko').renderToString(localsData), body.toString())
       fastify.close()
     })
   })
@@ -296,10 +296,10 @@ test('reply.view for marko engine with data-parameter and reply.locals and defau
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(marko.load('./templates/index.marko').renderToString(data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(marko.load('./templates/index.marko').renderToString(data), body.toString())
       fastify.close()
     })
   })
@@ -333,10 +333,10 @@ test('reply.view with marko engine and html-minifier', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-length'], '' + body.length)
-      t.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.strictEqual(minifier.minify(marko.load('./templates/index.marko').renderToString(data), minifierOpts), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(minifier.minify(marko.load('./templates/index.marko').renderToString(data), minifierOpts), body.toString())
       fastify.close()
     })
   })
@@ -362,7 +362,7 @@ test('fastify.view with marko engine and html-minifier without htmlMinifierOptio
 
     fastify.view('templates/index.marko', data, (err, compiled) => {
       t.error(err)
-      t.strictEqual(minifier.minify(marko.load('./templates/index.marko').renderToString(data)), compiled)
+      t.equal(minifier.minify(marko.load('./templates/index.marko').renderToString(data)), compiled)
 
       fastify.close()
     })
@@ -393,9 +393,9 @@ test('reply.view with marko engine, with stream', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-type'], 'application/octet-stream')
-      t.strictEqual(marko.load('./templates/index.marko').renderToString(data), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-type'], 'application/octet-stream')
+      t.equal(marko.load('./templates/index.marko').renderToString(data), body.toString())
       fastify.close()
     })
   })
@@ -430,9 +430,9 @@ test('reply.view with marko engine, with stream and html-minify-stream', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-type'], 'application/octet-stream')
-      t.strictEqual(minifier.minify(marko.load('./templates/index.marko').renderToString(data), minifierOpts), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-type'], 'application/octet-stream')
+      t.equal(minifier.minify(marko.load('./templates/index.marko').renderToString(data), minifierOpts), body.toString())
       fastify.close()
     })
   })
@@ -466,9 +466,9 @@ test('reply.view with marko engine, with stream and html-minify-stream without h
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-type'], 'application/octet-stream')
-      t.strictEqual(minifier.minify(marko.load('./templates/index.marko').renderToString(data)), body.toString())
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-type'], 'application/octet-stream')
+      t.equal(minifier.minify(marko.load('./templates/index.marko').renderToString(data)), body.toString())
       fastify.close()
     })
   })
@@ -491,14 +491,14 @@ test('fastify.view with marko engine', t => {
 
     fastify.view('templates/index.marko', data, (err, compiled) => {
       t.error(err)
-      t.strictEqual(marko.load('./templates/index.marko').renderToString(data), compiled)
+      t.equal(marko.load('./templates/index.marko').renderToString(data), compiled)
 
       fastify.ready(err => {
         t.error(err)
 
         fastify.view('templates/index.marko', data, (err, compiled) => {
           t.error(err)
-          t.strictEqual(marko.load('./templates/index.marko').renderToString(data), compiled)
+          t.equal(marko.load('./templates/index.marko').renderToString(data), compiled)
           fastify.close()
         })
       })
@@ -536,14 +536,14 @@ test('fastify.view to load template from memory with marko engine', t => {
       t.error(err)
       const markoLoaded = marko.load('./templates/index.marko', opts).renderToString(data)
 
-      t.strictEqual(markoLoaded, compiled)
+      t.equal(markoLoaded, compiled)
       fastify.ready(err => {
         t.error(err)
 
         fastify.view('templates/index.marko', data, (err, compiled) => {
           t.error(err)
           const markoLoaded = marko.load('./templates/index.marko', opts).renderToString(data)
-          t.strictEqual(markoLoaded, compiled)
+          t.equal(markoLoaded, compiled)
           fastify.close()
         })
       })
@@ -567,7 +567,7 @@ test('fastify.view with marko should throw page missing', t => {
 
     fastify.view(null, {}, err => {
       t.ok(err instanceof Error)
-      t.is(err.message, 'Missing page')
+      t.equal(err.message, 'Missing page')
       fastify.close()
     })
   })
@@ -601,8 +601,8 @@ test('reply.view with marko engine should return 500 if renderToString fails', t
     }, (err, response, body) => {
       const { message } = JSON.parse(body.toString())
       t.error(err)
-      t.strictEqual(response.statusCode, 500)
-      t.strictEqual('RenderToString Error', message)
+      t.equal(response.statusCode, 500)
+      t.equal('RenderToString Error', message)
 
       fastify.close()
     })
