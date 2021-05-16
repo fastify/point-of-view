@@ -3,7 +3,7 @@ import { FastifyPlugin, FastifyReply, RawServerBase } from 'fastify';
 declare module "fastify" {
   interface FastifyReply {
     view(page: string, data?: object): FastifyReply;
-    locals?: object;
+    locals?: Record<string, any>;
   }
 }
 
