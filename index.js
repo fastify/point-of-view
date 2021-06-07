@@ -9,6 +9,8 @@ const readdirSync = require('fs').readdirSync
 const resolve = require('path').resolve
 const join = require('path').join
 const basename = require('path').basename
+const dirname = require('path').dirname
+const extname = require('path').extname
 const HLRU = require('hashlru')
 const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'mustache', 'art-template', 'twig', 'liquid', 'dot', 'eta']
 
@@ -107,12 +109,12 @@ function fastifyView (fastify, opts, next) {
   })
 
   function getPage (page, extension) {
-    if (viewExt) {
-      return `${page}.${viewExt}`
-    } else if (includeViewExtension) {
-      return `${page}.${extension}`
-    }
-    return page
+    const filename = basename(page, extname(page))
+    return join(dirname(page), filename + getExtension(page, extension))
+  }
+
+  function getExtension (page, extension) {
+    return viewExt ? `.${viewExt}` : (includeViewExtension ? `.${extension}` : extname(page))
   }
 
   // Gets template as string (or precompiled for Handlebars)

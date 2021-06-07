@@ -9,7 +9,12 @@ fastify.register(require('./index'), {
   engine: {
     ejs: require('ejs')
   },
+  defaultContext: {
+    header: 'header value defined as default contenxt',
+    footer: 'footer value defined as default contenxt'
+  },
   includeViewExtension: true,
+  layout: 'layout',
   templates: templatesFolder,
   options: {
     filename: resolve(templatesFolder)
