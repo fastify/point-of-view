@@ -109,8 +109,19 @@ function fastifyView (fastify, opts, next) {
   })
 
   function getPage (page, extension) {
+    const cacheId = `getPage-${page}-${extension}`
+    let result = lru.get(cacheId)
+
+    if (typeof result === 'string') {
+      return result
+    }
+
     const filename = basename(page, extname(page))
-    return join(dirname(page), filename + getExtension(page, extension))
+    result = join(dirname(page), filename + getExtension(page, extension))
+
+    lru.set(cacheId, result)
+
+    return result
   }
 
   function getExtension (page, extension) {
