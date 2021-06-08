@@ -109,7 +109,7 @@ function fastifyView (fastify, opts, next) {
   })
 
   function getPage (page, extension) {
-    const cacheId = `getPage-${page}-${extension}`
+    const pageLRU = `getPage-${page}-${extension}`
     let result = lru.get(cacheId)
 
     if (typeof result === 'string') {
@@ -119,7 +119,7 @@ function fastifyView (fastify, opts, next) {
     const filename = basename(page, extname(page))
     result = join(dirname(page), filename + getExtension(page, extension))
 
-    lru.set(cacheId, result)
+    lru.set(pageLRU, result)
 
     return result
   }
