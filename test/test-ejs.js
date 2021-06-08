@@ -553,6 +553,52 @@ test('reply.view with ejs engine and includeViewExtension property as true', t =
   })
 })
 
+test('*** reply.view with ejs engine with layout option, includeViewExtension property as true ***', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+  const header = ''
+  const footer = ''
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: ejs
+    },
+    defaultContext: {
+      header,
+      footer
+    },
+    includeViewExtension: true,
+    root: path.join(__dirname, '../templates'),
+    layout: 'layout-with-includes'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('index-for-layout.ejs', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), {
+        ...data,
+        header,
+        footer
+      }), body.toString())
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with ejs engine, template folder specified, include files (ejs and html) used in template, includeViewExtension property as true', t => {
   t.plan(7)
   const fastify = Fastify()
@@ -570,8 +616,8 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
       ejs: ejs
     },
     includeViewExtension: true,
-    templates: templatesFolder,
-    options: options
+    templates: templatesFolder
+    // Options not necessary now
   })
 
   fastify.get('/', (req, reply) => {
