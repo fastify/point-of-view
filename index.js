@@ -110,7 +110,7 @@ function fastifyView (fastify, opts, next) {
 
   function getPage (page, extension) {
     const pageLRU = `getPage-${page}-${extension}`
-    let result = lru.get(cacheId)
+    let result = lru.get(pageLRU)
 
     if (typeof result === 'string') {
       return result
