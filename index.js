@@ -8,9 +8,7 @@ const mkdirSync = require('fs').mkdirSync
 const readdirSync = require('fs').readdirSync
 const resolve = require('path').resolve
 const join = require('path').join
-const basename = require('path').basename
-const dirname = require('path').dirname
-const extname = require('path').extname
+const { basename, dirname, extname } = require('path')
 const HLRU = require('hashlru')
 const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'mustache', 'art-template', 'twig', 'liquid', 'dot', 'eta']
 
@@ -43,7 +41,7 @@ function fastifyView (fastify, opts, next) {
     return
   }
 
-  if (layoutFileName && !hasAccessToLayoutFile(layoutFileName + ((type === 'dot') ? '.dot' : ''))) {
+  if (layoutFileName && !hasAccessToLayoutFile(layoutFileName, getDefaultExtension(type))) {
     next(new Error(`unable to access template "${layoutFileName}"`))
     return
   }
@@ -124,8 +122,23 @@ function fastifyView (fastify, opts, next) {
     return result
   }
 
+  function getDefaultExtension (type) {
+    const mappedExtensions = {
+      'art-template': 'art',
+      handlebars: 'hbs',
+      nunjucks: 'njk'
+    }
+
+    return viewExt || (mappedExtensions[type] || type)
+  }
+
   function getExtension (page, extension) {
-    return viewExt ? `.${viewExt}` : (includeViewExtension ? `.${extension}` : extname(page))
+    let filextension = extname(page)
+    if (!filextension) {
+      filextension = '.' + getDefaultExtension(type)
+    }
+
+    return viewExt ? `.${viewExt}` : (includeViewExtension ? `.${extension}` : filextension)
   }
 
   // Gets template as string (or precompiled for Handlebars)
@@ -618,9 +631,9 @@ function fastifyView (fastify, opts, next) {
     return render
   }
 
-  function hasAccessToLayoutFile (fileName) {
+  function hasAccessToLayoutFile (fileName, ext) {
     try {
-      accessSync(join(templatesDir, getPage(fileName, 'hbs')))
+      accessSync(join(templatesDir, getPage(fileName, ext)))
 
       return true
     } catch (e) {
