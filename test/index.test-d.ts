@@ -3,6 +3,15 @@ import pointOfView, {PointOfViewOptions} from "..";
 import {expectAssignable} from "tsd";
 import * as path from "path";
 
+interface Locals {
+  appVersion: string,
+}
+
+declare module "fastify" {
+  interface FastifyReply {
+    locals: Partial<Locals> | undefined
+  }
+}
 const app = fastify();
 
 app.register(pointOfView, {
@@ -28,6 +37,12 @@ app.get("/", (request, reply) => {
 });
 
 app.get("/data", (request, reply) => {
+  if (!reply.locals) {
+    reply.locals = {}
+  }
+
+  // reply.locals.appVersion = 1 // not a valid type
+  reply.locals.appVersion = '4.14.0'
   reply.view("/index", { text: "Sample data" });
 });
 
