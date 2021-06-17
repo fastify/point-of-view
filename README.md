@@ -306,8 +306,12 @@ Typing parameters from `reply.locals` in `typescript`:
 
 ```typescript
 interface Locals {
- appVersion: string,
- assetsManifest: AssetsManifest,
+  appVersion: string,
+  isAuthorized: boolean,
+  user?: {
+    id: number
+    login: string
+  }
 }
 
 declare module 'fastify' {
@@ -315,6 +319,18 @@ declare module 'fastify' {
     locals: Partial<Locals> | undefined;
   }
 }
+
+app.addHook('onRequest',  (request, reply, done) => {
+  if (!reply.locals) {
+    reply.locals = {}
+  }
+  
+  reply.locals.isAuthorized = true;
+  reply.locals.user = {
+   id: 1,
+   login: 'Admin'
+  }
+})
 
 app.get("/data", (request, reply) => {
  if (!reply.locals) {
