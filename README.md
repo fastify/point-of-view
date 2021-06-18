@@ -302,6 +302,48 @@ fastify.addHook('preHandler', function (request, reply, done) {
 ```
 Properties from `reply.locals` will override those from `defaultContext`, but not from `data` parameter provided to `reply.view(template, data)` function.
 
+Typing parameters from `reply.locals` in `typescript`: 
+
+```typescript
+interface Locals {
+  appVersion: string,
+  isAuthorized: boolean,
+  user?: {
+    id: number
+    login: string
+  }
+}
+
+declare module 'fastify' {
+  interface FastifyReply {
+    locals: Partial<Locals> | undefined;
+  }
+}
+
+app.addHook('onRequest',  (request, reply, done) => {
+  if (!reply.locals) {
+    reply.locals = {}
+  }
+  
+  reply.locals.isAuthorized = true;
+  reply.locals.user = {
+   id: 1,
+   login: 'Admin'
+  }
+})
+
+app.get("/data", (request, reply) => {
+ if (!reply.locals) {
+  reply.locals = {}
+ }
+
+ // reply.locals.appVersion = 1 // not a valid type
+ reply.locals.appVersion = '4.14.0'
+ reply.view("/index", { text: "Sample data" });
+});
+
+```
+
 To require `point-of-view` as a dependency to a [fastify-plugin](https://github.com/fastify/fastify-plugin), add the name `point-of-view` to the dependencies array in the [plugin's opts](https://github.com/fastify/fastify-plugin#dependencies).
 
 ```js
@@ -332,3 +374,4 @@ This project is kindly sponsored by:
 ## License
 
 Licensed under [MIT](./LICENSE).
+
