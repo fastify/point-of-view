@@ -536,7 +536,9 @@ function fastifyView (fastify, opts, next) {
         }
         this.send(html)
       })
-      .catch(this.send)
+      .catch((err) => {
+        this.send(err)
+      })
   }
 
   function viewDot (renderModule) {

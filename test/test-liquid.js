@@ -458,3 +458,26 @@ test('fastify.view with liquid engine, should throw page missing', t => {
     })
   })
 })
+
+test('fastify.view with liquid engine template that does not exist errors correctly', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const { Liquid } = require('liquidjs')
+  const engine = new Liquid()
+
+  fastify.register(require('../index'), {
+    engine: {
+      liquid: engine
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view('./I-Dont-Exist', {}, err => {
+      t.ok(err instanceof Error)
+      t.match(err.message, 'ENOENT')
+      fastify.close()
+    })
+  })
+})
