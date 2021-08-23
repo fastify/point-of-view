@@ -571,7 +571,7 @@ function fastifyView (fastify, opts, next) {
     })
 
     const config = Object.assign({
-      cache: process.env.NODE_ENV === 'production',
+      cache: prod,
       views: templatesDir
     }, options)
 
