@@ -800,6 +800,40 @@ test('fastify.view with eta engine and callback in production mode', t => {
   })
 })
 
+test('fastify.view with eta engine in production mode should use cache', t => {
+  t.plan(1)
+
+  const fastify = Fastify()
+  const cache = {
+    cache: {},
+    get (k) {
+      if (typeof this.cache[k] !== 'undefined') {
+        t.pass()
+      }
+      return this.cache[k]
+    },
+    define (k, v) {
+      this.cache[k] = v
+    }
+  }
+
+  fastify.register(pointOfView, {
+    production: true,
+    engine: {
+      eta: eta
+    },
+    options: {
+      templates: cache
+    }
+  })
+
+  fastify.ready(async () => {
+    await fastify.view('templates/index.eta', { text: 'test' })
+    await fastify.view('templates/index.eta', { text: 'test' }) // This should trigger the cache
+    fastify.close()
+  })
+})
+
 test('fastify.view with eta engine and custom cache', t => {
   t.plan(9)
   const fastify = Fastify()
