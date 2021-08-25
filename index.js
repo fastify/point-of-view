@@ -570,7 +570,10 @@ function fastifyView (fastify, opts, next) {
       templates: options.templates ? options.templates : lru
     })
 
-    const config = Object.assign({ views: templatesDir }, options)
+    const config = Object.assign({
+      cache: prod,
+      views: templatesDir
+    }, options)
 
     data = Object.assign({}, defaultCtx, this.locals, data)
     // Append view extension (Eta will append '.eta' by default,
