@@ -149,9 +149,9 @@ const resolve = require('path').resolve
 ```
 and in ejs template files (for example templates/index.ejs) use something like:
 ```html
-<% include header.ejs %>
+<%- include('header.ejs') %>
 ```
-with a path relative to the current page, or an absolute path.
+with a path relative to the current page, or an absolute path. Please check this example [here](https://raw.githubusercontent.com/fastify/point-of-view/c7ff7775cbc8dcf1a7194a517efbf243a74bd0be/templates/layout-with-includes.ejs)
 
 To use partials in mustache you will need to pass the names and paths in the options parameter:
 ```js
