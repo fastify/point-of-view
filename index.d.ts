@@ -2,7 +2,8 @@ import { FastifyPlugin, FastifyReply, RawServerBase } from 'fastify';
 
 declare module "fastify" {
   interface FastifyReply {
-    view<T = object>(page: string, data?: T): FastifyReply;
+    view<T extends { [key: string]: any; }>(page: string, data: T): FastifyReply;
+    view(page: string, data?: object): FastifyReply;
   }
 }
 

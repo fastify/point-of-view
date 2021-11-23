@@ -1,6 +1,6 @@
 import fastify from "fastify";
-import pointOfView, {PointOfViewOptions} from "..";
-import {expectAssignable} from "tsd";
+import pointOfView, { PointOfViewOptions } from "..";
+import { expectAssignable } from "tsd";
 import * as path from "path";
 
 interface Locals {
@@ -46,9 +46,19 @@ app.get("/data", (request, reply) => {
   reply.view("/index", { text: "Sample data" });
 });
 
+app.get("/dataTyped", (request, reply) => {
+  if (!reply.locals) {
+    reply.locals = {}
+  }
+
+  // reply.locals.appVersion = 1 // not a valid type
+  reply.locals.appVersion = '4.14.0'
+  reply.view<{ text: string; }>("/index", { text: "Sample data" });
+});
+
 app.listen(3000, (err, address) => {
   if (err) throw err
   console.log(`server listening on ${address} ...`)
 })
 
-expectAssignable<PointOfViewOptions>({engine: {twig: require('twig') }, propertyName: 'mobile' })
+expectAssignable<PointOfViewOptions>({ engine: { twig: require('twig') }, propertyName: 'mobile' })
