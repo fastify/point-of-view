@@ -339,7 +339,7 @@ app.get("/data", (request, reply) => {
 
  // reply.locals.appVersion = 1 // not a valid type
  reply.locals.appVersion = '4.14.0'
- reply.view("/index", { text: "Sample data" });
+ reply.view<{ text: string; }>("/index", { text: "Sample data" });
 });
 
 ```
