@@ -34,7 +34,7 @@ function fastifyView (fastify, opts, next) {
   const viewExt = opts.viewExt || ''
   const prod = typeof opts.production === 'boolean' ? opts.production : process.env.NODE_ENV === 'production'
   const defaultCtx = opts.defaultContext || {}
-  const layoutFileName = opts.layout
+  const globalLayoutFileName = opts.layout
 
   function layoutIsValid (_layoutFileName) {
     if (type !== 'dot' && type !== 'handlebars' && type !== 'ejs' && type !== 'eta') {
@@ -47,8 +47,8 @@ function fastifyView (fastify, opts, next) {
     }
   }
 
-  if (layoutFileName) {
-    layoutIsValid(layoutFileName)
+  if (globalLayoutFileName) {
+    layoutIsValid(globalLayoutFileName)
   }
 
   const dotRender = type === 'dot' ? viewDot.call(fastify, preProcessDot.call(fastify, templatesDir, options)) : null
@@ -616,7 +616,7 @@ function fastifyView (fastify, opts, next) {
   }
 
   function withLayout (render) {
-    if (layoutFileName) {
+    if (globalLayoutFileName) {
       return function (page, data, opts) {
         const that = this
 
@@ -632,7 +632,7 @@ function fastifyView (fastify, opts, next) {
 
             data = Object.assign((data || {}), { body: result })
 
-            render.call(that, layoutFileName, data, opts)
+            render.call(that, globalLayoutFileName, data, opts)
           }
         }, page, data, opts)
       }
