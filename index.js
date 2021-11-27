@@ -38,32 +38,37 @@ function fastifyView (fastify, opts, next) {
 
   function layoutIsValid (_layoutFileName) {
     if (type !== 'dot' && type !== 'handlebars' && type !== 'ejs' && type !== 'eta') {
-      next(new Error('Only Dot, Handlebars, EJS, and Eta support the "layout" option'))
-      return
+      throw new Error('Only Dot, Handlebars, EJS, and Eta support the "layout" option')
     }
 
     if (!hasAccessToLayoutFile(_layoutFileName, getDefaultExtension(type))) {
-      next(new Error(`unable to access template "${_layoutFileName}"`))
+      throw new Error(`unable to access template "${_layoutFileName}"`)
     }
+    return 1
   }
 
   if (globalLayoutFileName) {
-    layoutIsValid(globalLayoutFileName)
+    try {
+      layoutIsValid(globalLayoutFileName)
+    } catch (error) {
+      next(error)
+      return
+    }
   }
 
   const dotRender = type === 'dot' ? viewDot.call(fastify, preProcessDot.call(fastify, templatesDir, options)) : null
 
   const renders = {
     marko: viewMarko,
-    ejs: withLayout(viewEjs),
-    handlebars: withLayout(viewHandlebars),
+    ejs: withLayout(viewEjs, globalLayoutFileName),
+    handlebars: withLayout(viewHandlebars, globalLayoutFileName),
     mustache: viewMustache,
     nunjucks: viewNunjucks,
     'art-template': viewArtTemplate,
     twig: viewTwig,
     liquid: viewLiquid,
-    dot: withLayout(dotRender),
-    eta: withLayout(viewEta),
+    dot: withLayout(dotRender, globalLayoutFileName),
+    eta: withLayout(viewEta, globalLayoutFileName),
     _default: view
   }
 
@@ -296,7 +301,18 @@ function fastifyView (fastify, opts, next) {
     readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
   }
 
-  function viewEjs (page, data) {
+  function viewEjs (page, data, layout) {
+    if (layout) {
+      try {
+        layoutIsValid(layout)
+        const that = this
+        return withLayout(viewEjs, layout).call(that, page, data)
+      } catch (error) {
+        this.send(error)
+        return
+      }
+    }
+
     if (!page) {
       this.send(new Error('Missing page'))
       return
@@ -415,7 +431,18 @@ function fastifyView (fastify, opts, next) {
     }
   }
 
-  function viewHandlebars (page, data) {
+  function viewHandlebars (page, data, layout) {
+    if (layout) {
+      try {
+        layoutIsValid(layout)
+        const that = this
+        return withLayout(viewHandlebars, layout).call(that, page, data)
+      } catch (error) {
+        this.send(error)
+        return
+      }
+    }
+
     if (!page) {
       this.send(new Error('Missing page'))
       return
@@ -564,7 +591,18 @@ function fastifyView (fastify, opts, next) {
     }
   }
 
-  function viewEta (page, data) {
+  function viewEta (page, data, layout) {
+    if (layout) {
+      try {
+        layoutIsValid(layout)
+        const that = this
+        return withLayout(viewEta, layout).call(that, page, data)
+      } catch (error) {
+        this.send(error)
+        return
+      }
+    }
+
     if (!page) {
       this.send(new Error('Missing page'))
       return
@@ -615,13 +653,11 @@ function fastifyView (fastify, opts, next) {
     next()
   }
 
-  function withLayout (render) {
-    if (globalLayoutFileName) {
+  function withLayout (render, layout) {
+    if (layout) {
       return function (page, data, opts) {
         const that = this
-
         data = Object.assign({}, defaultCtx, this.locals, data)
-
         render.call({
           getHeader: () => { },
           header: () => { },
@@ -631,8 +667,7 @@ function fastifyView (fastify, opts, next) {
             }
 
             data = Object.assign((data || {}), { body: result })
-
-            render.call(that, globalLayoutFileName, data, opts)
+            render.call(that, layout, data, opts)
           }
         }, page, data, opts)
       }

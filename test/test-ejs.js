@@ -85,6 +85,69 @@ test('reply.view with ejs engine with layout option', t => {
   })
 })
 
+test('reply.view with ejs engine with layout option on render', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: ejs
+    },
+    root: path.join(__dirname, '../templates')
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('index-for-layout.ejs', data, 'layout.html')
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view should return 500 if layout is missing on render', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+  fastify.register(require('../index'), {
+    engine: {
+      ejs
+    },
+    root: path.join(__dirname, '../templates')
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('index-for-layout.ejs', data, 'non-existing-layout.html')
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 500)
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with ejs engine and custom ext', t => {
   t.plan(6)
   const fastify = Fastify()
@@ -576,6 +639,51 @@ test('*** reply.view with ejs engine with layout option, includeViewExtension pr
 
   fastify.get('/', (req, reply) => {
     reply.view('index-for-layout.ejs', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), {
+        ...data,
+        header,
+        footer
+      }), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('*** reply.view with ejs engine with layout option on render, includeViewExtension property as true ***', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+  const header = ''
+  const footer = ''
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: ejs
+    },
+    defaultContext: {
+      header,
+      footer
+    },
+    includeViewExtension: true,
+    root: path.join(__dirname, '../templates')
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('index-for-layout.ejs', data, 'layout-with-includes')
   })
 
   fastify.listen(0, err => {
