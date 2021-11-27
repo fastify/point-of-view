@@ -36,14 +36,19 @@ function fastifyView (fastify, opts, next) {
   const defaultCtx = opts.defaultContext || {}
   const layoutFileName = opts.layout
 
-  if (layoutFileName && type !== 'dot' && type !== 'handlebars' && type !== 'ejs' && type !== 'eta') {
-    next(new Error('Only Dot, Handlebars, EJS, and Eta support the "layout" option'))
-    return
+  function layoutIsValid (_layoutFileName) {
+    if (type !== 'dot' && type !== 'handlebars' && type !== 'ejs' && type !== 'eta') {
+      next(new Error('Only Dot, Handlebars, EJS, and Eta support the "layout" option'))
+      return
+    }
+
+    if (!hasAccessToLayoutFile(_layoutFileName, getDefaultExtension(type))) {
+      next(new Error(`unable to access template "${_layoutFileName}"`))
+    }
   }
 
-  if (layoutFileName && !hasAccessToLayoutFile(layoutFileName, getDefaultExtension(type))) {
-    next(new Error(`unable to access template "${layoutFileName}"`))
-    return
+  if (layoutFileName) {
+    layoutIsValid(layoutFileName)
   }
 
   const dotRender = type === 'dot' ? viewDot.call(fastify, preProcessDot.call(fastify, templatesDir, options)) : null
