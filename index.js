@@ -574,7 +574,17 @@ function fastifyView (fastify, opts, next) {
   }
 
   function viewDot (renderModule) {
-    return function _viewDot (page, data, opts) {
+    return function _viewDot (page, data, layout) {
+      if (layout) {
+        try {
+          layoutIsValid(layout)
+          const that = this
+          return withLayout(dotRender, layout).call(that, page, data)
+        } catch (error) {
+          this.send(error)
+          return
+        }
+      }
       if (!page) {
         this.send(new Error('Missing page'))
         return
