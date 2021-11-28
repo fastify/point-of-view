@@ -44,7 +44,6 @@ function fastifyView (fastify, opts, next) {
     if (!hasAccessToLayoutFile(_layoutFileName, getDefaultExtension(type))) {
       throw new Error(`unable to access template "${_layoutFileName}"`)
     }
-    return 1
   }
 
   if (globalLayoutFileName) {
