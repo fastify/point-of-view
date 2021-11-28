@@ -305,7 +305,6 @@ function fastifyView (fastify, opts, next) {
     if (opts && opts.layout) {
       try {
         layoutIsValid(opts.layout)
-        if (globalLayoutFileName) throw new Error('A layout can either be set globally or on render, not both.')
         const that = this
         return withLayout(viewEjs, opts.layout).call(that, page, data)
       } catch (error) {
@@ -436,7 +435,6 @@ function fastifyView (fastify, opts, next) {
     if (opts && opts.layout) {
       try {
         layoutIsValid(opts.layout)
-        if (globalLayoutFileName) throw new Error('A layout can either be set globally or on render, not both.')
         const that = this
         return withLayout(viewHandlebars, opts.layout).call(that, page, data)
       } catch (error) {
@@ -580,7 +578,6 @@ function fastifyView (fastify, opts, next) {
       if (opts && opts.layout) {
         try {
           layoutIsValid(opts.layout)
-          if (globalLayoutFileName) throw new Error('A layout can either be set globally or on render, not both.')
           const that = this
           return withLayout(dotRender, opts.layout).call(that, page, data)
         } catch (error) {
@@ -608,7 +605,6 @@ function fastifyView (fastify, opts, next) {
     if (opts && opts.layout) {
       try {
         layoutIsValid(opts.layout)
-        if (globalLayoutFileName) throw new Error('A layout can either be set globally or on render, not both.')
         const that = this
         return withLayout(viewEta, opts.layout).call(that, page, data)
       } catch (error) {
@@ -670,6 +666,7 @@ function fastifyView (fastify, opts, next) {
   function withLayout (render, layout) {
     if (layout) {
       return function (page, data, opts) {
+        if (opts && opts.layout) throw new Error('A layout can either be set globally or on render, not both.')
         const that = this
         data = Object.assign({}, defaultCtx, this.locals, data)
         render.call({

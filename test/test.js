@@ -325,6 +325,35 @@ test('reply.view should return 500 if page is missing', t => {
   })
 })
 
+test('reply.view should return 500 if layout is set globally and provided on render', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const data = { text: 'text' }
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: require('ejs'),
+      layout: 'layout.html'
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('index-for-layout.ejs', data, { layout: 'layout.html' })
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 500)
+      fastify.close()
+    })
+  })
+})
+
 test('register callback should throw if the engine is missing', t => {
   t.plan(2)
   const fastify = Fastify()
