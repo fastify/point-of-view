@@ -10,6 +10,7 @@ const resolve = require('path').resolve
 const join = require('path').join
 const { basename, dirname, extname } = require('path')
 const HLRU = require('hashlru')
+const { getRenderer } = require('./renderers')
 const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'mustache', 'art-template', 'twig', 'liquid', 'dot', 'eta']
 
 function fastifyView (fastify, opts, next) {
@@ -32,7 +33,9 @@ function fastifyView (fastify, opts, next) {
   const lru = HLRU(opts.maxCache || 100)
   const includeViewExtension = opts.includeViewExtension || false
   const viewExt = opts.viewExt || ''
-  const prod = typeof opts.production === 'boolean' ? opts.production : process.env.NODE_ENV === 'production'
+  const prod = typeof opts.production === 'boolean'
+    ? opts.production
+    : process.env.NODE_ENV === 'production'
   const defaultCtx = opts.defaultContext || {}
   const layoutFileName = opts.layout
 
@@ -46,23 +49,20 @@ function fastifyView (fastify, opts, next) {
     return
   }
 
-  const dotRender = type === 'dot' ? viewDot.call(fastify, preProcessDot.call(fastify, templatesDir, options)) : null
+  const dotRender = type === 'dot'
+    ? viewDot => viewDot.call(fastify, preProcessDot.call(fastify, templatesDir, options))
+    : () => {}
 
-  const renders = {
-    marko: viewMarko,
-    ejs: withLayout(viewEjs),
-    handlebars: withLayout(viewHandlebars),
-    mustache: viewMustache,
-    nunjucks: viewNunjucks,
-    'art-template': viewArtTemplate,
-    twig: viewTwig,
-    liquid: viewLiquid,
-    dot: withLayout(dotRender),
-    eta: withLayout(viewEta),
-    _default: view
-  }
-
-  const renderer = renders[type] ? renders[type] : renders._default
+  const renderer = getRenderer(type, {
+    lru,
+    dotRender,
+    getPartials,
+    getTemplate,
+    getPage,
+    readFile,
+    templatesDir,
+    readCallback,
+  })
 
   function viewDecorator () {
     const args = Array.from(arguments)
@@ -143,7 +143,7 @@ function fastifyView (fastify, opts, next) {
 
   // Gets template as string (or precompiled for Handlebars)
   // from LRU cache or filesystem.
-  const getTemplate = function (file, callback) {
+  function getTemplate (file, callback) {
     const data = lru.get(file)
     if (data && prod) {
       callback(null, data)
@@ -165,8 +165,9 @@ function fastifyView (fastify, opts, next) {
     }
   }
 
+
   // Gets partials as collection of strings from LRU cache or filesystem.
-  const getPartials = function (page, partials, callback) {
+  function getPartials (page, partials, callback) {
     const partialsObj = lru.get(`${page}-Partials`)
 
     if (partialsObj && prod) {
@@ -268,373 +269,14 @@ function fastifyView (fastify, opts, next) {
     return renderer
   }
 
-  function view (page, data) {
-    if (!page) {
-      this.send(new Error('Missing page'))
-      return
-    }
-
-    data = Object.assign({}, defaultCtx, this.locals, data)
-    // append view extension
-    page = getPage(page, type)
-
-    const toHtml = lru.get(page)
-
-    if (toHtml && prod) {
-      if (!this.getHeader('content-type')) {
-        this.header('Content-Type', 'text/html; charset=' + charset)
-      }
-      this.send(toHtml(data))
-      return
-    }
-
-    readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
-  }
-
-  function viewEjs (page, data) {
-    if (!page) {
-      this.send(new Error('Missing page'))
-      return
-    }
-    data = Object.assign({}, defaultCtx, this.locals, data)
-    // append view extension
-    page = getPage(page, type)
-    getTemplate(page, (err, template) => {
-      if (err) {
-        this.send(err)
-        return
-      }
-      const toHtml = lru.get(page)
-      if (toHtml && prod && (typeof (toHtml) === 'function')) {
-        if (!this.getHeader('content-type')) {
-          this.header('Content-Type', 'text/html; charset=' + charset)
-        }
-        this.send(toHtml(data))
-        return
-      }
-      readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
-    })
-  }
-
-  function viewArtTemplate (page, data) {
-    if (!page) {
-      this.send(new Error('Missing page'))
-      return
-    }
-    data = Object.assign({}, defaultCtx, this.locals, data)
-    // Append view extension.
-    page = getPage(page, 'art')
-
-    const defaultSetting = {
-      debug: process.env.NODE_ENV !== 'production',
-      root: templatesDir
-    }
-
-    // merge engine options
-    const confs = Object.assign({}, defaultSetting, options)
-
-    function render (filename, data) {
-      confs.filename = join(templatesDir, filename)
-      const render = engine.compile(confs)
-      return render(data)
-    }
-
-    try {
-      const html = render(page, data)
-      if (!this.getHeader('content-type')) {
-        this.header('Content-Type', 'text/html; charset=' + charset)
-      }
-      this.send(html)
-    } catch (error) {
-      this.send(error)
-    }
-  }
-
-  function viewNunjucks (page, data) {
-    if (!page) {
-      this.send(new Error('Missing page'))
-      return
-    }
-    const env = engine.configure(templatesDir, options)
-    if (typeof options.onConfigure === 'function') {
-      options.onConfigure(env)
-    }
-    data = Object.assign({}, defaultCtx, this.locals, data)
-    // Append view extension.
-    page = getPage(page, 'njk')
-    env.render(join(templatesDir, page), data, (err, html) => {
-      if (err) return this.send(err)
-      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-        html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
-      }
-      this.header('Content-Type', 'text/html; charset=' + charset)
-      this.send(html)
-    })
-  }
-
-  function viewMarko (page, data, opts) {
-    if (!page) {
-      this.send(new Error('Missing page'))
-      return
-    }
-
-    data = Object.assign({}, defaultCtx, this.locals, data)
-    // append view extension
-    page = getPage(page, type)
-
-    // Support compile template from memory
-    // opts.templateSrc : string - pre-loaded template source
-    // even to load from memory, a page parameter still should be provided and the parent path should exist for the loader to search components along the path.
-
-    const template = opts && opts.templateSrc ? engine.load(join(templatesDir, page), opts.templateSrc) : engine.load(join(templatesDir, page))
-
-    if (opts && opts.stream) {
-      if (typeof options.useHtmlMinifyStream === 'function') {
-        this.send(template.stream(data).pipe(options.useHtmlMinifyStream(options.htmlMinifierOptions || {})))
-      } else {
-        this.send(template.stream(data))
-      }
-    } else {
-      template.renderToString(data, send(this))
-    }
-
-    function send (that) {
-      return function _send (err, html) {
-        if (err) return that.send(err)
-        if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-          html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
-        }
-        that.header('Content-Type', 'text/html; charset=' + charset)
-        that.send(html)
-      }
-    }
-  }
-
-  function viewHandlebars (page, data) {
-    if (!page) {
-      this.send(new Error('Missing page'))
-      return
-    }
-
-    const options = Object.assign({}, opts.options)
-    data = Object.assign({}, defaultCtx, this.locals, data)
-    // append view extension
-    page = getPage(page, 'hbs')
-    getTemplate(page, (err, template) => {
-      if (err) {
-        this.send(err)
-        return
-      }
-
-      if (prod) {
-        try {
-          const html = template(data)
-          if (!this.getHeader('content-type')) {
-            this.header('Content-Type', 'text/html; charset=' + charset)
-          }
-          this.send(html)
-        } catch (e) {
-          this.send(e)
-        }
-      } else {
-        getPartials(type, options.partials || {}, (err, partialsObject) => {
-          if (err) {
-            this.send(err)
-            return
-          }
-
-          try {
-            Object.keys(partialsObject).forEach((name) => {
-              engine.registerPartial(name, engine.compile(partialsObject[name]))
-            })
-
-            const html = template(data)
-
-            if (!this.getHeader('content-type')) {
-              this.header('Content-Type', 'text/html; charset=' + charset)
-            }
-            this.send(html)
-          } catch (e) {
-            this.send(e)
-          }
-        })
-      }
-    })
-  }
-
-  function viewMustache (page, data, opts) {
-    if (!page) {
-      this.send(new Error('Missing page'))
-      return
-    }
-
-    const options = Object.assign({}, opts)
-    data = Object.assign({}, defaultCtx, this.locals, data)
-    // append view extension
-    page = getPage(page, 'mustache')
-    getTemplate(page, (err, templateString) => {
-      if (err) {
-        this.send(err)
-        return
-      }
-      getPartials(page, options.partials || {}, (err, partialsObject) => {
-        if (err) {
-          this.send(err)
-          return
-        }
-        const html = engine.render(templateString, data, partialsObject)
-
-        if (!this.getHeader('content-type')) {
-          this.header('Content-Type', 'text/html; charset=' + charset)
-        }
-        this.send(html)
-      })
-    })
-  }
-
-  function viewTwig (page, data, opts) {
-    if (!page) {
-      this.send(new Error('Missing page'))
-      return
-    }
-
-    data = Object.assign({}, defaultCtx, options, this.locals, data)
-    // Append view extension.
-    page = getPage(page, 'twig')
-    engine.renderFile(join(templatesDir, page), data, (err, html) => {
-      if (err) {
-        return this.send(err)
-      }
-
-      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-        html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
-      }
-      if (!this.getHeader('content-type')) {
-        this.header('Content-Type', 'text/html; charset=' + charset)
-      }
-      this.send(html)
-    })
-  }
-
-  function viewLiquid (page, data, opts) {
-    if (!page) {
-      this.send(new Error('Missing page'))
-      return
-    }
-
-    data = Object.assign({}, defaultCtx, this.locals, data)
-    // Append view extension.
-    page = getPage(page, 'liquid')
-
-    engine.renderFile(join(templatesDir, page), data, opts)
-      .then((html) => {
-        if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-          html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
-        }
-        if (!this.getHeader('content-type')) {
-          this.header('Content-Type', 'text/html; charset=' + charset)
-        }
-        this.send(html)
-      })
-      .catch((err) => {
-        this.send(err)
-      })
-  }
-
-  function viewDot (renderModule) {
-    return function _viewDot (page, data, opts) {
-      if (!page) {
-        this.send(new Error('Missing page'))
-        return
-      }
-      data = Object.assign({}, defaultCtx, this.locals, data)
-      let html = renderModule[page](data)
-      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-        html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
-      }
-      if (!this.getHeader('content-type')) {
-        this.header('Content-Type', 'text/html; charset=' + charset)
-      }
-      this.send(html)
-    }
-  }
-
-  function viewEta (page, data) {
-    if (!page) {
-      this.send(new Error('Missing page'))
-      return
-    }
-
-    lru.define = lru.set
-    engine.configure({
-      templates: options.templates ? options.templates : lru
-    })
-
-    const config = Object.assign({
-      cache: prod,
-      views: templatesDir
-    }, options)
-
-    data = Object.assign({}, defaultCtx, this.locals, data)
-    // Append view extension (Eta will append '.eta' by default,
-    // but this also allows custom extensions)
-    page = getPage(page, 'eta')
-    engine.renderFile(page, data, config, (err, html) => {
-      if (err) return this.send(err)
-      if (
-        config.useHtmlMinifier &&
-        typeof config.useHtmlMinifier.minify === 'function'
-      ) {
-        html = config.useHtmlMinifier.minify(
-          html,
-          config.htmlMinifierOptions || {}
-        )
-      }
-      this.header('Content-Type', 'text/html; charset=' + charset)
-      this.send(html)
-    })
-  }
-
-  if (prod && type === 'handlebars' && options.partials) {
-    getPartials(type, options.partials, (err, partialsObject) => {
-      if (err) {
-        next(err)
-        return
-      }
-      Object.keys(partialsObject).forEach((name) => {
-        engine.registerPartial(name, engine.compile(partialsObject[name]))
-      })
-      next()
-    })
-  } else {
-    next()
-  }
-
-  function withLayout (render) {
-    if (layoutFileName) {
-      return function (page, data, opts) {
-        const that = this
-
-        data = Object.assign({}, defaultCtx, this.locals, data)
-
-        render.call({
-          getHeader: () => { },
-          header: () => { },
-          send: (result) => {
-            if (result instanceof Error) {
-              throw result
-            }
-
-            data = Object.assign((data || {}), { body: result })
-
-            render.call(that, layoutFileName, data, opts)
-          }
-        }, page, data, opts)
-      }
-    }
-
-    return render
-  }
+  // function viewArtTemplate (page, data) {
+  // function viewNunjucks (page, data) {
+  // function viewMarko (page, data, opts) {
+  // function viewHandlebars (page, data) {
+  // function viewMustache (page, data, opts) {
+  // function viewTwig (page, data, opts) {
+  // function viewLiquid (page, data, opts) {
+  // function viewDot (renderModule) {
 
   function hasAccessToLayoutFile (fileName, ext) {
     try {
