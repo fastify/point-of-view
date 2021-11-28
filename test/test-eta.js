@@ -96,7 +96,7 @@ test('reply.view with eta engine with layout option on render', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('index-for-layout.eta', data, 'layout-eta.html')
+    reply.view('index-for-layout.eta', data, { layout: 'layout-eta.html' })
   })
 
   fastify.listen(0, err => {
@@ -130,7 +130,7 @@ test('reply.view should return 500 if layout is missing on render', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('index-for-layout.eta', data, 'non-existing-layout-eta.html')
+    reply.view('index-for-layout.eta', data, { layout: 'non-existing-layout-eta.html' })
   })
 
   fastify.listen(0, err => {

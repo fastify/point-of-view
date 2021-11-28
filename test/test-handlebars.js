@@ -323,7 +323,7 @@ test('fastify.view with handlebars engine with layout option on render', t => {
   fastify.ready(err => {
     t.error(err)
 
-    fastify.view('./templates/index-for-layout.hbs', data, './templates/layout.hbs', (err, compiled) => {
+    fastify.view('./templates/index-for-layout.hbs', data, { layout: './templates/layout.hbs' }, (err, compiled) => {
       t.error(err)
       t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), compiled)
       fastify.close()
@@ -346,7 +346,7 @@ test('fastify.view with handlebars engine with invalid layout option on render s
 
   fastify.ready(err => {
     t.error(err)
-    fastify.view('./templates/index-for-layout.hbs', data, './templates/invalid-layout.hbs', (err, compiled) => {
+    fastify.view('./templates/index-for-layout.hbs', data, { layout: './templates/invalid-layout.hbs' }, (err, compiled) => {
       t.ok(err instanceof Error)
       t.equal(err.message, 'unable to access template "./templates/invalid-layout.hbs"')
     })
@@ -816,7 +816,7 @@ test('reply.view with handlebars engine with layout option on render', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('./templates/index-for-layout.hbs', {}, './templates/layout.hbs')
+    reply.view('./templates/index-for-layout.hbs', {}, { layout: './templates/layout.hbs' })
   })
 
   fastify.listen(0, err => {
@@ -847,7 +847,7 @@ test('reply.view should return 500 if layout is missing on render', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('./templates/index-for-layout.hbs', {}, './templates/missing-layout.hbs')
+    reply.view('./templates/index-for-layout.hbs', {}, { layout: './templates/missing-layout.hbs' })
   })
 
   fastify.listen(0, err => {

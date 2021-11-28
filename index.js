@@ -27,7 +27,7 @@ function fastifyView (fastify, opts, next) {
   const charset = opts.charset || 'utf-8'
   const propertyName = opts.propertyName || 'view'
   const engine = opts.engine[type]
-  const options = opts.options || {}
+  const globalOptions = opts.options || {}
   const templatesDir = opts.root || resolve(opts.templates || './')
   const lru = HLRU(opts.maxCache || 100)
   const includeViewExtension = opts.includeViewExtension || false
@@ -56,7 +56,7 @@ function fastifyView (fastify, opts, next) {
     }
   }
 
-  const dotRender = type === 'dot' ? viewDot.call(fastify, preProcessDot.call(fastify, templatesDir, options)) : null
+  const dotRender = type === 'dot' ? viewDot.call(fastify, preProcessDot.call(fastify, templatesDir, globalOptions)) : null
 
   const renders = {
     marko: viewMarko,
@@ -163,8 +163,8 @@ function fastifyView (fastify, opts, next) {
           callback(err, null)
           return
         }
-        if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-          data = options.useHtmlMinifier.minify(data, options.htmlMinifierOptions || {})
+        if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+          data = globalOptions.useHtmlMinifier.minify(data, globalOptions.htmlMinifierOptions || {})
         }
         if (type === 'handlebars') {
           data = engine.compile(data)
@@ -196,8 +196,8 @@ function fastifyView (fastify, opts, next) {
           if (err) {
             error = err
           }
-          if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-            data = options.useHtmlMinifier.minify(data, options.htmlMinifierOptions || {})
+          if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+            data = globalOptions.useHtmlMinifier.minify(data, globalOptions.htmlMinifierOptions || {})
           }
 
           partialsHtml[key] = data
@@ -219,15 +219,15 @@ function fastifyView (fastify, opts, next) {
 
       let compiledPage
       try {
-        if ((type === 'ejs') && viewExt && !options.includer) {
-          options.includer = (originalPath, parsedPath) => {
+        if ((type === 'ejs') && viewExt && !globalOptions.includer) {
+          globalOptions.includer = (originalPath, parsedPath) => {
             return {
               filename: parsedPath || join(templatesDir, originalPath + '.' + viewExt)
             }
           }
         }
-        options.filename = join(templatesDir, page)
-        compiledPage = engine.compile(html, options)
+        globalOptions.filename = join(templatesDir, page)
+        compiledPage = engine.compile(html, globalOptions)
       } catch (error) {
         that.send(error)
         return
@@ -243,8 +243,8 @@ function fastifyView (fastify, opts, next) {
       } catch (error) {
         cachedPage = error
       }
-      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-        cachedPage = options.useHtmlMinifier.minify(cachedPage, options.htmlMinifierOptions || {})
+      if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+        cachedPage = globalOptions.useHtmlMinifier.minify(cachedPage, globalOptions.htmlMinifierOptions || {})
       }
       that.send(cachedPage)
     }
@@ -301,12 +301,13 @@ function fastifyView (fastify, opts, next) {
     readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
   }
 
-  function viewEjs (page, data, layout) {
-    if (layout) {
+  function viewEjs (page, data, opts) {
+    if (opts && opts.layout) {
       try {
-        layoutIsValid(layout)
+        layoutIsValid(opts.layout)
+        if (globalLayoutFileName) throw new Error('A layout can either be set globally or on render, not both.')
         const that = this
-        return withLayout(viewEjs, layout).call(that, page, data)
+        return withLayout(viewEjs, opts.layout).call(that, page, data)
       } catch (error) {
         this.send(error)
         return
@@ -352,7 +353,7 @@ function fastifyView (fastify, opts, next) {
     }
 
     // merge engine options
-    const confs = Object.assign({}, defaultSetting, options)
+    const confs = Object.assign({}, defaultSetting, globalOptions)
 
     function render (filename, data) {
       confs.filename = join(templatesDir, filename)
@@ -376,17 +377,17 @@ function fastifyView (fastify, opts, next) {
       this.send(new Error('Missing page'))
       return
     }
-    const env = engine.configure(templatesDir, options)
-    if (typeof options.onConfigure === 'function') {
-      options.onConfigure(env)
+    const env = engine.configure(templatesDir, globalOptions)
+    if (typeof globalOptions.onConfigure === 'function') {
+      globalOptions.onConfigure(env)
     }
     data = Object.assign({}, defaultCtx, this.locals, data)
     // Append view extension.
     page = getPage(page, 'njk')
     env.render(join(templatesDir, page), data, (err, html) => {
       if (err) return this.send(err)
-      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-        html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
+      if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+        html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
       }
       this.header('Content-Type', 'text/html; charset=' + charset)
       this.send(html)
@@ -410,8 +411,8 @@ function fastifyView (fastify, opts, next) {
     const template = opts && opts.templateSrc ? engine.load(join(templatesDir, page), opts.templateSrc) : engine.load(join(templatesDir, page))
 
     if (opts && opts.stream) {
-      if (typeof options.useHtmlMinifyStream === 'function') {
-        this.send(template.stream(data).pipe(options.useHtmlMinifyStream(options.htmlMinifierOptions || {})))
+      if (typeof globalOptions.useHtmlMinifyStream === 'function') {
+        this.send(template.stream(data).pipe(globalOptions.useHtmlMinifyStream(globalOptions.htmlMinifierOptions || {})))
       } else {
         this.send(template.stream(data))
       }
@@ -422,8 +423,8 @@ function fastifyView (fastify, opts, next) {
     function send (that) {
       return function _send (err, html) {
         if (err) return that.send(err)
-        if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-          html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
+        if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+          html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
         }
         that.header('Content-Type', 'text/html; charset=' + charset)
         that.send(html)
@@ -431,12 +432,13 @@ function fastifyView (fastify, opts, next) {
     }
   }
 
-  function viewHandlebars (page, data, layout) {
-    if (layout) {
+  function viewHandlebars (page, data, opts) {
+    if (opts && opts.layout) {
       try {
-        layoutIsValid(layout)
+        layoutIsValid(opts.layout)
+        if (globalLayoutFileName) throw new Error('A layout can either be set globally or on render, not both.')
         const that = this
-        return withLayout(viewHandlebars, layout).call(that, page, data)
+        return withLayout(viewHandlebars, opts.layout).call(that, page, data)
       } catch (error) {
         this.send(error)
         return
@@ -448,7 +450,7 @@ function fastifyView (fastify, opts, next) {
       return
     }
 
-    const options = Object.assign({}, opts.options)
+    const options = Object.assign({}, globalOptions)
     data = Object.assign({}, defaultCtx, this.locals, data)
     // append view extension
     page = getPage(page, 'hbs')
@@ -530,7 +532,7 @@ function fastifyView (fastify, opts, next) {
       return
     }
 
-    data = Object.assign({}, defaultCtx, options, this.locals, data)
+    data = Object.assign({}, defaultCtx, globalOptions, this.locals, data)
     // Append view extension.
     page = getPage(page, 'twig')
     engine.renderFile(join(templatesDir, page), data, (err, html) => {
@@ -538,8 +540,8 @@ function fastifyView (fastify, opts, next) {
         return this.send(err)
       }
 
-      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-        html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
+      if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+        html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
       }
       if (!this.getHeader('content-type')) {
         this.header('Content-Type', 'text/html; charset=' + charset)
@@ -560,8 +562,8 @@ function fastifyView (fastify, opts, next) {
 
     engine.renderFile(join(templatesDir, page), data, opts)
       .then((html) => {
-        if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-          html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
+        if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+          html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
         }
         if (!this.getHeader('content-type')) {
           this.header('Content-Type', 'text/html; charset=' + charset)
@@ -574,12 +576,13 @@ function fastifyView (fastify, opts, next) {
   }
 
   function viewDot (renderModule) {
-    return function _viewDot (page, data, layout) {
-      if (layout) {
+    return function _viewDot (page, data, opts) {
+      if (opts && opts.layout) {
         try {
-          layoutIsValid(layout)
+          layoutIsValid(opts.layout)
+          if (globalLayoutFileName) throw new Error('A layout can either be set globally or on render, not both.')
           const that = this
-          return withLayout(dotRender, layout).call(that, page, data)
+          return withLayout(dotRender, opts.layout).call(that, page, data)
         } catch (error) {
           this.send(error)
           return
@@ -591,8 +594,8 @@ function fastifyView (fastify, opts, next) {
       }
       data = Object.assign({}, defaultCtx, this.locals, data)
       let html = renderModule[page](data)
-      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-        html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
+      if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+        html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
       }
       if (!this.getHeader('content-type')) {
         this.header('Content-Type', 'text/html; charset=' + charset)
@@ -601,12 +604,13 @@ function fastifyView (fastify, opts, next) {
     }
   }
 
-  function viewEta (page, data, layout) {
-    if (layout) {
+  function viewEta (page, data, opts) {
+    if (opts && opts.layout) {
       try {
-        layoutIsValid(layout)
+        layoutIsValid(opts.layout)
+        if (globalLayoutFileName) throw new Error('A layout can either be set globally or on render, not both.')
         const that = this
-        return withLayout(viewEta, layout).call(that, page, data)
+        return withLayout(viewEta, opts.layout).call(that, page, data)
       } catch (error) {
         this.send(error)
         return
@@ -620,13 +624,13 @@ function fastifyView (fastify, opts, next) {
 
     lru.define = lru.set
     engine.configure({
-      templates: options.templates ? options.templates : lru
+      templates: globalOptions.templates ? globalOptions.templates : lru
     })
 
     const config = Object.assign({
       cache: prod,
       views: templatesDir
-    }, options)
+    }, globalOptions)
 
     data = Object.assign({}, defaultCtx, this.locals, data)
     // Append view extension (Eta will append '.eta' by default,
@@ -648,8 +652,8 @@ function fastifyView (fastify, opts, next) {
     })
   }
 
-  if (prod && type === 'handlebars' && options.partials) {
-    getPartials(type, options.partials, (err, partialsObject) => {
+  if (prod && type === 'handlebars' && globalOptions.partials) {
+    getPartials(type, globalOptions.partials, (err, partialsObject) => {
       if (err) {
         next(err)
         return
@@ -682,7 +686,6 @@ function fastifyView (fastify, opts, next) {
         }, page, data, opts)
       }
     }
-
     return render
   }
 

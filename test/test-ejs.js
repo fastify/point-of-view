@@ -99,7 +99,7 @@ test('reply.view with ejs engine with layout option on render', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('index-for-layout.ejs', data, 'layout.html')
+    reply.view('index-for-layout.ejs', data, { layout: 'layout.html' })
   })
 
   fastify.listen(0, err => {
@@ -132,7 +132,7 @@ test('reply.view should return 500 if layout is missing on render', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('index-for-layout.ejs', data, 'non-existing-layout.html')
+    reply.view('index-for-layout.ejs', data, { layout: 'non-existing-layout.html' })
   })
 
   fastify.listen(0, err => {
@@ -683,7 +683,7 @@ test('*** reply.view with ejs engine with layout option on render, includeViewEx
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('index-for-layout.ejs', data, 'layout-with-includes')
+    reply.view('index-for-layout.ejs', data, { layout: 'layout-with-includes' })
   })
 
   fastify.listen(0, err => {

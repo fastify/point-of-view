@@ -497,7 +497,7 @@ test('reply.view with dot engine with layout option on render', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('testdot', data, 'layout')
+    reply.view('testdot', data, { layout: 'layout' })
   })
 
   fastify.listen(0, err => {
@@ -531,7 +531,7 @@ test('reply.view with dot engine with layout option on render', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('testdot', data, 'layout')
+    reply.view('testdot', data, { layout: 'layout' })
   })
 
   fastify.listen(0, err => {
@@ -565,7 +565,7 @@ test('reply.view should return 500 if layout is missing on render', t => {
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('testdot', data, 'non-existing-layout')
+    reply.view('testdot', data, { layout: 'non-existing-layout' })
   })
 
   fastify.listen(0, err => {
