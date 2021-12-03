@@ -161,6 +161,19 @@ fastify.get("/desktop", (req, reply) => {
 });
 ```
 
+## Providing a layout on render
+
+Point-of-view supports layouts for **EJS**, **Handlebars**, **Eta** and **doT**.
+These engines also support providing a layout on render.
+
+**Please note:** Global layouts and provding layouts on render are mutually exclusive. They can not be mixed.
+
+```js
+fastify.get('/', (req, reply) => {
+  reply.view('index-for-layout.ejs', data, { layout: 'layout.html' })
+})
+```
+
 ## Setting request-global variables
 Sometimes, several templates should have access to the same request-sceific variables. E.g. when setting the current username.
 
