@@ -307,6 +307,52 @@ test('fastify.view with handlebars engine with layout option', t => {
   })
 })
 
+test('fastify.view with handlebars engine with layout option on render', t => {
+  t.plan(3)
+
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const data = { text: 'it works!' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view('./templates/index-for-layout.hbs', data, { layout: './templates/layout.hbs' }, (err, compiled) => {
+      t.error(err)
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), compiled)
+      fastify.close()
+    })
+  })
+})
+
+test('fastify.view with handlebars engine with invalid layout option on render should throw', t => {
+  t.plan(3)
+
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const data = { text: 'it works!' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+    fastify.view('./templates/index-for-layout.hbs', data, { layout: './templates/invalid-layout.hbs' }, (err, compiled) => {
+      t.ok(err instanceof Error)
+      t.equal(err.message, 'unable to access template "./templates/invalid-layout.hbs"')
+    })
+  })
+})
+
 test('reply.view with handlebars engine', t => {
   t.plan(6)
   const fastify = Fastify()
@@ -753,6 +799,65 @@ test('reply.view with handlebars engine with layout option', t => {
       t.equal(response.headers['content-length'], '' + replyBody.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
       t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))({}), replyBody.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with handlebars engine with layout option on render', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars: handlebars
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index-for-layout.hbs', {}, { layout: './templates/layout.hbs' })
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, replyBody) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + replyBody.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))({}), replyBody.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view should return 500 if layout is missing on render', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars: handlebars
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index-for-layout.hbs', {}, { layout: './templates/missing-layout.hbs' })
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, replyBody) => {
+      t.error(err)
+      t.equal(response.statusCode, 500)
       fastify.close()
     })
   })

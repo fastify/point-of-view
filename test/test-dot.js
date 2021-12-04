@@ -482,3 +482,101 @@ test('reply.view with dot engine with layout option', t => {
     })
   })
 })
+
+test('reply.view with dot engine with layout option on render', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const engine = require('dot')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      dot: engine
+    },
+    root: 'templates'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('testdot', data, { layout: 'layout' })
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal('header: textfoo text1 <p>foo</p>footer', body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with dot engine with layout option on render', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const engine = require('dot')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      dot: engine
+    },
+    root: 'templates'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('testdot', data, { layout: 'layout' })
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal('header: textfoo text1 <p>foo</p>footer', body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view should return 500 if layout is missing on render', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const engine = require('dot')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      dot: engine
+    },
+    root: 'templates'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('testdot', data, { layout: 'non-existing-layout' })
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 500)
+      fastify.close()
+    })
+  })
+})
