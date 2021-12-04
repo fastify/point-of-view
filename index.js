@@ -27,38 +27,47 @@ function fastifyView (fastify, opts, next) {
   const charset = opts.charset || 'utf-8'
   const propertyName = opts.propertyName || 'view'
   const engine = opts.engine[type]
-  const options = opts.options || {}
+  const globalOptions = opts.options || {}
   const templatesDir = opts.root || resolve(opts.templates || './')
   const lru = HLRU(opts.maxCache || 100)
   const includeViewExtension = opts.includeViewExtension || false
   const viewExt = opts.viewExt || ''
   const prod = typeof opts.production === 'boolean' ? opts.production : process.env.NODE_ENV === 'production'
   const defaultCtx = opts.defaultContext || {}
-  const layoutFileName = opts.layout
+  const globalLayoutFileName = opts.layout
 
-  if (layoutFileName && type !== 'dot' && type !== 'handlebars' && type !== 'ejs' && type !== 'eta') {
-    next(new Error('Only Dot, Handlebars, EJS, and Eta support the "layout" option'))
-    return
+  function layoutIsValid (_layoutFileName) {
+    if (type !== 'dot' && type !== 'handlebars' && type !== 'ejs' && type !== 'eta') {
+      throw new Error('Only Dot, Handlebars, EJS, and Eta support the "layout" option')
+    }
+
+    if (!hasAccessToLayoutFile(_layoutFileName, getDefaultExtension(type))) {
+      throw new Error(`unable to access template "${_layoutFileName}"`)
+    }
   }
 
-  if (layoutFileName && !hasAccessToLayoutFile(layoutFileName, getDefaultExtension(type))) {
-    next(new Error(`unable to access template "${layoutFileName}"`))
-    return
+  if (globalLayoutFileName) {
+    try {
+      layoutIsValid(globalLayoutFileName)
+    } catch (error) {
+      next(error)
+      return
+    }
   }
 
-  const dotRender = type === 'dot' ? viewDot.call(fastify, preProcessDot.call(fastify, templatesDir, options)) : null
+  const dotRender = type === 'dot' ? viewDot.call(fastify, preProcessDot.call(fastify, templatesDir, globalOptions)) : null
 
   const renders = {
     marko: viewMarko,
-    ejs: withLayout(viewEjs),
-    handlebars: withLayout(viewHandlebars),
+    ejs: withLayout(viewEjs, globalLayoutFileName),
+    handlebars: withLayout(viewHandlebars, globalLayoutFileName),
     mustache: viewMustache,
     nunjucks: viewNunjucks,
     'art-template': viewArtTemplate,
     twig: viewTwig,
     liquid: viewLiquid,
-    dot: withLayout(dotRender),
-    eta: withLayout(viewEta),
+    dot: withLayout(dotRender, globalLayoutFileName),
+    eta: withLayout(viewEta, globalLayoutFileName),
     _default: view
   }
 
@@ -153,8 +162,8 @@ function fastifyView (fastify, opts, next) {
           callback(err, null)
           return
         }
-        if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-          data = options.useHtmlMinifier.minify(data, options.htmlMinifierOptions || {})
+        if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+          data = globalOptions.useHtmlMinifier.minify(data, globalOptions.htmlMinifierOptions || {})
         }
         if (type === 'handlebars') {
           data = engine.compile(data)
@@ -186,8 +195,8 @@ function fastifyView (fastify, opts, next) {
           if (err) {
             error = err
           }
-          if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-            data = options.useHtmlMinifier.minify(data, options.htmlMinifierOptions || {})
+          if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+            data = globalOptions.useHtmlMinifier.minify(data, globalOptions.htmlMinifierOptions || {})
           }
 
           partialsHtml[key] = data
@@ -209,15 +218,15 @@ function fastifyView (fastify, opts, next) {
 
       let compiledPage
       try {
-        if ((type === 'ejs') && viewExt && !options.includer) {
-          options.includer = (originalPath, parsedPath) => {
+        if ((type === 'ejs') && viewExt && !globalOptions.includer) {
+          globalOptions.includer = (originalPath, parsedPath) => {
             return {
               filename: parsedPath || join(templatesDir, originalPath + '.' + viewExt)
             }
           }
         }
-        options.filename = join(templatesDir, page)
-        compiledPage = engine.compile(html, options)
+        globalOptions.filename = join(templatesDir, page)
+        compiledPage = engine.compile(html, globalOptions)
       } catch (error) {
         that.send(error)
         return
@@ -233,8 +242,8 @@ function fastifyView (fastify, opts, next) {
       } catch (error) {
         cachedPage = error
       }
-      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-        cachedPage = options.useHtmlMinifier.minify(cachedPage, options.htmlMinifierOptions || {})
+      if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+        cachedPage = globalOptions.useHtmlMinifier.minify(cachedPage, globalOptions.htmlMinifierOptions || {})
       }
       that.send(cachedPage)
     }
@@ -291,7 +300,18 @@ function fastifyView (fastify, opts, next) {
     readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
   }
 
-  function viewEjs (page, data) {
+  function viewEjs (page, data, opts) {
+    if (opts && opts.layout) {
+      try {
+        layoutIsValid(opts.layout)
+        const that = this
+        return withLayout(viewEjs, opts.layout).call(that, page, data)
+      } catch (error) {
+        this.send(error)
+        return
+      }
+    }
+
     if (!page) {
       this.send(new Error('Missing page'))
       return
@@ -331,7 +351,7 @@ function fastifyView (fastify, opts, next) {
     }
 
     // merge engine options
-    const confs = Object.assign({}, defaultSetting, options)
+    const confs = Object.assign({}, defaultSetting, globalOptions)
 
     function render (filename, data) {
       confs.filename = join(templatesDir, filename)
@@ -355,17 +375,17 @@ function fastifyView (fastify, opts, next) {
       this.send(new Error('Missing page'))
       return
     }
-    const env = engine.configure(templatesDir, options)
-    if (typeof options.onConfigure === 'function') {
-      options.onConfigure(env)
+    const env = engine.configure(templatesDir, globalOptions)
+    if (typeof globalOptions.onConfigure === 'function') {
+      globalOptions.onConfigure(env)
     }
     data = Object.assign({}, defaultCtx, this.locals, data)
     // Append view extension.
     page = getPage(page, 'njk')
     env.render(join(templatesDir, page), data, (err, html) => {
       if (err) return this.send(err)
-      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-        html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
+      if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+        html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
       }
       this.header('Content-Type', 'text/html; charset=' + charset)
       this.send(html)
@@ -389,8 +409,8 @@ function fastifyView (fastify, opts, next) {
     const template = opts && opts.templateSrc ? engine.load(join(templatesDir, page), opts.templateSrc) : engine.load(join(templatesDir, page))
 
     if (opts && opts.stream) {
-      if (typeof options.useHtmlMinifyStream === 'function') {
-        this.send(template.stream(data).pipe(options.useHtmlMinifyStream(options.htmlMinifierOptions || {})))
+      if (typeof globalOptions.useHtmlMinifyStream === 'function') {
+        this.send(template.stream(data).pipe(globalOptions.useHtmlMinifyStream(globalOptions.htmlMinifierOptions || {})))
       } else {
         this.send(template.stream(data))
       }
@@ -401,8 +421,8 @@ function fastifyView (fastify, opts, next) {
     function send (that) {
       return function _send (err, html) {
         if (err) return that.send(err)
-        if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-          html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
+        if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+          html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
         }
         that.header('Content-Type', 'text/html; charset=' + charset)
         that.send(html)
@@ -410,13 +430,24 @@ function fastifyView (fastify, opts, next) {
     }
   }
 
-  function viewHandlebars (page, data) {
+  function viewHandlebars (page, data, opts) {
+    if (opts && opts.layout) {
+      try {
+        layoutIsValid(opts.layout)
+        const that = this
+        return withLayout(viewHandlebars, opts.layout).call(that, page, data)
+      } catch (error) {
+        this.send(error)
+        return
+      }
+    }
+
     if (!page) {
       this.send(new Error('Missing page'))
       return
     }
 
-    const options = Object.assign({}, opts.options)
+    const options = Object.assign({}, globalOptions)
     data = Object.assign({}, defaultCtx, this.locals, data)
     // append view extension
     page = getPage(page, 'hbs')
@@ -498,7 +529,7 @@ function fastifyView (fastify, opts, next) {
       return
     }
 
-    data = Object.assign({}, defaultCtx, options, this.locals, data)
+    data = Object.assign({}, defaultCtx, globalOptions, this.locals, data)
     // Append view extension.
     page = getPage(page, 'twig')
     engine.renderFile(join(templatesDir, page), data, (err, html) => {
@@ -506,8 +537,8 @@ function fastifyView (fastify, opts, next) {
         return this.send(err)
       }
 
-      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-        html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
+      if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+        html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
       }
       if (!this.getHeader('content-type')) {
         this.header('Content-Type', 'text/html; charset=' + charset)
@@ -528,8 +559,8 @@ function fastifyView (fastify, opts, next) {
 
     engine.renderFile(join(templatesDir, page), data, opts)
       .then((html) => {
-        if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-          html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
+        if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+          html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
         }
         if (!this.getHeader('content-type')) {
           this.header('Content-Type', 'text/html; charset=' + charset)
@@ -543,14 +574,24 @@ function fastifyView (fastify, opts, next) {
 
   function viewDot (renderModule) {
     return function _viewDot (page, data, opts) {
+      if (opts && opts.layout) {
+        try {
+          layoutIsValid(opts.layout)
+          const that = this
+          return withLayout(dotRender, opts.layout).call(that, page, data)
+        } catch (error) {
+          this.send(error)
+          return
+        }
+      }
       if (!page) {
         this.send(new Error('Missing page'))
         return
       }
       data = Object.assign({}, defaultCtx, this.locals, data)
       let html = renderModule[page](data)
-      if (options.useHtmlMinifier && (typeof options.useHtmlMinifier.minify === 'function')) {
-        html = options.useHtmlMinifier.minify(html, options.htmlMinifierOptions || {})
+      if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+        html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
       }
       if (!this.getHeader('content-type')) {
         this.header('Content-Type', 'text/html; charset=' + charset)
@@ -559,7 +600,18 @@ function fastifyView (fastify, opts, next) {
     }
   }
 
-  function viewEta (page, data) {
+  function viewEta (page, data, opts) {
+    if (opts && opts.layout) {
+      try {
+        layoutIsValid(opts.layout)
+        const that = this
+        return withLayout(viewEta, opts.layout).call(that, page, data)
+      } catch (error) {
+        this.send(error)
+        return
+      }
+    }
+
     if (!page) {
       this.send(new Error('Missing page'))
       return
@@ -567,13 +619,13 @@ function fastifyView (fastify, opts, next) {
 
     lru.define = lru.set
     engine.configure({
-      templates: options.templates ? options.templates : lru
+      templates: globalOptions.templates ? globalOptions.templates : lru
     })
 
     const config = Object.assign({
       cache: prod,
       views: templatesDir
-    }, options)
+    }, globalOptions)
 
     data = Object.assign({}, defaultCtx, this.locals, data)
     // Append view extension (Eta will append '.eta' by default,
@@ -595,8 +647,8 @@ function fastifyView (fastify, opts, next) {
     })
   }
 
-  if (prod && type === 'handlebars' && options.partials) {
-    getPartials(type, options.partials, (err, partialsObject) => {
+  if (prod && type === 'handlebars' && globalOptions.partials) {
+    getPartials(type, globalOptions.partials, (err, partialsObject) => {
       if (err) {
         next(err)
         return
@@ -610,13 +662,12 @@ function fastifyView (fastify, opts, next) {
     next()
   }
 
-  function withLayout (render) {
-    if (layoutFileName) {
+  function withLayout (render, layout) {
+    if (layout) {
       return function (page, data, opts) {
+        if (opts && opts.layout) throw new Error('A layout can either be set globally or on render, not both.')
         const that = this
-
         data = Object.assign({}, defaultCtx, this.locals, data)
-
         render.call({
           getHeader: () => { },
           header: () => { },
@@ -626,13 +677,11 @@ function fastifyView (fastify, opts, next) {
             }
 
             data = Object.assign((data || {}), { body: result })
-
-            render.call(that, layoutFileName, data, opts)
+            render.call(that, layout, data, opts)
           }
         }, page, data, opts)
       }
     }
-
     return render
   }
 
