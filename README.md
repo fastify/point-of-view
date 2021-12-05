@@ -416,9 +416,9 @@ app.get("/data", (request, reply) => {
 ```
 -->
 
-### Miscellaneous
+## Miscellaneous
 
-## Using point-of-view as a dependency in a fastify-plugin
+### Using point-of-view as a dependency in a fastify-plugin
 
 To require `point-of-view` as a dependency to a [fastify-plugin](https://github.com/fastify/fastify-plugin), add the name `point-of-view` to the dependencies array in the [plugin's opts](https://github.com/fastify/fastify-plugin#dependencies).
 
@@ -428,7 +428,7 @@ fastify.register(myViewRendererPlugin, {
 });
 ```
 
-## Forcing a cache-flush
+### Forcing a cache-flush
 
 To forcefully clear cache when in production mode, call the `view.clearCache()` function.
 
