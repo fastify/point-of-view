@@ -15,7 +15,6 @@ Currently supports the following templates engines:
 - [`nunjucks`](https://mozilla.github.io/nunjucks/)
 - [`pug`](https://pugjs.org/api/getting-started.html)
 - [`handlebars`](https://handlebarsjs.com/)
-- [`marko`](https://markojs.com/)
 - [`mustache`](https://mustache.github.io/)
 - [`art-template`](https://aui.github.io/art-template/)
 - [`twig`](https://twig.symfony.com/)
@@ -28,6 +27,8 @@ In `production` mode, `point-of-view` will heavily cache the templates file and 
 _Note that at least Fastify `v2.0.0` is needed._
 
 _Note: [`ejs-mate`](https://github.com/JacksonTian/ejs-mate) support [has been dropped](https://github.com/fastify/point-of-view/pull/157)._
+
+_Note: [`marko`](https://markojs.com/) support has been dropped. Please use [`@marko/fastify`](https://github.com/marko-js/fastify) instead._
 
 #### Benchmarks
 

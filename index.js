@@ -10,7 +10,7 @@ const resolve = require('path').resolve
 const join = require('path').join
 const { basename, dirname, extname } = require('path')
 const HLRU = require('hashlru')
-const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'marko', 'mustache', 'art-template', 'twig', 'liquid', 'dot', 'eta']
+const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'mustache', 'art-template', 'twig', 'liquid', 'dot', 'eta']
 
 function fastifyView (fastify, opts, next) {
   if (!opts.engine) {
@@ -58,7 +58,6 @@ function fastifyView (fastify, opts, next) {
   const dotRender = type === 'dot' ? viewDot.call(fastify, preProcessDot.call(fastify, templatesDir, globalOptions)) : null
 
   const renders = {
-    marko: viewMarko,
     ejs: withLayout(viewEjs, globalLayoutFileName),
     handlebars: withLayout(viewHandlebars, globalLayoutFileName),
     mustache: viewMustache,
@@ -390,44 +389,6 @@ function fastifyView (fastify, opts, next) {
       this.header('Content-Type', 'text/html; charset=' + charset)
       this.send(html)
     })
-  }
-
-  function viewMarko (page, data, opts) {
-    if (!page) {
-      this.send(new Error('Missing page'))
-      return
-    }
-
-    data = Object.assign({}, defaultCtx, this.locals, data)
-    // append view extension
-    page = getPage(page, type)
-
-    // Support compile template from memory
-    // opts.templateSrc : string - pre-loaded template source
-    // even to load from memory, a page parameter still should be provided and the parent path should exist for the loader to search components along the path.
-
-    const template = opts && opts.templateSrc ? engine.load(join(templatesDir, page), opts.templateSrc) : engine.load(join(templatesDir, page))
-
-    if (opts && opts.stream) {
-      if (typeof globalOptions.useHtmlMinifyStream === 'function') {
-        this.send(template.stream(data).pipe(globalOptions.useHtmlMinifyStream(globalOptions.htmlMinifierOptions || {})))
-      } else {
-        this.send(template.stream(data))
-      }
-    } else {
-      template.renderToString(data, send(this))
-    }
-
-    function send (that) {
-      return function _send (err, html) {
-        if (err) return that.send(err)
-        if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
-          html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
-        }
-        that.header('Content-Type', 'text/html; charset=' + charset)
-        that.send(html)
-      }
-    }
   }
 
   function viewHandlebars (page, data, opts) {
