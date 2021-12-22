@@ -129,9 +129,6 @@ yarn.lock
 .vscode
 .idea
 
-# marko generated files
-*.marko.js
-
 # temporary/work/output folders
 # build/
 out
