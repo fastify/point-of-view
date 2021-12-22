@@ -1,6 +1,6 @@
 {
   "name": "point-of-view",
-  "version": "4.16.0",
+  "version": "5.0.0",
   "description": "Template plugin for Fastify",
   "main": "index.js",
   "scripts": {
