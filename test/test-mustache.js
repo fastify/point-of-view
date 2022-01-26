@@ -419,6 +419,43 @@ test('reply.view with mustache engine with partials and html-minifier', t => {
   })
 })
 
+test('reply.view with mustache engine with partials and paths excluded from html-minifier', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const mustache = require('mustache')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      mustache: mustache
+    },
+    options: {
+      useHtmlMinifier: minifier,
+      htmlMinifierOptions: minifierOpts,
+      pathsToExcludeHtmlMinifier: ['/test']
+    }
+  })
+
+  fastify.get('/test', (req, reply) => {
+    reply.view('./templates/index.mustache', data, { partials: { body: './templates/body.mustache' } })
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port + '/test'
+    }, (err, response, replyBody) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + replyBody.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), replyBody.toString())
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with mustache engine, template folder specified', t => {
   t.plan(6)
   const fastify = Fastify()

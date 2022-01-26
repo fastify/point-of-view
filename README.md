@@ -237,7 +237,26 @@ const minifierOpts = {
     htmlMinifierOptions: minifierOpts
   }
 ```
-
+To filter some paths from minification, you can add the option `pathsToExcludeHtmlMinifier` with list of paths
+```js
+// get a reference to html-minifier
+const minifier = require('html-minifier')
+// optionally defined the html-minifier options
+const minifierOpts = {
+  removeComments: true,
+  removeCommentsFromCDATA: true,
+  collapseWhitespace: true,
+  collapseBooleanAttributes: true,
+  removeAttributeQuotes: true,
+  removeEmptyAttributes: true
+}
+// in template engine options configure the use of html-minifier
+  options: {
+    useHtmlMinifier: minifier,
+    htmlMinifierOptions: minifierOpts, 
+    pathsToExcludeHtmlMinifier: ['/test']
+  }
+```
 
 
 

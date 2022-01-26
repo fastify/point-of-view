@@ -17,13 +17,11 @@ function fastifyView (fastify, opts, next) {
     next(new Error('Missing engine'))
     return
   }
-
   const type = Object.keys(opts.engine)[0]
   if (supportedEngines.indexOf(type) === -1) {
     next(new Error(`'${type}' not yet supported, PR? :)`))
     return
   }
-
   const charset = opts.charset || 'utf-8'
   const propertyName = opts.propertyName || 'view'
   const engine = opts.engine[type]
@@ -149,9 +147,18 @@ function fastifyView (fastify, opts, next) {
     return viewExt ? `.${viewExt}` : (includeViewExtension ? `.${extension}` : filextension)
   }
 
+  function isPathExcludedMinification (currentPath, pathsToExclude) {
+    return pathsToExclude.includes(currentPath)
+  }
+
+  function useHtmlMinification (globalOpts, requestedPath) {
+    return globalOptions.useHtmlMinifier &&
+      (typeof globalOptions.useHtmlMinifier.minify === 'function') &&
+      !isPathExcludedMinification(requestedPath, globalOptions.pathsToExcludeHtmlMinifier || [])
+  }
   // Gets template as string (or precompiled for Handlebars)
   // from LRU cache or filesystem.
-  const getTemplate = function (file, callback) {
+  const getTemplate = (file, callback, requestedPath) => {
     const data = lru.get(file)
     if (data && prod) {
       callback(null, data)
@@ -161,7 +168,8 @@ function fastifyView (fastify, opts, next) {
           callback(err, null)
           return
         }
-        if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+
+        if (useHtmlMinification(globalOptions, requestedPath)) {
           data = globalOptions.useHtmlMinifier.minify(data, globalOptions.htmlMinifierOptions || {})
         }
         if (type === 'handlebars') {
@@ -174,19 +182,16 @@ function fastifyView (fastify, opts, next) {
   }
 
   // Gets partials as collection of strings from LRU cache or filesystem.
-  const getPartials = function (page, partials, callback) {
+  const getPartials = function (page, { partials, requestedPath }, callback) {
     const partialsObj = lru.get(`${page}-Partials`)
-
     if (partialsObj && prod) {
       callback(null, partialsObj)
     } else {
       let filesToLoad = Object.keys(partials).length
-
       if (filesToLoad === 0) {
         callback(null, {})
         return
       }
-
       let error = null
       const partialsHtml = {}
       Object.keys(partials).forEach((key, index) => {
@@ -194,7 +199,7 @@ function fastifyView (fastify, opts, next) {
           if (err) {
             error = err
           }
-          if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+          if (useHtmlMinification(globalOptions, requestedPath)) {
             data = globalOptions.useHtmlMinifier.minify(data, globalOptions.htmlMinifierOptions || {})
           }
 
@@ -210,6 +215,8 @@ function fastifyView (fastify, opts, next) {
 
   function readCallback (that, page, data) {
     return function _readCallback (err, html) {
+      const requestedPath = that?.request?.context?.config?.url
+
       if (err) {
         that.send(err)
         return
@@ -241,7 +248,7 @@ function fastifyView (fastify, opts, next) {
       } catch (error) {
         cachedPage = error
       }
-      if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+      if (useHtmlMinification(globalOptions, requestedPath)) {
         cachedPage = globalOptions.useHtmlMinifier.minify(cachedPage, globalOptions.htmlMinifierOptions || {})
       }
       that.send(cachedPage)
@@ -318,6 +325,7 @@ function fastifyView (fastify, opts, next) {
     data = Object.assign({}, defaultCtx, this.locals, data)
     // append view extension
     page = getPage(page, type)
+    const requestedPath = this?.request?.context?.config?.url
     getTemplate(page, (err, template) => {
       if (err) {
         this.send(err)
@@ -332,7 +340,7 @@ function fastifyView (fastify, opts, next) {
         return
       }
       readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
-    })
+    }, requestedPath)
   }
 
   function viewArtTemplate (page, data) {
@@ -382,8 +390,9 @@ function fastifyView (fastify, opts, next) {
     // Append view extension.
     page = getPage(page, 'njk')
     env.render(join(templatesDir, page), data, (err, html) => {
+      const requestedPath = this?.request?.context?.config?.url
       if (err) return this.send(err)
-      if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+      if (useHtmlMinification(globalOptions, requestedPath)) {
         html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
       }
       this.header('Content-Type', 'text/html; charset=' + charset)
@@ -412,6 +421,7 @@ function fastifyView (fastify, opts, next) {
     data = Object.assign({}, defaultCtx, this.locals, data)
     // append view extension
     page = getPage(page, 'hbs')
+    const requestedPath = this?.request?.context?.config?.url
     getTemplate(page, (err, template) => {
       if (err) {
         this.send(err)
@@ -429,7 +439,7 @@ function fastifyView (fastify, opts, next) {
           this.send(e)
         }
       } else {
-        getPartials(type, options.partials || {}, (err, partialsObject) => {
+        getPartials(type, { partials: options.partials || {}, requestedPath: requestedPath }, (err, partialsObject) => {
           if (err) {
             this.send(err)
             return
@@ -451,7 +461,7 @@ function fastifyView (fastify, opts, next) {
           }
         })
       }
-    })
+    }, requestedPath)
   }
 
   function viewMustache (page, data, opts) {
@@ -464,12 +474,13 @@ function fastifyView (fastify, opts, next) {
     data = Object.assign({}, defaultCtx, this.locals, data)
     // append view extension
     page = getPage(page, 'mustache')
+    const requestedPath = this?.request?.context?.config?.url
     getTemplate(page, (err, templateString) => {
       if (err) {
         this.send(err)
         return
       }
-      getPartials(page, options.partials || {}, (err, partialsObject) => {
+      getPartials(page, { partials: options.partials || {}, requestedPath: requestedPath }, (err, partialsObject) => {
         if (err) {
           this.send(err)
           return
@@ -481,7 +492,7 @@ function fastifyView (fastify, opts, next) {
         }
         this.send(html)
       })
-    })
+    }, requestedPath)
   }
 
   function viewTwig (page, data, opts) {
@@ -494,11 +505,11 @@ function fastifyView (fastify, opts, next) {
     // Append view extension.
     page = getPage(page, 'twig')
     engine.renderFile(join(templatesDir, page), data, (err, html) => {
+      const requestedPath = this?.request?.context?.config?.url
       if (err) {
         return this.send(err)
       }
-
-      if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+      if (useHtmlMinification(globalOptions, requestedPath)) {
         html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
       }
       if (!this.getHeader('content-type')) {
@@ -520,7 +531,8 @@ function fastifyView (fastify, opts, next) {
 
     engine.renderFile(join(templatesDir, page), data, opts)
       .then((html) => {
-        if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+        const requestedPath = this?.request?.context?.config?.url
+        if (useHtmlMinification(globalOptions, requestedPath)) {
           html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
         }
         if (!this.getHeader('content-type')) {
@@ -551,7 +563,8 @@ function fastifyView (fastify, opts, next) {
       }
       data = Object.assign({}, defaultCtx, this.locals, data)
       let html = renderModule[page](data)
-      if (globalOptions.useHtmlMinifier && (typeof globalOptions.useHtmlMinifier.minify === 'function')) {
+      const requestedPath = this?.request?.context?.config?.url
+      if (useHtmlMinification(globalOptions, requestedPath)) {
         html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
       }
       if (!this.getHeader('content-type')) {
@@ -596,7 +609,8 @@ function fastifyView (fastify, opts, next) {
       if (err) return this.send(err)
       if (
         config.useHtmlMinifier &&
-        typeof config.useHtmlMinifier.minify === 'function'
+        typeof config.useHtmlMinifier.minify === 'function' &&
+        !isPathExcludedMinification(this?.request?.context?.config?.url, config.pathsToExcludeHtmlMinifier || [])
       ) {
         html = config.useHtmlMinifier.minify(
           html,
@@ -609,7 +623,7 @@ function fastifyView (fastify, opts, next) {
   }
 
   if (prod && type === 'handlebars' && globalOptions.partials) {
-    getPartials(type, globalOptions.partials, (err, partialsObject) => {
+    getPartials(type, { partials: globalOptions.partials || {}, requestedPath: this?.request?.context?.config?.url }, (err, partialsObject) => {
       if (err) {
         next(err)
         return
