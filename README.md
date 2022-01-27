@@ -241,21 +241,24 @@ To filter some paths from minification, you can add the option `pathsToExcludeHt
 ```js
 // get a reference to html-minifier
 const minifier = require('html-minifier')
-// optionally defined the html-minifier options
-const minifierOpts = {
-  removeComments: true,
-  removeCommentsFromCDATA: true,
-  collapseWhitespace: true,
-  collapseBooleanAttributes: true,
-  removeAttributeQuotes: true,
-  removeEmptyAttributes: true
+// in options configure the use of html-minifier and set paths to exclude from minification
+const options = {
+  useHtmlMinifier: minifier,
+  pathsToExcludeHtmlMinifier: ['/test']
 }
-// in template engine options configure the use of html-minifier
-  options: {
-    useHtmlMinifier: minifier,
-    htmlMinifierOptions: minifierOpts, 
-    pathsToExcludeHtmlMinifier: ['/test']
-  }
+
+fastify.register(require("point-of-view"), {
+  engine: {
+    ejs: require('ejs')
+  },
+  options
+});
+
+// This path is excluded from minification
+fastify.get("/test", (req, reply) => {
+  reply.view("./template/index.ejs", { text: "text" });
+});
+
 ```
 
 

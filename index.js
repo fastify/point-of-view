@@ -148,17 +148,21 @@ function fastifyView (fastify, opts, next) {
   }
 
   function isPathExcludedMinification (currentPath, pathsToExclude) {
-    return pathsToExclude.includes(currentPath)
+    return (pathsToExclude && Array.isArray(pathsToExclude)) ? pathsToExclude.includes(currentPath) : false
   }
 
   function useHtmlMinification (globalOpts, requestedPath) {
     return globalOptions.useHtmlMinifier &&
       (typeof globalOptions.useHtmlMinifier.minify === 'function') &&
-      !isPathExcludedMinification(requestedPath, globalOptions.pathsToExcludeHtmlMinifier || [])
+      !isPathExcludedMinification(requestedPath, globalOptions.pathsToExcludeHtmlMinifier)
+  }
+
+  function getRequestedPath (fastify) {
+    return (fastify && fastify.request) ? fastify.request.context.config.url : null
   }
   // Gets template as string (or precompiled for Handlebars)
   // from LRU cache or filesystem.
-  const getTemplate = (file, callback, requestedPath) => {
+  const getTemplate = function (file, callback, requestedPath) {
     const data = lru.get(file)
     if (data && prod) {
       callback(null, data)
@@ -215,7 +219,7 @@ function fastifyView (fastify, opts, next) {
 
   function readCallback (that, page, data) {
     return function _readCallback (err, html) {
-      const requestedPath = that?.request?.context?.config?.url
+      const requestedPath = getRequestedPath(that)
 
       if (err) {
         that.send(err)
@@ -325,7 +329,7 @@ function fastifyView (fastify, opts, next) {
     data = Object.assign({}, defaultCtx, this.locals, data)
     // append view extension
     page = getPage(page, type)
-    const requestedPath = this?.request?.context?.config?.url
+    const requestedPath = getRequestedPath(this)
     getTemplate(page, (err, template) => {
       if (err) {
         this.send(err)
@@ -390,7 +394,7 @@ function fastifyView (fastify, opts, next) {
     // Append view extension.
     page = getPage(page, 'njk')
     env.render(join(templatesDir, page), data, (err, html) => {
-      const requestedPath = this?.request?.context?.config?.url
+      const requestedPath = getRequestedPath(this)
       if (err) return this.send(err)
       if (useHtmlMinification(globalOptions, requestedPath)) {
         html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
@@ -421,7 +425,7 @@ function fastifyView (fastify, opts, next) {
     data = Object.assign({}, defaultCtx, this.locals, data)
     // append view extension
     page = getPage(page, 'hbs')
-    const requestedPath = this?.request?.context?.config?.url
+    const requestedPath = getRequestedPath(this)
     getTemplate(page, (err, template) => {
       if (err) {
         this.send(err)
@@ -474,7 +478,7 @@ function fastifyView (fastify, opts, next) {
     data = Object.assign({}, defaultCtx, this.locals, data)
     // append view extension
     page = getPage(page, 'mustache')
-    const requestedPath = this?.request?.context?.config?.url
+    const requestedPath = getRequestedPath(this)
     getTemplate(page, (err, templateString) => {
       if (err) {
         this.send(err)
@@ -505,7 +509,7 @@ function fastifyView (fastify, opts, next) {
     // Append view extension.
     page = getPage(page, 'twig')
     engine.renderFile(join(templatesDir, page), data, (err, html) => {
-      const requestedPath = this?.request?.context?.config?.url
+      const requestedPath = getRequestedPath(this)
       if (err) {
         return this.send(err)
       }
@@ -531,7 +535,7 @@ function fastifyView (fastify, opts, next) {
 
     engine.renderFile(join(templatesDir, page), data, opts)
       .then((html) => {
-        const requestedPath = this?.request?.context?.config?.url
+        const requestedPath = getRequestedPath(this)
         if (useHtmlMinification(globalOptions, requestedPath)) {
           html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
         }
@@ -563,7 +567,7 @@ function fastifyView (fastify, opts, next) {
       }
       data = Object.assign({}, defaultCtx, this.locals, data)
       let html = renderModule[page](data)
-      const requestedPath = this?.request?.context?.config?.url
+      const requestedPath = getRequestedPath(this)
       if (useHtmlMinification(globalOptions, requestedPath)) {
         html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
       }
@@ -610,7 +614,7 @@ function fastifyView (fastify, opts, next) {
       if (
         config.useHtmlMinifier &&
         typeof config.useHtmlMinifier.minify === 'function' &&
-        !isPathExcludedMinification(this?.request?.context?.config?.url, config.pathsToExcludeHtmlMinifier || [])
+        !isPathExcludedMinification(getRequestedPath(this), config.pathsToExcludeHtmlMinifier)
       ) {
         html = config.useHtmlMinifier.minify(
           html,
@@ -623,7 +627,7 @@ function fastifyView (fastify, opts, next) {
   }
 
   if (prod && type === 'handlebars' && globalOptions.partials) {
-    getPartials(type, { partials: globalOptions.partials || {}, requestedPath: this?.request?.context?.config?.url }, (err, partialsObject) => {
+    getPartials(type, { partials: globalOptions.partials || {}, requestedPath: getRequestedPath(this) }, (err, partialsObject) => {
       if (err) {
         next(err)
         return
