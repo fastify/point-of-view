@@ -63,6 +63,43 @@ module.exports.dotHtmlMinifierTests = function (t, compileOptions, withMinifierO
       })
     })
   })
+  test('reply.view with dot engine and paths excluded from html-minifier', t => {
+    t.plan(6)
+    const fastify = Fastify()
+    dot.log = false
+
+    fastify.register(POV, {
+      engine: {
+        dot: dot
+      },
+      root: 'templates',
+      options: {
+        useHtmlMinifier: minifier,
+        ...(withMinifierOptions && { htmlMinifierOptions: minifierOpts }),
+        pathsToExcludeHtmlMinifier: ['/test']
+      }
+    })
+
+    fastify.get('/test', (req, reply) => {
+      reply.view('testdot', data)
+    })
+
+    fastify.listen(0, err => {
+      t.error(err)
+
+      sget({
+        method: 'GET',
+        url: 'http://localhost:' + fastify.server.address().port + '/test'
+      }, (err, response, body) => {
+        t.error(err)
+        t.equal(response.statusCode, 200)
+        t.equal(response.headers['content-length'], String(body.length))
+        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.equal(dot.process(compileOptions).testdot(data), body.toString())
+        fastify.close()
+      })
+    })
+  })
 }
 
 module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
@@ -99,6 +136,41 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
         t.equal(response.headers['content-length'], String(body.length))
         t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
         t.equal(minifier.minify(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), body.toString())
+        fastify.close()
+      })
+    })
+  })
+  test('reply.view with eta engine and paths excluded from html-minifier', t => {
+    t.plan(6)
+    const fastify = Fastify()
+
+    fastify.register(POV, {
+      engine: {
+        eta: eta
+      },
+      options: {
+        useHtmlMinifier: minifier,
+        ...(withMinifierOptions && { htmlMinifierOptions: minifierOpts }),
+        pathsToExcludeHtmlMinifier: ['/test']
+      }
+    })
+
+    fastify.get('/test', (req, reply) => {
+      reply.view('templates/index.eta', data)
+    })
+
+    fastify.listen(0, err => {
+      t.error(err)
+
+      sget({
+        method: 'GET',
+        url: 'http://localhost:' + fastify.server.address().port + '/test'
+      }, (err, response, body) => {
+        t.error(err)
+        t.equal(response.statusCode, 200)
+        t.equal(response.headers['content-length'], String(body.length))
+        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.equal(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
         fastify.close()
       })
     })
@@ -178,6 +250,46 @@ module.exports.liquidHtmlMinifierTests = function (t, withMinifierOptions) {
       })
     })
   })
+  test('reply.view with liquid engine and paths excluded from html-minifier', t => {
+    t.plan(7)
+    const fastify = Fastify()
+    const engine = new Liquid()
+
+    fastify.register(POV, {
+      engine: {
+        liquid: engine
+      },
+      options: {
+        useHtmlMinifier: minifier,
+        ...(withMinifierOptions && { htmlMinifierOptions: minifierOpts }),
+        pathsToExcludeHtmlMinifier: ['/test']
+      }
+    })
+
+    fastify.get('/test', (req, reply) => {
+      reply.view('./templates/index.liquid', data)
+    })
+
+    fastify.listen(0, err => {
+      t.error(err)
+
+      sget({
+        method: 'GET',
+        url: 'http://localhost:' + fastify.server.address().port + '/test'
+      }, (err, response, body) => {
+        t.error(err)
+        t.equal(response.statusCode, 200)
+        t.equal(response.headers['content-length'], String(body.length))
+        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+        engine.renderFile('./templates/index.liquid', data)
+          .then((html) => {
+            t.error(err)
+            t.equal(html, body.toString())
+          })
+        fastify.close()
+      })
+    })
+  })
 }
 
 module.exports.nunjucksHtmlMinifierTests = function (t, withMinifierOptions) {
@@ -216,6 +328,43 @@ module.exports.nunjucksHtmlMinifierTests = function (t, withMinifierOptions) {
         t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
         // Global Nunjucks templates dir changed here.
         t.equal(minifier.minify(nunjucks.render('./index.njk', data), options), body.toString())
+        fastify.close()
+      })
+    })
+  })
+  test('reply.view with nunjucks engine, full path templates folder, and paths excluded from html-minifier', t => {
+    t.plan(6)
+    const fastify = Fastify()
+
+    fastify.register(POV, {
+      engine: {
+        nunjucks: nunjucks
+      },
+      templates: 'templates',
+      options: {
+        useHtmlMinifier: minifier,
+        ...(withMinifierOptions && { htmlMinifierOptions: minifierOpts }),
+        pathsToExcludeHtmlMinifier: ['/test']
+      }
+    })
+
+    fastify.get('/test', (req, reply) => {
+      reply.view('./index.njk', data)
+    })
+
+    fastify.listen(0, err => {
+      t.error(err)
+
+      sget({
+        method: 'GET',
+        url: 'http://localhost:' + fastify.server.address().port + '/test'
+      }, (err, response, body) => {
+        t.error(err)
+        t.equal(response.statusCode, 200)
+        t.equal(response.headers['content-length'], String(body.length))
+        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+        // Global Nunjucks templates dir changed here.
+        t.equal(nunjucks.render('./index.njk', data), body.toString())
         fastify.close()
       })
     })
@@ -260,6 +409,41 @@ module.exports.pugHtmlMinifierTests = function (t, withMinifierOptions) {
       })
     })
   })
+  test('reply.view with pug engine and paths excluded from html-minifier', t => {
+    t.plan(6)
+    const fastify = Fastify()
+
+    fastify.register(POV, {
+      engine: {
+        pug: pug
+      },
+      options: {
+        useHtmlMinifier: minifier,
+        ...(withMinifierOptions && { htmlMinifierOptions: minifierOpts }),
+        pathsToExcludeHtmlMinifier: ['/test']
+      }
+    })
+
+    fastify.get('/test', (req, reply) => {
+      reply.view('./templates/index.pug', data)
+    })
+
+    fastify.listen(0, err => {
+      t.error(err)
+
+      sget({
+        method: 'GET',
+        url: 'http://localhost:' + fastify.server.address().port + '/test'
+      }, (err, response, body) => {
+        t.error(err)
+        t.equal(response.statusCode, 200)
+        t.equal(response.headers['content-length'], String(body.length))
+        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
+        fastify.close()
+      })
+    })
+  })
 }
 
 module.exports.twigHtmlMinifierTests = function (t, withMinifierOptions) {
@@ -298,6 +482,44 @@ module.exports.twigHtmlMinifierTests = function (t, withMinifierOptions) {
         Twig.renderFile('./templates/index.twig', data, (err, html) => {
           t.error(err)
           t.equal(minifier.minify(html, options), body.toString())
+        })
+        fastify.close()
+      })
+    })
+  })
+  test('reply.view with twig engine and paths excluded from html-minifier', t => {
+    t.plan(7)
+    const fastify = Fastify()
+
+    fastify.register(POV, {
+      engine: {
+        twig: Twig
+      },
+      options: {
+        useHtmlMinifier: minifier,
+        ...(withMinifierOptions && { htmlMinifierOptions: minifierOpts }),
+        pathsToExcludeHtmlMinifier: ['/test']
+      }
+    })
+
+    fastify.get('/test', (req, reply) => {
+      reply.view('./templates/index.twig', data)
+    })
+
+    fastify.listen(0, err => {
+      t.error(err)
+
+      sget({
+        method: 'GET',
+        url: 'http://localhost:' + fastify.server.address().port + '/test'
+      }, (err, response, body) => {
+        t.error(err)
+        t.equal(response.statusCode, 200)
+        t.equal(response.headers['content-length'], String(body.length))
+        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+        Twig.renderFile('./templates/index.twig', data, (err, html) => {
+          t.error(err)
+          t.equal(html, body.toString())
         })
         fastify.close()
       })
