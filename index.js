@@ -533,7 +533,16 @@ function fastifyView (fastify, opts, next) {
     // Append view extension.
     page = getPage(page, 'liquid')
 
-    engine.renderFile(join(templatesDir, page), data, opts)
+    const root = engine.options.root
+    let pagepath = join(templatesDir, page)
+    // Don't execute it if root path is included, then serve it directly
+    if (typeof root.length !== 'undefined' && page.indexOf(templatesDir) === -1) {
+      const paths = root.map((dir) => join(dir, page))
+      const found = paths.find((filepath) => existsSync(filepath) ? filepath : undefined)
+      if (found) pagepath = found
+    }
+
+    engine.renderFile(pagepath, data, opts)
       .then((html) => {
         const requestedPath = getRequestedPath(this)
         if (useHtmlMinification(globalOptions, requestedPath)) {

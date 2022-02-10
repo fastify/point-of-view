@@ -481,3 +481,44 @@ test('fastify.view with liquid engine template that does not exist errors correc
     })
   })
 })
+
+test('reply.view with liquid engine, should allow multiple root directories', t => {
+  t.plan(7)
+  const fastify = Fastify()
+  const { Liquid } = require('liquidjs')
+  const data = { text: 'text' }
+
+  const engine = new Liquid({
+    root: ['./', './templates']
+  })
+
+  fastify.register(require('../index'), {
+    engine: {
+      liquid: engine
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index.liquid', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      engine.renderFile('./templates/index.liquid', data)
+        .then((html) => {
+          t.error(err)
+          t.equal(html, body.toString())
+        })
+      fastify.close()
+    })
+  })
+})
