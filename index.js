@@ -10,6 +10,7 @@ const resolve = require('path').resolve
 const join = require('path').join
 const { basename, dirname, extname } = require('path')
 const HLRU = require('hashlru')
+const normalize = require('path').normalize
 const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'mustache', 'art-template', 'twig', 'liquid', 'dot', 'eta']
 
 function fastifyView (fastify, opts, next) {
@@ -536,12 +537,13 @@ function fastifyView (fastify, opts, next) {
     const root = engine.options.root
     let pagepath = join(templatesDir, page)
     // Don't execute it if root path is included, then serve it directly
-    if (typeof root.length !== 'undefined' && page.indexOf(templatesDir) === -1) {
-      const paths = root.map((dir) => join(dir, page))
-      const found = paths.find((filepath) => existsSync(filepath) ? filepath : undefined)
+    const normalised = (root || []).map(loc => normalize(loc))
+    const isRootIncluded = normalised.find(loc => page.indexOf(loc) !== -1)
+    if (typeof root.length !== 'undefined' && !isRootIncluded) {
+      const paths = root.map((dir) => join(resolve(dir), page))
+      const found = paths.find((filepath) => existsSync(filepath))
       if (found) pagepath = found
     }
-
     engine.renderFile(pagepath, data, opts)
       .then((html) => {
         const requestedPath = getRequestedPath(this)
