@@ -524,6 +524,47 @@ test('reply.view with liquid engine, should allow just filename for multiple roo
   })
 })
 
+test('reply.view with liquid engine, should fallback to the default template dir when engine root option is undefined', t => {
+  t.plan(7)
+  const fastify = Fastify()
+  const { Liquid } = require('liquidjs')
+  const data = { text: 'text' }
+
+  const engine = new Liquid({
+    root: undefined
+  })
+
+  fastify.register(require('../index'), {
+    engine: {
+      liquid: engine
+    }
+  })
+
+  fastify.get('/hello', (req, reply) => {
+    reply.view('./templates/liquid-one/hello.liquid', data)
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port + '/hello'
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      engine.renderFile(resolve('./templates/liquid-one/hello.liquid'), data)
+        .then((html) => {
+          t.error(err)
+          t.equal(html, body.toString())
+        })
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with liquid engine, should allow absolute path for multiple root directories', t => {
   t.plan(7)
   const fastify = Fastify()
