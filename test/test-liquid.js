@@ -599,7 +599,7 @@ test('reply.view with liquid engine, should allow absolute path for multiple roo
       engine.renderFile(resolve('./templates/liquid-one/hello.liquid'), data)
         .then((html) => {
           t.error(err)
-          t.equal(html, body.toString())
+          t.equal(body.toString(), html)
         })
       fastify.close()
     })
