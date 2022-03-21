@@ -187,7 +187,8 @@ function fastifyView (fastify, opts, next) {
 
   // Gets partials as collection of strings from LRU cache or filesystem.
   const getPartials = function (page, { partials, requestedPath }, callback) {
-    const partialsObj = lru.get(`${page}-Partials`)
+    const cacheKey = getPartialsCacheKey(page, partials, requestedPath)
+    const partialsObj = lru.get(cacheKey)
     if (partialsObj && prod) {
       callback(null, partialsObj)
     } else {
@@ -209,12 +210,24 @@ function fastifyView (fastify, opts, next) {
 
           partialsHtml[key] = data
           if (--filesToLoad === 0) {
-            lru.set(`${page}-Partials`, partialsHtml)
+            lru.set(cacheKey, partialsHtml)
             callback(error, partialsHtml)
           }
         })
       })
     }
+  }
+
+  function getPartialsCacheKey (page, partials, requestedPath) {
+    let cacheKey = page
+
+    Object.keys(partials).forEach(function (key) {
+      cacheKey += `|${key}:${partials[key]}`
+    })
+
+    cacheKey += `|${requestedPath}-Partials`
+
+    return cacheKey
   }
 
   function readCallback (that, page, data) {
