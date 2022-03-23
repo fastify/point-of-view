@@ -221,9 +221,9 @@ function fastifyView (fastify, opts, next) {
   function getPartialsCacheKey (page, partials, requestedPath) {
     let cacheKey = page
 
-    Object.keys(partials).forEach(function (key) {
+    for (const key of Object.keys(partials)) {
       cacheKey += `|${key}:${partials[key]}`
-    })
+    }
 
     cacheKey += `|${requestedPath}-Partials`
 
