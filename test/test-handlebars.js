@@ -725,10 +725,10 @@ test('reply.view with handlebars engine with partials in production mode should 
     hashlru: function () {
       return {
         get: (key) => {
-          t.equal(key, 'handlebars-Partials')
+          t.equal(key, 'handlebars|body:./templates/body.hbs|null-Partials')
         },
         set: (key, value) => {
-          t.equal(key, 'handlebars-Partials')
+          t.equal(key, 'handlebars|body:./templates/body.hbs|null-Partials')
           t.strictSame(value, { body: fs.readFileSync('./templates/body.hbs', 'utf8') })
         }
       }

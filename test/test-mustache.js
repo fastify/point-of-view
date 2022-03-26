@@ -383,6 +383,56 @@ test('reply.view with mustache engine with partials in production mode should us
   })
 })
 
+test('reply.view with mustache engine with partials in production mode should cache partials correctly', t => {
+  t.plan(11)
+  const fastify = Fastify()
+  const mustache = require('mustache')
+  const data = { text: 'text' }
+  const POV = require('..')
+
+  fastify.register(POV, {
+    engine: {
+      mustache: mustache
+    },
+    production: true
+  })
+
+  fastify.get('/one', (req, reply) => {
+    reply.view('./templates/index.mustache', data, { partials: { body: './templates/partial-1.mustache' } })
+  })
+  fastify.get('/two', (req, reply) => {
+    reply.view('./templates/index.mustache', data, { partials: { body: './templates/partial-2.mustache' } })
+  })
+
+  fastify.listen(0, err => {
+    t.error(err)
+    sget({
+      method: 'GET',
+      url: `http://localhost:${fastify.server.address().port}/one`
+    }, (err, response, replyBody) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], String(replyBody.length))
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+
+      t.match(replyBody.toString(), /Partial 1 - b4d932b9-4baa-4c99-8d14-d45411b9361e/g)
+    })
+
+    sget({
+      method: 'GET',
+      url: `http://localhost:${fastify.server.address().port}/two`
+    }, (err, response, replyBody) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], String(replyBody.length))
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+
+      t.match(replyBody.toString(), /Partial 2 - fdab0fe2-6dab-4429-ae9f-dfcb791d1d3d/g)
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with mustache engine with partials and html-minifier', t => {
   t.plan(6)
   const fastify = Fastify()
