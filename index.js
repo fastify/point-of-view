@@ -54,6 +54,7 @@ function fastifyView (fastify, opts, next) {
   }
 
   const dotRender = type === 'dot' ? viewDot.call(fastify, preProcessDot.call(fastify, templatesDir, globalOptions)) : null
+  const nunjucksEnv = type === 'nunjucks' ? engine.configure(templatesDir, globalOptions) : null
 
   const renders = {
     ejs: withLayout(viewEjs, globalLayoutFileName),
@@ -399,14 +400,13 @@ function fastifyView (fastify, opts, next) {
       this.send(new Error('Missing page'))
       return
     }
-    const env = engine.configure(templatesDir, globalOptions)
     if (typeof globalOptions.onConfigure === 'function') {
-      globalOptions.onConfigure(env)
+      globalOptions.onConfigure(nunjucksEnv)
     }
     data = Object.assign({}, defaultCtx, this.locals, data)
     // Append view extension.
     page = getPage(page, 'njk')
-    env.render(join(templatesDir, page), data, (err, html) => {
+    nunjucksEnv.render(join(templatesDir, page), data, (err, html) => {
       const requestedPath = getRequestedPath(this)
       if (err) return this.send(err)
       if (useHtmlMinification(globalOptions, requestedPath)) {
