@@ -333,6 +333,20 @@ fastify.get("/", (req, reply) => {
 
 ### Nunjucks
 
+You can load templates from multiple paths when using the nunjucks engine:
+
+```js
+fastify.register(require("point-of-view"), {
+  engine: {
+    nunjucks: require("nunjucks"),
+  },
+  templates: [
+    "node_modules/shared-components",
+    "views",
+  ],
+});
+```
+
 To configure nunjucks environment after initialisation, you can pass callback function to options:
 
 ```js
@@ -393,7 +407,7 @@ fastify.get("/", (req, reply) => {
 });
 ```
 
-<!--- 
+<!---
 // This seems a bit random given that there was no mention of typescript before.
 ### Typing
 

@@ -410,6 +410,21 @@ test('register callback should throw if layout option provided with wrong engine
   })
 })
 
+test('register callback should throw if templates option provided as array with wrong engine', t => {
+  t.plan(2)
+  const fastify = Fastify()
+
+  fastify.register(require('../index'), {
+    engine: {
+      pug: require('pug')
+    },
+    templates: ['layouts', 'pages']
+  }).ready(err => {
+    t.ok(err instanceof Error)
+    t.equal(err.message, 'Only Nunjucks supports the "templates" option as an array')
+  })
+})
+
 test('plugin is registered with "point-of-view" name', t => {
   t.plan(2)
   const fastify = Fastify()

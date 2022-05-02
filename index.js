@@ -26,13 +26,19 @@ function fastifyView (fastify, opts, next) {
   const propertyName = opts.propertyName || 'view'
   const engine = opts.engine[type]
   const globalOptions = opts.options || {}
-  const templatesDir = opts.root || resolve(opts.templates || './')
+  const templatesDir = resolveTemplateDir(opts)
   const lru = HLRU(opts.maxCache || 100)
   const includeViewExtension = opts.includeViewExtension || false
   const viewExt = opts.viewExt || ''
   const prod = typeof opts.production === 'boolean' ? opts.production : process.env.NODE_ENV === 'production'
   const defaultCtx = opts.defaultContext || {}
   const globalLayoutFileName = opts.layout
+
+  function templatesDirIsValid (_templatesDir) {
+    if (Array.isArray(_templatesDir) && type !== 'nunjucks') {
+      throw new Error('Only Nunjucks supports the "templates" option as an array')
+    }
+  }
 
   function layoutIsValid (_layoutFileName) {
     if (type !== 'dot' && type !== 'handlebars' && type !== 'ejs' && type !== 'eta') {
@@ -44,13 +50,15 @@ function fastifyView (fastify, opts, next) {
     }
   }
 
-  if (globalLayoutFileName) {
-    try {
+  try {
+    templatesDirIsValid(templatesDir)
+
+    if (globalLayoutFileName) {
       layoutIsValid(globalLayoutFileName)
-    } catch (error) {
-      next(error)
-      return
     }
+  } catch (error) {
+    next(error)
+    return
   }
 
   const dotRender = type === 'dot' ? viewDot.call(fastify, preProcessDot.call(fastify, templatesDir, globalOptions)) : null
@@ -406,7 +414,7 @@ function fastifyView (fastify, opts, next) {
     data = Object.assign({}, defaultCtx, this.locals, data)
     // Append view extension.
     page = getPage(page, 'njk')
-    nunjucksEnv.render(join(templatesDir, page), data, (err, html) => {
+    nunjucksEnv.render(page, data, (err, html) => {
       const requestedPath = getRequestedPath(this)
       if (err) return this.send(err)
       if (useHtmlMinification(globalOptions, requestedPath)) {
@@ -675,6 +683,16 @@ function fastifyView (fastify, opts, next) {
       }
     }
     return render
+  }
+
+  function resolveTemplateDir (_opts) {
+    if (_opts.root) {
+      return _opts.root
+    }
+
+    return Array.isArray(_opts.templates)
+      ? _opts.templates.map((dir) => resolve(dir))
+      : resolve(_opts.templates || './')
   }
 
   function hasAccessToLayoutFile (fileName, ext) {
