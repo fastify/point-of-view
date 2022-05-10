@@ -23,7 +23,7 @@ test('reply.view with art-template engine and custom templates folder', t => {
     reply.view('./index.art', data)
   })
 
-  fastify.listen(10086, err => {
+  fastify.listen({ port: 10086 }, err => {
     t.error(err)
 
     sget({
@@ -59,7 +59,7 @@ test('reply.view for art-template without data-parameter and defaultContext', t 
     reply.view('./index.art')
   })
 
-  fastify.listen(10086, err => {
+  fastify.listen({ port: 10086 }, err => {
     t.error(err)
 
     sget({
@@ -97,7 +97,7 @@ test('reply.view for art-template without data-parameter but with defaultContext
     reply.view('./index.art')
   })
 
-  fastify.listen(10086, err => {
+  fastify.listen({ port: 10086 }, err => {
     t.error(err)
 
     sget({
@@ -135,7 +135,7 @@ test('reply.view with art-template engine and defaultContext', t => {
     reply.view('./index.art', {})
   })
 
-  fastify.listen(10086, err => {
+  fastify.listen({ port: 10086 }, err => {
     t.error(err)
 
     sget({
@@ -176,7 +176,7 @@ test('reply.view for art-template engine without data-parameter and defaultConte
     reply.view('./templates/index.art')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -218,7 +218,7 @@ test('reply.view for art-template engine without defaultContext but with reply.l
     reply.view('./templates/index.art', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -261,7 +261,7 @@ test('reply.view for art-template engine without data-parameter but with reply.l
     reply.view('./templates/index.art')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -305,7 +305,7 @@ test('reply.view for art-template engine with data-parameter and reply.locals an
     reply.view('./templates/index.art', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -343,7 +343,7 @@ test('reply.view with art-template engine and full path templates folder', t => 
     reply.view('./index.art', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -381,7 +381,7 @@ test('reply.view with art-template engine and includeViewExtension is true', t =
     reply.view('./templates/index', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -422,7 +422,7 @@ test('fastify.view with art-template engine and full path templates folder', t =
     })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -480,7 +480,7 @@ test('reply.view with art-template should return 500 if render fails', t => {
     reply.view('./templates/index')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({

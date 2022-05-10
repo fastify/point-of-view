@@ -464,7 +464,7 @@ function fastifyView (fastify, opts, next) {
           this.send(e)
         }
       } else {
-        getPartials(type, { partials: options.partials || {}, requestedPath: requestedPath }, (err, partialsObject) => {
+        getPartials(type, { partials: options.partials || {}, requestedPath }, (err, partialsObject) => {
           if (err) {
             this.send(err)
             return
@@ -505,7 +505,7 @@ function fastifyView (fastify, opts, next) {
         this.send(err)
         return
       }
-      getPartials(page, { partials: options.partials || {}, requestedPath: requestedPath }, (err, partialsObject) => {
+      getPartials(page, { partials: options.partials || {}, requestedPath }, (err, partialsObject) => {
         if (err) {
           this.send(err)
           return
@@ -707,6 +707,6 @@ function fastifyView (fastify, opts, next) {
 }
 
 module.exports = fp(fastifyView, {
-  fastify: '3.x',
+  fastify: '4.x',
   name: 'point-of-view'
 })

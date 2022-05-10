@@ -24,7 +24,7 @@ test('reply.view with mustache engine', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      mustache: mustache
+      mustache
     }
   })
 
@@ -32,7 +32,7 @@ test('reply.view with mustache engine', t => {
     reply.view('./templates/index.html', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -57,7 +57,7 @@ test('reply.view for mustache without data-parameter but defaultContext', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      mustache: mustache
+      mustache
     },
     defaultContext: data
   })
@@ -66,7 +66,7 @@ test('reply.view for mustache without data-parameter but defaultContext', t => {
     reply.view('./templates/index.html')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -90,7 +90,7 @@ test('reply.view for mustache without data-parameter and without defaultContext'
 
   fastify.register(require('../index'), {
     engine: {
-      mustache: mustache
+      mustache
     }
   })
 
@@ -99,7 +99,7 @@ test('reply.view for mustache without data-parameter and without defaultContext'
     reply.view('./templates/index-bare.html')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -124,7 +124,7 @@ test('reply.view with mustache engine and defaultContext', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      mustache: mustache
+      mustache
     },
     defaultContext: data
   })
@@ -133,7 +133,7 @@ test('reply.view with mustache engine and defaultContext', t => {
     reply.view('./templates/index.html', {})
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -158,7 +158,7 @@ test('reply.view for mustache engine without data-parameter and defaultContext b
 
   fastify.register(require('../index'), {
     engine: {
-      mustache: mustache
+      mustache
     }
   })
 
@@ -171,7 +171,7 @@ test('reply.view for mustache engine without data-parameter and defaultContext b
     reply.view('./templates/index.html')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -197,7 +197,7 @@ test('reply.view for mustache engine without defaultContext but with reply.local
 
   fastify.register(require('../index'), {
     engine: {
-      mustache: mustache
+      mustache
     }
   })
 
@@ -210,7 +210,7 @@ test('reply.view for mustache engine without defaultContext but with reply.local
     reply.view('./templates/index.html', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -236,7 +236,7 @@ test('reply.view for mustache engine without data-parameter but with reply.local
 
   fastify.register(require('../index'), {
     engine: {
-      mustache: mustache
+      mustache
     },
     defaultContext: contextData
   })
@@ -250,7 +250,7 @@ test('reply.view for mustache engine without data-parameter but with reply.local
     reply.view('./templates/index.html')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -277,7 +277,7 @@ test('reply.view for mustache engine with data-parameter and reply.locals and de
 
   fastify.register(require('../index'), {
     engine: {
-      mustache: mustache
+      mustache
     },
     defaultContext: contextData
   })
@@ -291,7 +291,7 @@ test('reply.view for mustache engine with data-parameter and reply.locals and de
     reply.view('./templates/index.html', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -316,7 +316,7 @@ test('reply.view with mustache engine with partials', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      mustache: mustache
+      mustache
     }
   })
 
@@ -324,7 +324,7 @@ test('reply.view with mustache engine with partials', t => {
     reply.view('./templates/index.mustache', data, { partials: { body: './templates/body.mustache' } })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
     sget({
       method: 'GET',
@@ -358,7 +358,7 @@ test('reply.view with mustache engine with partials in production mode should us
 
   fastify.register(POV, {
     engine: {
-      mustache: mustache
+      mustache
     },
     production: true
   })
@@ -367,7 +367,7 @@ test('reply.view with mustache engine with partials in production mode should us
     reply.view('./templates/index.mustache', data, { partials: { body: './templates/body.mustache' } })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
     sget({
       method: 'GET',
@@ -392,7 +392,7 @@ test('reply.view with mustache engine with partials in production mode should ca
 
   fastify.register(POV, {
     engine: {
-      mustache: mustache
+      mustache
     },
     production: true
   })
@@ -404,7 +404,7 @@ test('reply.view with mustache engine with partials in production mode should ca
     reply.view('./templates/index.mustache', data, { partials: { body: './templates/partial-2.mustache' } })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
     sget({
       method: 'GET',
@@ -441,7 +441,7 @@ test('reply.view with mustache engine with partials and html-minifier', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      mustache: mustache
+      mustache
     },
     options: {
       useHtmlMinifier: minifier,
@@ -453,7 +453,7 @@ test('reply.view with mustache engine with partials and html-minifier', t => {
     reply.view('./templates/index.mustache', data, { partials: { body: './templates/body.mustache' } })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
     sget({
       method: 'GET',
@@ -477,7 +477,7 @@ test('reply.view with mustache engine with partials and paths excluded from html
 
   fastify.register(require('../index'), {
     engine: {
-      mustache: mustache
+      mustache
     },
     options: {
       useHtmlMinifier: minifier,
@@ -490,7 +490,7 @@ test('reply.view with mustache engine with partials and paths excluded from html
     reply.view('./templates/index.mustache', data, { partials: { body: './templates/body.mustache' } })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
     sget({
       method: 'GET',
@@ -515,7 +515,7 @@ test('reply.view with mustache engine, template folder specified', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      mustache: mustache
+      mustache
     },
     templates: templatesFolder
   })
@@ -524,7 +524,7 @@ test('reply.view with mustache engine, template folder specified', t => {
     reply.view('index.html', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -550,7 +550,7 @@ test('reply.view with mustache engine, template folder specified with partials',
 
   fastify.register(require('../index'), {
     engine: {
-      mustache: mustache
+      mustache
     },
     templates: templatesFolder
   })
@@ -559,7 +559,7 @@ test('reply.view with mustache engine, template folder specified with partials',
     reply.view('index.mustache', data, { partials: { body: 'body.mustache' } })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
     sget({
       method: 'GET',
@@ -583,7 +583,7 @@ test('reply.view with mustache engine, missing template file', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      mustache: mustache
+      mustache
     }
   })
 
@@ -591,7 +591,7 @@ test('reply.view with mustache engine, missing template file', t => {
     reply.view('../templates/missing.html', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -615,7 +615,7 @@ test('reply.view with mustache engine, with partials missing template file', t =
 
   fastify.register(require('../index'), {
     engine: {
-      mustache: mustache
+      mustache
     }
   })
 
@@ -623,7 +623,7 @@ test('reply.view with mustache engine, with partials missing template file', t =
     reply.view('./templates/missing.mustache', data, { partials: { body: './templates/body.mustache' } })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
     sget({
       method: 'GET',
@@ -646,7 +646,7 @@ test('reply.view with mustache engine, with partials missing partials file', t =
 
   fastify.register(require('../index'), {
     engine: {
-      mustache: mustache
+      mustache
     }
   })
 
@@ -654,7 +654,7 @@ test('reply.view with mustache engine, with partials missing partials file', t =
     reply.view('./templates/index.mustache', data, { partials: { body: './templates/missing.mustache' } })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
     sget({
       method: 'GET',
@@ -677,7 +677,7 @@ test('reply.view with mustache engine, with partials and multiple missing partia
 
   fastify.register(require('../index'), {
     engine: {
-      mustache: mustache
+      mustache
     }
   })
 
@@ -685,7 +685,7 @@ test('reply.view with mustache engine, with partials and multiple missing partia
     reply.view('./templates/index.mustache', data, { partials: { body: './templates/missing.mustache', footer: './templates/alsomissing.mustache' } })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
     sget({
       method: 'GET',
@@ -707,7 +707,7 @@ test('fastify.view with mustache engine, should throw page missing', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      mustache: mustache
+      mustache
     }
   })
 

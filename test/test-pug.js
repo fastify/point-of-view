@@ -18,7 +18,7 @@ test('reply.view with pug engine', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      pug: pug
+      pug
     }
   })
 
@@ -26,7 +26,7 @@ test('reply.view with pug engine', t => {
     reply.view('./templates/index.pug', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -60,7 +60,7 @@ test('reply.view with pug engine in production mode should use cache', t => {
 
   fastify.register(POV, {
     engine: {
-      pug: pug
+      pug
     },
     production: true
   })
@@ -69,7 +69,7 @@ test('reply.view with pug engine in production mode should use cache', t => {
     reply.view('./templates/index.pug')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -94,7 +94,7 @@ test('reply.view with pug engine and includes', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      pug: pug
+      pug
     }
   })
 
@@ -102,7 +102,7 @@ test('reply.view with pug engine and includes', t => {
     reply.view('./templates/sample.pug', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -127,7 +127,7 @@ test('reply.view for pug without data-parameter but defaultContext', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      pug: pug
+      pug
     },
     defaultContext: data
   })
@@ -136,7 +136,7 @@ test('reply.view for pug without data-parameter but defaultContext', t => {
     reply.view('./templates/index.pug')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -160,7 +160,7 @@ test('reply.view for pug without data-parameter and without defaultContext', t =
 
   fastify.register(require('../index'), {
     engine: {
-      pug: pug
+      pug
     }
   })
 
@@ -168,7 +168,7 @@ test('reply.view for pug without data-parameter and without defaultContext', t =
     reply.view('./templates/index.pug')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -193,7 +193,7 @@ test('reply.view with pug engine and defaultContext', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      pug: pug
+      pug
     },
     defaultContext: data
   })
@@ -202,7 +202,7 @@ test('reply.view with pug engine and defaultContext', t => {
     reply.view('./templates/index.pug', {})
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -227,7 +227,7 @@ test('reply.view for pug engine without data-parameter and defaultContext but wi
 
   fastify.register(require('../index'), {
     engine: {
-      pug: pug
+      pug
     }
   })
 
@@ -240,7 +240,7 @@ test('reply.view for pug engine without data-parameter and defaultContext but wi
     reply.view('./templates/index.pug')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -266,7 +266,7 @@ test('reply.view for pug engine without defaultContext but with reply.locals and
 
   fastify.register(require('../index'), {
     engine: {
-      pug: pug
+      pug
     }
   })
 
@@ -279,7 +279,7 @@ test('reply.view for pug engine without defaultContext but with reply.locals and
     reply.view('./templates/index.pug', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -305,7 +305,7 @@ test('reply.view for pug engine without data-parameter but with reply.locals and
 
   fastify.register(require('../index'), {
     engine: {
-      pug: pug
+      pug
     },
     defaultContext: contextData
   })
@@ -319,7 +319,7 @@ test('reply.view for pug engine without data-parameter but with reply.locals and
     reply.view('./templates/index.pug')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -346,7 +346,7 @@ test('reply.view for pug engine with data-parameter and reply.locals and default
 
   fastify.register(require('../index'), {
     engine: {
-      pug: pug
+      pug
     },
     defaultContext: contextData
   })
@@ -360,7 +360,7 @@ test('reply.view for pug engine with data-parameter and reply.locals and default
     reply.view('./templates/index.pug', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -385,7 +385,7 @@ test('reply.view with pug engine, will preserve content-type', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      pug: pug
+      pug
     }
   })
 
@@ -394,7 +394,7 @@ test('reply.view with pug engine, will preserve content-type', t => {
     reply.view('./templates/index.pug', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -418,7 +418,7 @@ test('fastify.view with pug engine, should throw page missing', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      pug: pug
+      pug
     }
   })
 
@@ -440,7 +440,7 @@ test('reply.view with pug engine, should throw error if non existent template pa
 
   fastify.register(require('../index'), {
     engine: {
-      pug: pug
+      pug
     },
     templates: 'non-existent'
   })
@@ -449,7 +449,7 @@ test('reply.view with pug engine, should throw error if non existent template pa
     reply.view('./test/index.html')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -474,7 +474,7 @@ test('reply.view with pug engine should return 500 if compile fails', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      pug: pug
+      pug
     }
   })
 
@@ -482,7 +482,7 @@ test('reply.view with pug engine should return 500 if compile fails', t => {
     reply.view('./templates/index.pug')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({

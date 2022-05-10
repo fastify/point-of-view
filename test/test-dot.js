@@ -35,7 +35,7 @@ test('reply.view with dot engine .dot file', t => {
     reply.view('testdot', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -73,7 +73,7 @@ test('reply.view with dot engine .dot file should create non-existent destinatio
     reply.view('testdot')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
     t.ok(existsSync('non-existent'))
     fastify.close()
@@ -88,7 +88,7 @@ test('reply.view with dot engine .dot file should log WARN if template not found
   })
   const logger = pino({ level: 'warn' }, splitStream)
   const fastify = Fastify({
-    logger: logger
+    logger
   })
   const engine = require('dot')
   engine.log = false
@@ -104,7 +104,7 @@ test('reply.view with dot engine .dot file should log WARN if template not found
     }
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.equal(err, err)
     fastify.close()
   })
@@ -128,7 +128,7 @@ test('reply.view with dot engine .jst file', t => {
     reply.view('testjst', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -166,7 +166,7 @@ test('reply.view with dot engine without data-parameter but defaultContext', t =
     reply.view('testdot')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -201,7 +201,7 @@ test('reply.view with dot engine without data-parameter but without defaultConte
     reply.view('testdot')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -239,7 +239,7 @@ test('reply.view with dot engine with data-parameter and defaultContext', t => {
     reply.view('testdot', {})
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -280,7 +280,7 @@ test('reply.view for dot engine without data-parameter and defaultContext but wi
     reply.view('testdot', {})
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -322,7 +322,7 @@ test('reply.view for dot engine without defaultContext but with reply.locals and
     reply.view('testdot', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -365,7 +365,7 @@ test('reply.view for dot engine without data-parameter but with reply.locals and
     reply.view('testdot')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -408,7 +408,7 @@ test('reply.view for dot engine with data-parameter and reply.locals and default
     reply.view('testdot', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -466,7 +466,7 @@ test('reply.view with dot engine with layout option', t => {
     reply.view('testdot', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -500,7 +500,7 @@ test('reply.view with dot engine with layout option on render', t => {
     reply.view('testdot', data, { layout: 'layout' })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -534,7 +534,7 @@ test('reply.view with dot engine with layout option on render', t => {
     reply.view('testdot', data, { layout: 'layout' })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -568,7 +568,7 @@ test('reply.view should return 500 if layout is missing on render', t => {
     reply.view('testdot', data, { layout: 'non-existing-layout' })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
     sget({
       method: 'GET',

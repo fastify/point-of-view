@@ -21,7 +21,7 @@ test('reply.view with eta engine and custom templates folder', t => {
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     templates: 'templates'
   })
@@ -30,7 +30,7 @@ test('reply.view with eta engine and custom templates folder', t => {
     reply.view('index.eta', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -55,7 +55,7 @@ test('reply.view with eta engine with layout option', t => {
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     root: path.join(__dirname, '../templates'),
     layout: 'layout-eta.html'
@@ -65,7 +65,7 @@ test('reply.view with eta engine with layout option', t => {
     reply.view('index-for-layout.eta', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -90,7 +90,7 @@ test('reply.view with eta engine with layout option on render', t => {
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     root: path.join(__dirname, '../templates')
   })
@@ -99,7 +99,7 @@ test('reply.view with eta engine with layout option on render', t => {
     reply.view('index-for-layout.eta', data, { layout: 'layout-eta.html' })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -124,7 +124,7 @@ test('reply.view should return 500 if layout is missing on render', t => {
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     root: path.join(__dirname, '../templates')
   })
@@ -133,7 +133,7 @@ test('reply.view should return 500 if layout is missing on render', t => {
     reply.view('index-for-layout.eta', data, { layout: 'non-existing-layout-eta.html' })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -155,7 +155,7 @@ test('reply.view with eta engine and custom ext', t => {
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     templates: 'templates',
     viewExt: 'eta'
@@ -165,7 +165,7 @@ test('reply.view with eta engine and custom ext', t => {
     reply.view('index', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -190,7 +190,7 @@ test('reply.view for eta without data-parameter but defaultContext', t => {
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     defaultContext: data,
     templates: 'templates'
@@ -200,7 +200,7 @@ test('reply.view for eta without data-parameter but defaultContext', t => {
     reply.view('index.eta')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -225,7 +225,7 @@ test('reply.view for eta without data-parameter but defaultContext', t => {
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     defaultContext: data,
     templates: 'templates'
@@ -235,7 +235,7 @@ test('reply.view for eta without data-parameter but defaultContext', t => {
     reply.view('index.eta')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -258,7 +258,7 @@ test('reply.view for eta without data-parameter and without defaultContext', t =
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     templates: 'templates'
   })
@@ -267,7 +267,7 @@ test('reply.view for eta without data-parameter and without defaultContext', t =
     reply.view('index-bare.html')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -292,7 +292,7 @@ test('reply.view for eta engine without data-parameter and defaultContext but wi
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     }
   })
 
@@ -305,7 +305,7 @@ test('reply.view for eta engine without data-parameter and defaultContext but wi
     reply.view('./templates/index-bare.html')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -331,7 +331,7 @@ test('reply.view for eta engine without defaultContext but with reply.locals and
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     }
   })
 
@@ -344,7 +344,7 @@ test('reply.view for eta engine without defaultContext but with reply.locals and
     reply.view('./templates/index-bare.html', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -370,7 +370,7 @@ test('reply.view for eta engine without data-parameter but with reply.locals and
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     defaultContext: contextData
   })
@@ -384,7 +384,7 @@ test('reply.view for eta engine without data-parameter but with reply.locals and
     reply.view('./templates/index-bare.html')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -411,7 +411,7 @@ test('reply.view for eta engine with data-parameter and reply.locals and default
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     defaultContext: contextData
   })
@@ -425,7 +425,7 @@ test('reply.view for eta engine with data-parameter and reply.locals and default
     reply.view('./templates/index-bare.html', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -450,7 +450,7 @@ test('reply.view with eta engine and full path templates folder', t => {
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     templates: path.join(__dirname, '../templates')
   })
@@ -459,7 +459,7 @@ test('reply.view with eta engine and full path templates folder', t => {
     reply.view('index.eta', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -484,7 +484,7 @@ test('reply.view with eta engine', t => {
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     }
   })
 
@@ -492,7 +492,7 @@ test('reply.view with eta engine', t => {
     reply.view('templates/index.eta', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -517,7 +517,7 @@ test('reply.view with eta engine and defaultContext', t => {
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     defaultContext: data
   })
@@ -526,7 +526,7 @@ test('reply.view with eta engine and defaultContext', t => {
     reply.view('templates/index.eta', {})
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -551,7 +551,7 @@ test('reply.view with eta engine and includeViewExtension property as true', t =
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     includeViewExtension: true
   })
@@ -560,7 +560,7 @@ test('reply.view with eta engine and includeViewExtension property as true', t =
     reply.view('templates/index', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -589,18 +589,18 @@ test('reply.view with eta engine, template folder specified, include files (eta 
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     includeViewExtension: true,
     templates: templatesFolder,
-    options: options
+    options
   })
 
   fastify.get('/', (req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-linking-other-pages', data) // sample for specifying with type
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -636,18 +636,18 @@ test('reply.view with eta engine, templates with folder specified, include files
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     includeViewExtension: true,
     templates: templatesFolder,
-    options: options
+    options
   })
 
   fastify.get('/', (req, reply) => {
     reply.type('text/html; charset=utf-8').view('index', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -687,18 +687,18 @@ test('reply.view with eta engine, templates with folder specified, include files
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     includeViewExtension: true,
     templates: templatesFolder,
-    options: options
+    options
   })
 
   fastify.get('/no-data-test', (req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-with-no-data')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -740,18 +740,18 @@ test('reply.view with eta engine, templates with folder specified, include files
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     includeViewExtension: true,
     templates: templatesFolder,
-    options: options
+    options
   })
 
   fastify.get('/include-test', (req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-with-includes', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -792,18 +792,18 @@ test('reply.view with eta engine, templates with folder specified, include files
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     includeViewExtension: true,
     templates: templatesFolder,
-    options: options
+    options
   })
 
   fastify.get('/include-one-include-missing-test', (req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-with-includes-one-missing', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -840,7 +840,7 @@ test('fastify.view with eta engine and callback in production mode', t => {
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     production: true
   })
@@ -885,7 +885,7 @@ test('fastify.view with eta engine in production mode should use cache', t => {
   fastify.register(pointOfView, {
     production: true,
     engine: {
-      eta: eta
+      eta
     },
     options: {
       templates: cache
@@ -928,7 +928,7 @@ test('fastify.view with eta engine and custom cache', t => {
 
   fastify.register(pointOfView, {
     engine: {
-      eta: eta
+      eta
     },
     options: etaOptions
   })
@@ -949,7 +949,7 @@ test('fastify.view with eta engine and custom cache', t => {
     }
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
     sget({
       method: 'GET',
@@ -972,7 +972,7 @@ test('fastify.view with eta engine, should throw page missing', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      eta: eta
+      eta
     }
   })
 
