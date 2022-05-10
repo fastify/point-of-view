@@ -17,7 +17,7 @@ test('reply.view with nunjucks engine and custom templates folder', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      nunjucks: nunjucks
+      nunjucks
     },
     templates: 'templates'
   })
@@ -26,7 +26,7 @@ test('reply.view with nunjucks engine and custom templates folder', t => {
     reply.view('index.njk', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -51,7 +51,7 @@ test('reply.view with nunjucks engine and custom templates array of folders', t 
 
   fastify.register(require('../index'), {
     engine: {
-      nunjucks: nunjucks
+      nunjucks
     },
     templates: [
       'templates/nunjucks-layout',
@@ -63,7 +63,7 @@ test('reply.view with nunjucks engine and custom templates array of folders', t 
     reply.view('index.njk', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -88,7 +88,7 @@ test('reply.view for nunjucks engine without data-parameter but defaultContext',
 
   fastify.register(require('../index'), {
     engine: {
-      nunjucks: nunjucks
+      nunjucks
     },
     defaultContext: data
   })
@@ -97,7 +97,7 @@ test('reply.view for nunjucks engine without data-parameter but defaultContext',
     reply.view('./templates/index.njk')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -121,7 +121,7 @@ test('reply.view for nunjucks engine without data-parameter and without defaultC
 
   fastify.register(require('../index'), {
     engine: {
-      nunjucks: nunjucks
+      nunjucks
     }
   })
 
@@ -129,7 +129,7 @@ test('reply.view for nunjucks engine without data-parameter and without defaultC
     reply.view('./templates/index.njk')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -154,7 +154,7 @@ test('reply.view for nunjucks engine without data-parameter and defaultContext b
 
   fastify.register(require('../index'), {
     engine: {
-      nunjucks: nunjucks
+      nunjucks
     }
   })
 
@@ -167,7 +167,7 @@ test('reply.view for nunjucks engine without data-parameter and defaultContext b
     reply.view('./templates/index.njk')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -193,7 +193,7 @@ test('reply.view for nunjucks engine without defaultContext but with reply.local
 
   fastify.register(require('../index'), {
     engine: {
-      nunjucks: nunjucks
+      nunjucks
     }
   })
 
@@ -206,7 +206,7 @@ test('reply.view for nunjucks engine without defaultContext but with reply.local
     reply.view('./templates/index.njk', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -232,7 +232,7 @@ test('reply.view for nunjucks engine without data-parameter but with reply.local
 
   fastify.register(require('../index'), {
     engine: {
-      nunjucks: nunjucks
+      nunjucks
     },
     defaultContext: contextData
   })
@@ -246,7 +246,7 @@ test('reply.view for nunjucks engine without data-parameter but with reply.local
     reply.view('./templates/index.njk')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -273,7 +273,7 @@ test('reply.view for nunjucks engine with data-parameter and reply.locals and de
 
   fastify.register(require('../index'), {
     engine: {
-      nunjucks: nunjucks
+      nunjucks
     },
     defaultContext: contextData
   })
@@ -287,7 +287,7 @@ test('reply.view for nunjucks engine with data-parameter and reply.locals and de
     reply.view('./templates/index.njk', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -312,7 +312,7 @@ test('reply.view with nunjucks engine and full path templates folder', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      nunjucks: nunjucks
+      nunjucks
     },
     templates: path.join(__dirname, '../templates')
   })
@@ -321,7 +321,7 @@ test('reply.view with nunjucks engine and full path templates folder', t => {
     reply.view('./index.njk', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -347,7 +347,7 @@ test('reply.view with nunjucks engine and includeViewExtension is true', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      nunjucks: nunjucks
+      nunjucks
     },
     includeViewExtension: true
   })
@@ -356,7 +356,7 @@ test('reply.view with nunjucks engine and includeViewExtension is true', t => {
     reply.view('./templates/index', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -382,7 +382,7 @@ test('reply.view with nunjucks engine using onConfigure callback', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      nunjucks: nunjucks
+      nunjucks
     },
     options: {
       onConfigure: env => {
@@ -395,7 +395,7 @@ test('reply.view with nunjucks engine using onConfigure callback', t => {
     reply.view('./templates/index-with-global.njk', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -422,7 +422,7 @@ test('fastify.view with nunjucks engine', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      nunjucks: nunjucks
+      nunjucks
     }
   })
 
@@ -453,7 +453,7 @@ test('fastify.view with nunjucks should throw page missing', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      nunjucks: nunjucks
+      nunjucks
     }
   })
 
@@ -479,7 +479,7 @@ test('fastify.view with nunjucks engine should return 500 if render fails', t =>
 
   fastify.register(require('../index'), {
     engine: {
-      nunjucks: nunjucks
+      nunjucks
     }
   })
 
@@ -487,7 +487,7 @@ test('fastify.view with nunjucks engine should return 500 if render fails', t =>
     reply.view('./templates/index.njk')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({

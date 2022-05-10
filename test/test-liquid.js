@@ -26,7 +26,7 @@ test('reply.view with liquid engine', t => {
     reply.view('./templates/index.liquid', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -66,7 +66,7 @@ test('reply.view with liquid engine without data-parameter but defaultContext', 
     reply.view('./templates/index.liquid')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -104,7 +104,7 @@ test('reply.view with liquid engine without data-parameter but without defaultCo
     reply.view('./templates/index.liquid')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -144,7 +144,7 @@ test('reply.view with liquid engine with data-parameter and defaultContext', t =
     reply.view('./templates/index.liquid', {})
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -188,7 +188,7 @@ test('reply.view for liquid engine without data-parameter and defaultContext but
     reply.view('./templates/index.liquid', {})
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -233,7 +233,7 @@ test('reply.view for liquid engine without defaultContext but with reply.locals 
     reply.view('./templates/index.liquid', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -279,7 +279,7 @@ test('reply.view for liquid engine without data-parameter but with reply.locals 
     reply.view('./templates/index.liquid')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -326,7 +326,7 @@ test('reply.view for liquid engine with data-parameter and reply.locals and defa
     reply.view('./templates/index.liquid', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -376,7 +376,7 @@ test('reply.view with liquid engine and custom tag', t => {
     reply.view('./templates/index-with-custom-tag.liquid', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -415,7 +415,7 @@ test('reply.view with liquid engine and double quoted variable', t => {
     reply.view('./templates/double-quotes-variable.liquid', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({

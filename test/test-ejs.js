@@ -24,7 +24,7 @@ test('reply.view with ejs engine and custom templates folder', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     templates: 'templates'
   })
@@ -33,7 +33,7 @@ test('reply.view with ejs engine and custom templates folder', t => {
     reply.view('index.ejs', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -58,7 +58,7 @@ test('reply.view with ejs engine with layout option', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     root: path.join(__dirname, '../templates'),
     layout: 'layout.html'
@@ -68,7 +68,7 @@ test('reply.view with ejs engine with layout option', t => {
     reply.view('index-for-layout.ejs', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -93,7 +93,7 @@ test('reply.view with ejs engine with layout option on render', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     root: path.join(__dirname, '../templates')
   })
@@ -102,7 +102,7 @@ test('reply.view with ejs engine with layout option on render', t => {
     reply.view('index-for-layout.ejs', data, { layout: 'layout.html' })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -135,7 +135,7 @@ test('reply.view should return 500 if layout is missing on render', t => {
     reply.view('index-for-layout.ejs', data, { layout: 'non-existing-layout.html' })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
     sget({
       method: 'GET',
@@ -156,7 +156,7 @@ test('reply.view with ejs engine and custom ext', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     templates: 'templates',
     viewExt: 'ejs'
@@ -166,7 +166,7 @@ test('reply.view with ejs engine and custom ext', t => {
     reply.view('index', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -191,7 +191,7 @@ test('reply.view for ejs without data-parameter but defaultContext', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     defaultContext: data,
     templates: 'templates'
@@ -201,7 +201,7 @@ test('reply.view for ejs without data-parameter but defaultContext', t => {
     reply.view('index.ejs')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -226,7 +226,7 @@ test('reply.view for ejs without data-parameter but defaultContext', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     defaultContext: data,
     templates: 'templates'
@@ -236,7 +236,7 @@ test('reply.view for ejs without data-parameter but defaultContext', t => {
     reply.view('index.ejs')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -260,7 +260,7 @@ test('reply.view for ejs without data-parameter and without defaultContext', t =
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     templates: 'templates'
   })
@@ -269,7 +269,7 @@ test('reply.view for ejs without data-parameter and without defaultContext', t =
     reply.view('index-bare.html')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -294,7 +294,7 @@ test('reply.view for ejs engine without data-parameter and defaultContext but wi
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     }
   })
 
@@ -307,7 +307,7 @@ test('reply.view for ejs engine without data-parameter and defaultContext but wi
     reply.view('./templates/index-bare.html')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -333,7 +333,7 @@ test('reply.view for ejs engine without defaultContext but with reply.locals and
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     }
   })
 
@@ -346,7 +346,7 @@ test('reply.view for ejs engine without defaultContext but with reply.locals and
     reply.view('./templates/index-bare.html', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -372,7 +372,7 @@ test('reply.view for ejs engine without data-parameter but with reply.locals and
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     defaultContext: contextData
   })
@@ -386,7 +386,7 @@ test('reply.view for ejs engine without data-parameter but with reply.locals and
     reply.view('./templates/index-bare.html')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -413,7 +413,7 @@ test('reply.view for ejs engine with data-parameter and reply.locals and default
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     defaultContext: contextData
   })
@@ -427,7 +427,7 @@ test('reply.view for ejs engine with data-parameter and reply.locals and default
     reply.view('./templates/index-bare.html', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -452,7 +452,7 @@ test('reply.view with ejs engine and full path templates folder', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     templates: path.join(__dirname, '../templates')
   })
@@ -461,7 +461,7 @@ test('reply.view with ejs engine and full path templates folder', t => {
     reply.view('index.ejs', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -486,7 +486,7 @@ test('reply.view with ejs engine', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     }
   })
 
@@ -494,7 +494,7 @@ test('reply.view with ejs engine', t => {
     reply.view('templates/index.ejs', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -519,7 +519,7 @@ test('reply.view with ejs engine and defaultContext', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     defaultContext: data
   })
@@ -528,7 +528,7 @@ test('reply.view with ejs engine and defaultContext', t => {
     reply.view('templates/index.ejs', {})
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -553,7 +553,7 @@ test('reply.view with ejs engine and html-minifier', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     options: {
       useHtmlMinifier: minifier,
@@ -565,7 +565,7 @@ test('reply.view with ejs engine and html-minifier', t => {
     reply.view('templates/index.ejs', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -589,7 +589,7 @@ test('reply.view with ejs engine and paths excluded from html-minifier', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     options: {
       useHtmlMinifier: minifier,
@@ -602,7 +602,7 @@ test('reply.view with ejs engine and paths excluded from html-minifier', t => {
     reply.view('templates/index.ejs', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -627,7 +627,7 @@ test('reply.view with ejs engine and includeViewExtension property as true', t =
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     includeViewExtension: true
   })
@@ -636,7 +636,7 @@ test('reply.view with ejs engine and includeViewExtension property as true', t =
     reply.view('templates/index', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -663,7 +663,7 @@ test('*** reply.view with ejs engine with layout option, includeViewExtension pr
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     defaultContext: {
       header,
@@ -678,7 +678,7 @@ test('*** reply.view with ejs engine with layout option, includeViewExtension pr
     reply.view('index-for-layout.ejs', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -709,7 +709,7 @@ test('*** reply.view with ejs engine with layout option on render, includeViewEx
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     defaultContext: {
       header,
@@ -723,7 +723,7 @@ test('*** reply.view with ejs engine with layout option on render, includeViewEx
     reply.view('index-for-layout.ejs', data, { layout: 'layout-with-includes' })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -758,7 +758,7 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     includeViewExtension: true,
     templates: templatesFolder
@@ -770,7 +770,7 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
     // reply.view('index-with-includes', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -808,18 +808,18 @@ test('reply.view with ejs engine, templates with folder specified, include files
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     includeViewExtension: true,
     templates: templatesFolder,
-    options: options
+    options
   })
 
   fastify.get('/', (req, reply) => {
     reply.type('text/html; charset=utf-8').view('index', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -856,18 +856,18 @@ test('reply.view with ejs engine, templates with folder specified, include files
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     includeViewExtension: true,
     templates: templatesFolder,
-    options: options
+    options
   })
 
   fastify.get('/no-data-test', (req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-with-no-data')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -906,18 +906,18 @@ test('reply.view with ejs engine, templates with folder specified, include files
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     includeViewExtension: true,
     templates: templatesFolder,
-    options: options
+    options
   })
 
   fastify.get('/include-test', (req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-with-includes', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -955,18 +955,18 @@ test('reply.view with ejs engine, templates with folder specified, include files
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     includeViewExtension: true,
     templates: templatesFolder,
-    options: options
+    options
   })
 
   fastify.get('/include-one-include-missing-test', (req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-with-includes-one-missing', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -1004,18 +1004,18 @@ test('reply.view with ejs engine, templates with folder specified, include files
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     includeViewExtension: true,
     templates: templatesFolder,
-    options: options
+    options
   })
 
   fastify.get('/include-one-attribute-missing-test', (req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-with-includes-and-attribute-missing', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -1046,7 +1046,7 @@ test('fastify.view with ejs engine, missing template file', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     }
   })
 
@@ -1069,7 +1069,7 @@ test('fastify.view with ejs engine and callback in production mode', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     production: true
   })

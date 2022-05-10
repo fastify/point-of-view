@@ -34,7 +34,7 @@ module.exports.dotHtmlMinifierTests = function (t, compileOptions, withMinifierO
 
     fastify.register(POV, {
       engine: {
-        dot: dot
+        dot
       },
       root: 'templates',
       options: {
@@ -47,7 +47,7 @@ module.exports.dotHtmlMinifierTests = function (t, compileOptions, withMinifierO
       reply.view('testdot', data)
     })
 
-    fastify.listen(0, err => {
+    fastify.listen({ port: 0 }, err => {
       t.error(err)
 
       sget({
@@ -70,7 +70,7 @@ module.exports.dotHtmlMinifierTests = function (t, compileOptions, withMinifierO
 
     fastify.register(POV, {
       engine: {
-        dot: dot
+        dot
       },
       root: 'templates',
       options: {
@@ -84,7 +84,7 @@ module.exports.dotHtmlMinifierTests = function (t, compileOptions, withMinifierO
       reply.view('testdot', data)
     })
 
-    fastify.listen(0, err => {
+    fastify.listen({ port: 0 }, err => {
       t.error(err)
 
       sget({
@@ -112,7 +112,7 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
 
     fastify.register(POV, {
       engine: {
-        eta: eta
+        eta
       },
       options: {
         useHtmlMinifier: minifier,
@@ -124,7 +124,7 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('templates/index.eta', data)
     })
 
-    fastify.listen(0, err => {
+    fastify.listen({ port: 0 }, err => {
       t.error(err)
 
       sget({
@@ -146,7 +146,7 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
 
     fastify.register(POV, {
       engine: {
-        eta: eta
+        eta
       },
       options: {
         useHtmlMinifier: minifier,
@@ -159,7 +159,7 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('templates/index.eta', data)
     })
 
-    fastify.listen(0, err => {
+    fastify.listen({ port: 0 }, err => {
       t.error(err)
 
       sget({
@@ -187,7 +187,7 @@ module.exports.handleBarsHtmlMinifierTests = function (t, withMinifierOptions) {
 
     fastify.register(POV, {
       engine: {
-        handlebars: handlebars
+        handlebars
       },
       options: {
         useHtmlMinifier: minifier,
@@ -230,7 +230,7 @@ module.exports.liquidHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('./templates/index.liquid', data)
     })
 
-    fastify.listen(0, err => {
+    fastify.listen({ port: 0 }, err => {
       t.error(err)
 
       sget({
@@ -270,7 +270,7 @@ module.exports.liquidHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('./templates/index.liquid', data)
     })
 
-    fastify.listen(0, err => {
+    fastify.listen({ port: 0 }, err => {
       t.error(err)
 
       sget({
@@ -302,7 +302,7 @@ module.exports.nunjucksHtmlMinifierTests = function (t, withMinifierOptions) {
 
     fastify.register(POV, {
       engine: {
-        nunjucks: nunjucks
+        nunjucks
       },
       templates: 'templates',
       options: {
@@ -315,7 +315,7 @@ module.exports.nunjucksHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('./index.njk', data)
     })
 
-    fastify.listen(0, err => {
+    fastify.listen({ port: 0 }, err => {
       t.error(err)
 
       sget({
@@ -338,7 +338,7 @@ module.exports.nunjucksHtmlMinifierTests = function (t, withMinifierOptions) {
 
     fastify.register(POV, {
       engine: {
-        nunjucks: nunjucks
+        nunjucks
       },
       templates: 'templates',
       options: {
@@ -352,7 +352,7 @@ module.exports.nunjucksHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('./index.njk', data)
     })
 
-    fastify.listen(0, err => {
+    fastify.listen({ port: 0 }, err => {
       t.error(err)
 
       sget({
@@ -381,7 +381,7 @@ module.exports.pugHtmlMinifierTests = function (t, withMinifierOptions) {
 
     fastify.register(POV, {
       engine: {
-        pug: pug
+        pug
       },
       options: {
         useHtmlMinifier: minifier,
@@ -393,7 +393,7 @@ module.exports.pugHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('./templates/index.pug', data)
     })
 
-    fastify.listen(0, err => {
+    fastify.listen({ port: 0 }, err => {
       t.error(err)
 
       sget({
@@ -415,7 +415,7 @@ module.exports.pugHtmlMinifierTests = function (t, withMinifierOptions) {
 
     fastify.register(POV, {
       engine: {
-        pug: pug
+        pug
       },
       options: {
         useHtmlMinifier: minifier,
@@ -428,7 +428,7 @@ module.exports.pugHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('./templates/index.pug', data)
     })
 
-    fastify.listen(0, err => {
+    fastify.listen({ port: 0 }, err => {
       t.error(err)
 
       sget({
@@ -468,7 +468,7 @@ module.exports.twigHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('./templates/index.twig', data)
     })
 
-    fastify.listen(0, err => {
+    fastify.listen({ port: 0 }, err => {
       t.error(err)
 
       sget({
@@ -506,7 +506,7 @@ module.exports.twigHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('./templates/index.twig', data)
     })
 
-    fastify.listen(0, err => {
+    fastify.listen({ port: 0 }, err => {
       t.error(err)
 
       sget({

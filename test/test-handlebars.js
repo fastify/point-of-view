@@ -19,7 +19,7 @@ test('fastify.view with handlebars engine', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     }
   })
 
@@ -41,7 +41,7 @@ test('fastify.view for handlebars without data-parameter but defaultContext', t 
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     },
     defaultContext: data
   })
@@ -63,7 +63,7 @@ test('fastify.view for handlebars without data-parameter and without defaultCont
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     }
   })
 
@@ -86,7 +86,7 @@ test('fastify.view with handlebars engine and defaultContext', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     },
     defaultContext: data
   })
@@ -109,7 +109,7 @@ test('reply.view for handlebars engine without data-parameter and defaultContext
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     }
   })
 
@@ -122,7 +122,7 @@ test('reply.view for handlebars engine without data-parameter and defaultContext
     reply.view('./templates/index.html')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -148,7 +148,7 @@ test('reply.view for handlebars engine without defaultContext but with reply.loc
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     }
   })
 
@@ -161,7 +161,7 @@ test('reply.view for handlebars engine without defaultContext but with reply.loc
     reply.view('./templates/index.html', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -187,7 +187,7 @@ test('reply.view for handlebars engine without data-parameter but with reply.loc
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     },
     defaultContext: contextData
   })
@@ -201,7 +201,7 @@ test('reply.view for handlebars engine without data-parameter but with reply.loc
     reply.view('./templates/index.html')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -228,7 +228,7 @@ test('reply.view for handlebars engine with data-parameter and reply.locals and 
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     },
     defaultContext: contextData
   })
@@ -242,7 +242,7 @@ test('reply.view for handlebars engine with data-parameter and reply.locals and 
     reply.view('./templates/index.html', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -267,7 +267,7 @@ test('fastify.view with handlebars engine and callback', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     }
   })
 
@@ -361,7 +361,7 @@ test('reply.view with handlebars engine', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     }
   })
 
@@ -369,7 +369,7 @@ test('reply.view with handlebars engine', t => {
     reply.view('./templates/index.html', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -395,7 +395,7 @@ test('reply.view with handlebars engine catches render error', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     }
   })
 
@@ -421,7 +421,7 @@ test('reply.view with handlebars engine and defaultContext', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     },
     defaultContext: data
   })
@@ -430,7 +430,7 @@ test('reply.view with handlebars engine and defaultContext', t => {
     reply.view('./templates/index.html', {})
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -455,7 +455,7 @@ test('reply.view with ejs engine and includeViewExtension property as true', t =
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     includeViewExtension: true
   })
@@ -464,7 +464,7 @@ test('reply.view with ejs engine and includeViewExtension property as true', t =
     reply.view('./templates/index', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -495,11 +495,11 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     includeViewExtension: true,
     templates: templatesFolder,
-    options: options
+    options
   })
 
   fastify.get('/', (req, reply) => {
@@ -507,7 +507,7 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
     // reply.view('index-with-includes', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -545,18 +545,18 @@ test('reply.view with ejs engine, templates with folder specified, include files
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     includeViewExtension: true,
     templates: templatesFolder,
-    options: options
+    options
   })
 
   fastify.get('/', (req, reply) => {
     reply.type('text/html; charset=utf-8').view('index', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -588,7 +588,7 @@ test('reply.view with handlebars engine and includeViewExtension property as tru
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     },
     includeViewExtension: true
   })
@@ -597,7 +597,7 @@ test('reply.view with handlebars engine and includeViewExtension property as tru
     reply.view('./templates/index', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -622,7 +622,7 @@ test('fastify.view with handlebars engine and callback in production mode', t =>
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     },
     production: true
   })
@@ -655,7 +655,7 @@ test('reply.view with handlebars engine with partials', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     },
     options: {
       partials: { body: './templates/body.hbs' }
@@ -666,7 +666,7 @@ test('reply.view with handlebars engine with partials', t => {
     reply.view('./templates/index-with-partials.hbs', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
     sget({
       method: 'GET',
@@ -690,7 +690,7 @@ test('reply.view with handlebars engine with missing partials path', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     },
     options: {
       partials: { body: './non-existent' }
@@ -701,7 +701,7 @@ test('reply.view with handlebars engine with missing partials path', t => {
     reply.view('./templates/index-with-partials.hbs', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
     sget({
       method: 'GET',
@@ -737,7 +737,7 @@ test('reply.view with handlebars engine with partials in production mode should 
 
   fastify.register(POV, {
     engine: {
-      handlebars: handlebars
+      handlebars
     },
     options: {
       partials: { body: './templates/body.hbs' }
@@ -758,7 +758,7 @@ test('fastify.view with handlebars engine with missing partials path in producti
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     },
     options: {
       partials: { body: './non-existent' }
@@ -779,7 +779,7 @@ test('reply.view with handlebars engine with layout option', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     },
     layout: './templates/layout.hbs'
   })
@@ -788,7 +788,7 @@ test('reply.view with handlebars engine with layout option', t => {
     reply.view('./templates/index-for-layout.hbs')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
     sget({
       method: 'GET',
@@ -811,7 +811,7 @@ test('reply.view with handlebars engine with layout option on render', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     }
   })
 
@@ -819,7 +819,7 @@ test('reply.view with handlebars engine with layout option on render', t => {
     reply.view('./templates/index-for-layout.hbs', {}, { layout: './templates/layout.hbs' })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
     sget({
       method: 'GET',
@@ -842,7 +842,7 @@ test('reply.view should return 500 if layout is missing on render', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     }
   })
 
@@ -850,7 +850,7 @@ test('reply.view should return 500 if layout is missing on render', t => {
     reply.view('./templates/index-for-layout.hbs', {}, { layout: './templates/missing-layout.hbs' })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
     sget({
       method: 'GET',
@@ -870,7 +870,7 @@ test('fastify.view with handlebars engine, missing template file', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     }
   })
 
@@ -892,7 +892,7 @@ test('fastify.view with handlebars engine should throw page missing', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      handlebars: handlebars
+      handlebars
     }
   })
 
@@ -924,7 +924,7 @@ test('reply.view with handlebars engine should return 500 if template fails in p
 
   fastify.register(POV, {
     engine: {
-      handlebars: handlebars
+      handlebars
     },
     layout: './templates/layout.hbs',
     production: true
@@ -934,7 +934,7 @@ test('reply.view with handlebars engine should return 500 if template fails in p
     reply.view('./templates/index.hbs')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({

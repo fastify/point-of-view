@@ -24,7 +24,7 @@ test('reply.view with twig engine', t => {
     reply.view('./templates/index.twig', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -60,7 +60,7 @@ test('reply.view with twig engine and simple include', t => {
     reply.view('./templates/template.twig', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -97,7 +97,7 @@ test('reply.view for twig without data-parameter but defaultContext', t => {
     reply.view('./templates/index.twig')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -132,7 +132,7 @@ test('reply.view for twig without data-parameter and without defaultContext', t 
     reply.view('./templates/index.twig')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -169,7 +169,7 @@ test('reply.view with twig engine and defaultContext', t => {
     reply.view('./templates/index.twig', {})
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -210,7 +210,7 @@ test('reply.view for twig engine without data-parameter and defaultContext but w
     reply.view('./templates/index.twig')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -252,7 +252,7 @@ test('reply.view for twig engine without defaultContext but with reply.locals an
     reply.view('./templates/index.twig', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -295,7 +295,7 @@ test('reply.view for twig engine without data-parameter but with reply.locals an
     reply.view('./templates/index.twig')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -339,7 +339,7 @@ test('reply.view for twig engine with data-parameter and reply.locals and defaul
     reply.view('./templates/index.twig', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -376,7 +376,7 @@ test('reply.view with twig engine, will preserve content-type', t => {
     reply.view('./templates/index.twig', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -435,7 +435,7 @@ test('reply.view with twig engine should return 500 if renderFile fails', t => {
     reply.view('./templates/index.twig')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({

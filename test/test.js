@@ -66,7 +66,7 @@ test('fastify.view.clearCache clears cache', t => {
     reply.type('text/html; charset=utf-8').view('cache_clear_test')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
     sget({
       method: 'GET',
@@ -117,7 +117,7 @@ test('reply.view exist', t => {
     reply.send({ hello: 'world' })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -141,7 +141,7 @@ test('reply.view can be returned from async function to indicate response proces
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     root: path.join(__dirname, '../templates'),
     layout: 'layout.html'
@@ -151,7 +151,7 @@ test('reply.view can be returned from async function to indicate response proces
     return reply.view('index-for-layout.ejs', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -191,7 +191,7 @@ test('Possibility to access res.locals variable across all views', t => {
     return reply.view('index-layout-content')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -224,7 +224,7 @@ test('Default extension for ejs', t => {
     return reply.view('index-with-includes-without-ext')
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -248,7 +248,7 @@ test('reply.view with ejs engine and custom propertyName', t => {
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     root: path.join(__dirname, '../templates'),
     layout: 'layout.html',
@@ -256,7 +256,7 @@ test('reply.view with ejs engine and custom propertyName', t => {
   })
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     root: path.join(__dirname, '../templates'),
     layout: 'layout.html',
@@ -268,7 +268,7 @@ test('reply.view with ejs engine and custom propertyName', t => {
     return reply[text]('index-for-layout.ejs', { text })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -311,7 +311,7 @@ test('reply.view should return 500 if page is missing', t => {
     reply.view()
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -340,7 +340,7 @@ test('reply.view should return 500 if layout is set globally and provided on ren
     reply.view('index-for-layout.ejs', data, { layout: 'layout.html' })
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({

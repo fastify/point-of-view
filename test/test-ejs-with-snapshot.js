@@ -20,18 +20,18 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     includeViewExtension: true,
     templates: templatesFolder,
-    options: options
+    options
   })
 
   fastify.get('/', (req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-linking-other-pages', data) // sample for specifying with type
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -64,18 +64,18 @@ test('reply.view with ejs engine, templates with folder specified, include files
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     includeViewExtension: true,
     templates: templatesFolder,
-    options: options
+    options
   })
 
   fastify.get('/', (req, reply) => {
     reply.type('text/html; charset=utf-8').view('index', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -108,18 +108,18 @@ test('reply.view with ejs engine, templates with folder specified, include files
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     includeViewExtension: true,
     templates: templatesFolder,
-    options: options
+    options
   })
 
   fastify.get('/include-test', (req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-with-includes', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -152,18 +152,18 @@ test('reply.view with ejs engine, templates with folder specified, include files
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     includeViewExtension: true,
     templates: templatesFolder,
-    options: options
+    options
   })
 
   fastify.get('/include-one-include-missing-test', (req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-with-includes-one-missing', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
@@ -196,18 +196,18 @@ test('reply.view with ejs engine, templates with folder specified, include files
 
   fastify.register(require('../index'), {
     engine: {
-      ejs: ejs
+      ejs
     },
     includeViewExtension: true,
     templates: templatesFolder,
-    options: options
+    options
   })
 
   fastify.get('/include-one-attribute-missing-test', (req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-with-includes-and-attribute-missing', data)
   })
 
-  fastify.listen(0, err => {
+  fastify.listen({ port: 0 }, err => {
     t.error(err)
 
     sget({
