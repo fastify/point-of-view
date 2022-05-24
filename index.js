@@ -277,6 +277,10 @@ function fastifyView (fastify, opts, next) {
       if (useHtmlMinification(globalOptions, requestedPath)) {
         cachedPage = globalOptions.useHtmlMinifier.minify(cachedPage, globalOptions.htmlMinifierOptions || {})
       }
+      if (type === 'ejs' && globalOptions.async) {
+        cachedPage.then(html => that.send(html)).catch(err => that.send(err))
+        return
+      }
       that.send(cachedPage)
     }
   }
