@@ -274,12 +274,17 @@ function fastifyView (fastify, opts, next) {
       } catch (error) {
         cachedPage = error
       }
+      if (type === 'ejs' && globalOptions.async) {
+        cachedPage.then(html => {
+          if (useHtmlMinification(globalOptions, requestedPath)) {
+            html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
+          }
+          that.send(html)
+        }).catch(err => that.send(err))
+        return
+      }
       if (useHtmlMinification(globalOptions, requestedPath)) {
         cachedPage = globalOptions.useHtmlMinifier.minify(cachedPage, globalOptions.htmlMinifierOptions || {})
-      }
-      if (type === 'ejs' && globalOptions.async) {
-        cachedPage.then(html => that.send(html)).catch(err => that.send(err))
-        return
       }
       that.send(cachedPage)
     }
@@ -365,6 +370,20 @@ function fastifyView (fastify, opts, next) {
       if (toHtml && prod && (typeof (toHtml) === 'function')) {
         if (!this.getHeader('content-type')) {
           this.header('Content-Type', 'text/html; charset=' + charset)
+        }
+        if (globalOptions.async) {
+          toHtml(data).then(html => {
+            if (useHtmlMinification(globalOptions, requestedPath)) {
+              this.send(globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {}))
+              return
+            }
+            this.send(html)
+          }).catch(err => this.send(err))
+          return
+        }
+        if (useHtmlMinification(globalOptions, requestedPath)) {
+          this.send(globalOptions.useHtmlMinifier.minify(toHtml(data), globalOptions.htmlMinifierOptions || {}))
+          return
         }
         this.send(toHtml(data))
         return

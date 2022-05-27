@@ -618,6 +618,47 @@ test('reply.view with ejs engine and paths excluded from html-minifier', t => {
     })
   })
 })
+test('reply.view with ejs engine and html-minifier in production mode', t => {
+  const numTests = 5
+  t.plan(numTests * 5 + 1)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: { ejs },
+    production: true,
+    options: {
+      useHtmlMinifier: minifier,
+      htmlMinifierOptions: minifierOpts
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('templates/index.ejs', data)
+  })
+
+  fastify.listen({ port: 0 }, async err => {
+    t.error(err)
+
+    for (let i = 0; i < numTests; i++) {
+      await new Promise((resolve, reject) => {
+        sget({
+          method: 'GET',
+          url: 'http://localhost:' + fastify.server.address().port
+        }, async (err, response, body) => {
+          t.error(err)
+          t.equal(response.statusCode, 200)
+          t.equal(response.headers['content-length'], '' + body.length)
+          t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+          t.equal(minifier.minify(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), minifierOpts), body.toString())
+          if (i === numTests - 1) fastify.close()
+          resolve()
+        })
+      })
+    }
+  })
+})
 
 test('reply.view with ejs engine and includeViewExtension property as true', t => {
   t.plan(6)
