@@ -239,7 +239,7 @@ function fastifyView (fastify, opts, next) {
     return cacheKey
   }
 
-  function readCallback (that, page, data) {
+  function readCallback (that, page, data, localOptions) {
     return function _readCallback (err, html) {
       const requestedPath = getRequestedPath(that)
 
@@ -258,7 +258,12 @@ function fastifyView (fastify, opts, next) {
           }
         }
         globalOptions.filename = join(templatesDir, page)
-        compiledPage = engine.compile(html, globalOptions)
+        if (localOptions) {
+          for (const key in globalOptions) {
+            if (!Object.prototype.hasOwnProperty.call(localOptions, key)) localOptions[key] = globalOptions[key]
+          }
+        } else localOptions = globalOptions
+        compiledPage = engine.compile(html, localOptions)
       } catch (error) {
         that.send(error)
         return
@@ -274,7 +279,7 @@ function fastifyView (fastify, opts, next) {
       } catch (error) {
         cachedPage = error
       }
-      if (type === 'ejs' && globalOptions.async) {
+      if (type === 'ejs' && (globalOptions.async || localOptions?.async)) {
         cachedPage.then(html => {
           if (useHtmlMinification(globalOptions, requestedPath)) {
             html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
@@ -318,7 +323,7 @@ function fastifyView (fastify, opts, next) {
     return renderer
   }
 
-  function view (page, data) {
+  function view (page, data, opts) {
     if (!page) {
       this.send(new Error('Missing page'))
       return
@@ -338,7 +343,7 @@ function fastifyView (fastify, opts, next) {
       return
     }
 
-    readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
+    readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data, opts))
   }
 
   function viewEjs (page, data, opts) {
@@ -371,7 +376,7 @@ function fastifyView (fastify, opts, next) {
         if (!this.getHeader('content-type')) {
           this.header('Content-Type', 'text/html; charset=' + charset)
         }
-        if (globalOptions.async) {
+        if (globalOptions.async || opts?.async) {
           toHtml(data).then(html => {
             if (useHtmlMinification(globalOptions, requestedPath)) {
               this.send(globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {}))
@@ -388,7 +393,7 @@ function fastifyView (fastify, opts, next) {
         this.send(toHtml(data))
         return
       }
-      readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data))
+      readFile(join(templatesDir, page), 'utf8', readCallback(this, page, data, opts))
     }, requestedPath)
   }
 
