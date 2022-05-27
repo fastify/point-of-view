@@ -366,6 +366,10 @@ function fastifyView (fastify, opts, next) {
         if (!this.getHeader('content-type')) {
           this.header('Content-Type', 'text/html; charset=' + charset)
         }
+        if (globalOptions.async) {
+          toHtml(data).then(html => this.send(html)).catch(err => this.send(err))
+          return
+        }
         this.send(toHtml(data))
         return
       }
