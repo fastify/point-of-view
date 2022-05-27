@@ -10,8 +10,8 @@ fastify.register(require('./index'), {
     ejs: require('ejs')
   },
   defaultContext: {
-    header: 'header value defined as default contenxt',
-    footer: 'footer value defined as default contenxt'
+    header: 'header value defined as default context',
+    footer: 'footer value defined as default context'
   },
   includeViewExtension: true,
   layout: 'layout',
