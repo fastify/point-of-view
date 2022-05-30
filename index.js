@@ -279,7 +279,7 @@ function fastifyView (fastify, opts, next) {
       } catch (error) {
         cachedPage = error
       }
-      if (type === 'ejs' && (globalOptions.async || localOptions?.async)) {
+      if (type === 'ejs' && (localOptions.async)) {
         cachedPage.then(html => {
           if (useHtmlMinification(globalOptions, requestedPath)) {
             html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
@@ -376,7 +376,7 @@ function fastifyView (fastify, opts, next) {
         if (!this.getHeader('content-type')) {
           this.header('Content-Type', 'text/html; charset=' + charset)
         }
-        if (globalOptions.async || opts?.async) {
+        if (opts?.async !== undefined ? opts.async : globalOptions.async) {
           toHtml(data).then(html => {
             if (useHtmlMinification(globalOptions, requestedPath)) {
               this.send(globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {}))
