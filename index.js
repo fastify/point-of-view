@@ -279,7 +279,7 @@ function fastifyView (fastify, opts, next) {
       } catch (error) {
         cachedPage = error
       }
-      if (type === 'ejs' && (localOptions.async)) {
+      if (type === 'ejs' && (localOptions.async ?? globalOptions.async)) {
         cachedPage.then(html => {
           if (useHtmlMinification(globalOptions, requestedPath)) {
             html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
