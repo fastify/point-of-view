@@ -376,7 +376,7 @@ function fastifyView (fastify, opts, next) {
         if (!this.getHeader('content-type')) {
           this.header('Content-Type', 'text/html; charset=' + charset)
         }
-        if (opts?.async !== undefined ? opts.async : globalOptions.async) {
+        if (opts?.async ?? globalOptions.async) {
           toHtml(data).then(html => {
             if (useHtmlMinification(globalOptions, requestedPath)) {
               this.send(globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {}))
