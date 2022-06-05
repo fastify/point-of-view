@@ -23,6 +23,8 @@ Currently supports the following templates engines:
 
 In `production` mode, `point-of-view` will heavily cache the templates file and functions, while in `development` will reload every time the template file and function.
 
+_Note: For **Fastify v3 support**, please use point-of-view `5.x` (npm i point-of-view@5)._
+
 _Note that at least Fastify `v2.0.0` is needed._
 
 _Note: [`ejs-mate`](https://github.com/JacksonTian/ejs-mate) support [has been dropped](https://github.com/fastify/point-of-view/pull/157)._
