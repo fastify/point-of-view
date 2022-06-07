@@ -440,7 +440,7 @@ test('plugin is registered with "point-of-view" name', t => {
 
     const kRegistedPlugins = Symbol.for('registered-plugin')
     const registeredPlugins = fastify[kRegistedPlugins]
-    t.ok(registeredPlugins.find(name => name === 'point-of-view'))
+    t.ok(registeredPlugins.find(name => name === '@fastify/view'))
 
     fastify.close()
   })
