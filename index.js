@@ -736,5 +736,5 @@ function fastifyView (fastify, opts, next) {
 
 module.exports = fp(fastifyView, {
   fastify: '4.x',
-  name: 'point-of-view'
+  name: '@fastify/view'
 })
