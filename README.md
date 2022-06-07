@@ -1,12 +1,12 @@
-# point-of-view
+# @fastify/view
 
 ![CI](https://github.com/fastify/point-of-view/workflows/CI/badge.svg)
-[![NPM version](https://img.shields.io/npm/v/point-of-view.svg?style=flat)](https://www.npmjs.com/package/point-of-view)
+[![NPM version](https://img.shields.io/npm/v/@fastify/view.svg?style=flat)](https://www.npmjs.com/package/@fastify/view)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
 Templates rendering plugin support for Fastify.
 
-`point-of-view` decorates the reply interface with the `view` method for managing view engines, which can be used to render templates responses.
+`@fastify/view` decorates the reply interface with the `view` method for managing view engines, which can be used to render templates responses.
 
 Currently supports the following templates engines:
 
@@ -21,7 +21,7 @@ Currently supports the following templates engines:
 - [`doT`](https://github.com/olado/doT)
 - [`eta`](https://eta.js.org)
 
-In `production` mode, `point-of-view` will heavily cache the templates file and functions, while in `development` will reload every time the template file and function.
+In `production` mode, `@fastify/view` will heavily cache the templates file and functions, while in `development` will reload every time the template file and function.
 
 _Note: For **Fastify v3 support**, please use point-of-view `5.x` (npm i point-of-view@5)._
 
@@ -42,14 +42,14 @@ The data has been taken with: `autocannon -c 100 -d 5 -p 10 localhost:3000`
 ## Install
 
 ```
-npm install point-of-view --save
+npm install @fastify/view
 ```
 
 <a name="quickstart"></a>
 
 ## Quick start
 
-`fastify.register` is used to register point-of-view. By default, It will decorate the `reply` object with a `view` method that takes at least two arguments:
+`fastify.register` is used to register @fastify/view. By default, It will decorate the `reply` object with a `view` method that takes at least two arguments:
 
 - the template to be rendered
 - the data that should be available to the template during rendering
@@ -59,7 +59,7 @@ This example will render the template and provide a variable `text` to be used i
 ```js
 const fastify = require("fastify")();
 
-fastify.register(require("point-of-view"), {
+fastify.register(require("@fastify/view"), {
   engine: {
     ejs: require("ejs"),
   },
@@ -95,7 +95,7 @@ fastify.get("/", async (req, reply) => {
 ### Options
 
 - `engine`: The template engine object - pass in the return value of `require('<engine>')`. This option is mandatory.
-- `layout`: Point-of-view supports layouts for **EJS**, **Handlebars**, **Eta** and **doT**. This option lets you specify a global layout file to be used when rendering your templates. Settings like `root` or `viewExt` apply as for any other template file. Example: `./templates/layouts/main.hbs`
+- `layout`: @fastify/view supports layouts for **EJS**, **Handlebars**, **Eta** and **doT**. This option lets you specify a global layout file to be used when rendering your templates. Settings like `root` or `viewExt` apply as for any other template file. Example: `./templates/layouts/main.hbs`
 - `propertyName`: The property that should be used to decorate `reply` and `fastify` - E.g. `reply.view()` and `fastify.view()` where `"view"` is the property name. Default: `"view"`.
 - `root`: The root path of your templates folder. The template name or path passed to the render function will be resolved relative to this path. Default: `"./"`.
 - `includeViewExtension`: Setting this to `true` will automatically append the default extension for the used template engine **if ommited from the template name** . So instead of `template.hbs`, just `template` can be used. Default: `false`.
@@ -105,7 +105,7 @@ fastify.get("/", async (req, reply) => {
 Example:
 
 ```js
-fastify.register(require("point-of-view"), {
+fastify.register(require("@fastify/view"), {
   engine: {
     handlebars: require("handlebars"),
   },
@@ -140,13 +140,13 @@ fastify.view("/templates/index.ejs", { text: "text" }, (err, html) => {
 Registering multiple engines with different configurations is supported. They are dinguished via their `propertyName`:
 
 ```js
-fastify.register(require("point-of-view"), {
+fastify.register(require("@fastify/view"), {
   engine: { ejs: ejs },
   layout: "./templates/layout-mobile.ejs",
   propertyName: "mobile",
 });
 
-fastify.register(require("point-of-view"), {
+fastify.register(require("@fastify/view"), {
   engine: { ejs: ejs },
   layout: "./templates/layout-desktop.ejs",
   propertyName: "desktop",
@@ -165,7 +165,7 @@ fastify.get("/desktop", (req, reply) => {
 
 ## Providing a layout on render
 
-Point-of-view supports layouts for **EJS**, **Handlebars**, **Eta** and **doT**.
+@fastify/view supports layouts for **EJS**, **Handlebars**, **Eta** and **doT**.
 These engines also support providing a layout on render.
 
 **Please note:** Global layouts and provding layouts on render are mutually exclusive. They can not be mixed.
@@ -248,7 +248,7 @@ const options = {
   pathsToExcludeHtmlMinifier: ['/test']
 }
 
-fastify.register(require("point-of-view"), {
+fastify.register(require("@fastify/view"), {
   engine: {
     ejs: require('ejs')
   },
@@ -320,7 +320,7 @@ To use partials in handlebars you will need to pass the names and paths in the o
 To use layouts in handlebars you will need to pass the `layout` parameter:
 
 ```js
-fastify.register(require("point-of-view"), {
+fastify.register(require("@fastify/view"), {
   engine: {
     handlebars: require("handlebars"),
   },
@@ -337,7 +337,7 @@ fastify.get("/", (req, reply) => {
 You can load templates from multiple paths when using the nunjucks engine:
 
 ```js
-fastify.register(require("point-of-view"), {
+fastify.register(require("@fastify/view"), {
   engine: {
     nunjucks: require("nunjucks"),
   },
@@ -371,7 +371,7 @@ const engine = new Liquid({
   extname: ".liquid",
 });
 
-fastify.register(require("point-of-view"), {
+fastify.register(require("@fastify/view"), {
   engine: {
     liquid: engine,
   },
@@ -392,7 +392,7 @@ To make it possible it is necessary to provide a `root` or `templates` option wi
 ```js
 const path = require("path");
 
-fastify.register(require("point-of-view"), {
+fastify.register(require("@fastify/view"), {
   engine: {
     dot: require("dot"),
   },
@@ -456,13 +456,13 @@ app.get("/data", (request, reply) => {
 
 ## Miscellaneous
 
-### Using point-of-view as a dependency in a fastify-plugin
+### Using @fastify/view as a dependency in a fastify-plugin
 
-To require `point-of-view` as a dependency to a [fastify-plugin](https://github.com/fastify/fastify-plugin), add the name `point-of-view` to the dependencies array in the [plugin's opts](https://github.com/fastify/fastify-plugin#dependencies).
+To require `@fastify/view` as a dependency to a [fastify-plugin](https://github.com/fastify/fastify-plugin), add the name `@fastify/view` to the dependencies array in the [plugin's opts](https://github.com/fastify/fastify-plugin#dependencies).
 
 ```js
 fastify.register(myViewRendererPlugin, {
-  dependencies: ["point-of-view"],
+  dependencies: ["@fastify/view"],
 });
 ```
 
