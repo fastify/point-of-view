@@ -1,6 +1,6 @@
 {
-  "name": "point-of-view",
-  "version": "6.2.1",
+  "name": "@fastify/view",
+  "version": "7.0.0",
   "description": "Template plugin for Fastify",
   "main": "index.js",
   "scripts": {
@@ -66,5 +66,8 @@
   },
   "tsd": {
     "directory": "test"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
