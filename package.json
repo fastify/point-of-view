@@ -38,7 +38,7 @@
     "hashlru": "^2.3.0"
   },
   "devDependencies": {
-    "@types/node": "^17.0.0",
+    "@types/node": "^18.0.0",
     "art-template": "^4.13.2",
     "cross-env": "^7.0.2",
     "dot": "^1.1.3",
