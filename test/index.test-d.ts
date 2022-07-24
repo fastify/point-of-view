@@ -16,7 +16,7 @@ const app = fastify();
 
 app.register(pointOfView, {
   engine: {
-    handlebars: require("handlebars"),
+    ejs: require("ejs"),
   },
   templates: "templates",
   includeViewExtension: true,
@@ -33,7 +33,7 @@ app.register(pointOfView, {
 });
 
 app.get("/", (request, reply) => {
-  reply.view("/index-with-no-data");
+  reply.view("/index-with-no-data", {header: "Header", footer: "Footer"});
 });
 
 app.get("/data", (request, reply) => {
@@ -56,7 +56,14 @@ app.get("/dataTyped", (request, reply) => {
   reply.view<{ text: string; }>("/index", { text: "Sample data" });
 });
 
-app.listen(3000, (err, address) => {
+// Global layout setting and per route layout are mutually exclusive
+/*
+app.get("/alt-layout", (request, reply) => {
+  reply.view("/alt-layout-content", {text: "Alt layout"}, {layout: "/alt-layout"})
+});
+*/
+
+app.listen({port: 3000}, (err, address) => {
   if (err) throw err
   console.log(`server listening on ${address} ...`)
 })
