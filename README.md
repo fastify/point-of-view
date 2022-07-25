@@ -42,7 +42,7 @@ The data has been taken with: `autocannon -c 100 -d 5 -p 10 localhost:3000`
 ## Install
 
 ```
-npm install @fastify/view
+npm i @fastify/view
 ```
 
 <a name="quickstart"></a>
