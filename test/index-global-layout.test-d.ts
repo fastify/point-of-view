@@ -25,6 +25,7 @@ app.register(pointOfView, {
   },
   options: {},
   charset: "utf-8",
+  layout: "layout-ts",
   maxCache: 100,
   production: false,
   root: path.resolve(__dirname, "../templates"),
@@ -32,7 +33,7 @@ app.register(pointOfView, {
 });
 
 app.get("/", (request, reply) => {
-  reply.view("/index-with-no-data");
+  reply.view("/layout-ts-content-no-data");
 });
 
 app.get("/data", (request, reply) => {
@@ -42,7 +43,7 @@ app.get("/data", (request, reply) => {
 
   // reply.locals.appVersion = 1 // not a valid type
   reply.locals.appVersion = '4.14.0'
-  reply.view("/index", { text: "Sample data" });
+  reply.view("/layout-ts-content-with-data", { text: "Sample data" });
 });
 
 app.get("/dataTyped", (request, reply) => {
@@ -52,11 +53,7 @@ app.get("/dataTyped", (request, reply) => {
 
   // reply.locals.appVersion = 1 // not a valid type
   reply.locals.appVersion = '4.14.0'
-  reply.view<{ text: string; }>("/index", { text: "Sample data" });
-});
-
-app.get("/use-layout", (request, reply) => {
-  reply.view("/layout-ts-content-with-data", {text: "Using a layout"}, {layout: "/layout-ts"})
+  reply.view<{ text: string; }>("/layout-ts-content-with-data", { text: "Sample data" });
 });
 
 app.listen({port: 3000}, (err, address) => {
