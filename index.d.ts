@@ -1,9 +1,14 @@
 import { FastifyPlugin, FastifyReply, RawServerBase } from 'fastify';
 
 declare module "fastify" {
+
+  interface RouteSpecificOptions {
+    layout?: string;
+  }
+
   interface FastifyReply {
-    view<T extends { [key: string]: any; }>(page: string, data: T): FastifyReply;
-    view(page: string, data?: object): FastifyReply;
+    view<T extends { [key: string]: any; }>(page: string, data: T, opts?: RouteSpecificOptions): FastifyReply;
+    view(page: string, data?: object, opts?: RouteSpecificOptions): FastifyReply;
   }
 }
 
