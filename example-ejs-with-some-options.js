@@ -39,7 +39,7 @@ fastify.get('/include-one-attribute-missing-test', (req, reply) => {
   reply.view('index-with-includes-and-attribute-missing', data)
 })
 
-fastify.listen(3000, err => {
+fastify.listen({ port: 3000 }, err => {
   if (err) throw err
   console.log(`server listening on ${fastify.server.address().port}`)
 })
