@@ -25,7 +25,7 @@ fastify.get('/', async (req, reply) => {
   return reply.view('/index.njk', { text: t })
 })
 
-fastify.listen(3000, err => {
+fastify.listen({ port: 3000 }, err => {
   if (err) throw err
   console.log(`server listening on ${fastify.server.address().port}`)
 })
