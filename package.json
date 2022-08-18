@@ -3,12 +3,14 @@
   "version": "7.1.0",
   "description": "Template plugin for Fastify",
   "main": "index.js",
+  "types": "types/index.d.ts",
   "scripts": {
     "example": "node example.js",
     "example-with-options": "node example-ejs-with-some-options.js",
     "example-typescript": "npx ts-node test/index.test-d.ts",
     "test-with-snapshot": "cross-env TAP_SNAPSHOT=1 tap test/test-ejs-with-snapshot.js",
-    "test": "standard && tap -J test/*.js && tsd"
+    "test": "standard && tap -J test/*.js && npm run test:typescript",
+    "test:typescript": "tsd"
   },
   "repository": {
     "type": "git",
@@ -63,9 +65,6 @@
     "tsd": "^0.22.0",
     "twig": "^1.13.3",
     "typescript": "^4.0.2"
-  },
-  "tsd": {
-    "directory": "test"
   },
   "publishConfig": {
     "access": "public"
