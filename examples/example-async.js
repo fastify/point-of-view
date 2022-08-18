@@ -8,7 +8,7 @@ const fastify = require('fastify')({
   logger: true
 })
 
-fastify.register(require('.'), {
+fastify.register(require('..'), {
   engine: {
     nunjucks: require('nunjucks')
   },
