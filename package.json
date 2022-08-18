@@ -10,7 +10,8 @@
     "example-typescript": "npx ts-node types/index.test-d.ts",
     "lint": "standard",
     "test-with-snapshot": "cross-env TAP_SNAPSHOT=1 tap test/test-ejs-with-snapshot.js",
-    "test": "tap -J test/*.js && npm run test:typescript",
+    "test": "npm run test:unit && npm run test:typescript",
+    "test:unit": "tap",
     "test:typescript": "tsd"
   },
   "repository": {
