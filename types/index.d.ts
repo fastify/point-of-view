@@ -1,4 +1,4 @@
-import { FastifyPlugin, FastifyReply, RawServerBase } from 'fastify';
+import { FastifyPluginCallback } from 'fastify';
 
 declare module "fastify" {
 
@@ -38,5 +38,5 @@ export interface PointOfViewOptions {
   propertyName?: string;
 }
 
-declare const pointOfView: FastifyPlugin<PointOfViewOptions>;
+declare const pointOfView: FastifyPluginCallback<PointOfViewOptions>;
 export default pointOfView;
