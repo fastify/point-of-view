@@ -8,8 +8,9 @@
     "example": "node examples/example.js",
     "example-with-options": "node examples/example-ejs-with-some-options.js",
     "example-typescript": "npx ts-node types/index.test-d.ts",
+    "lint": "standard",
     "test-with-snapshot": "cross-env TAP_SNAPSHOT=1 tap test/test-ejs-with-snapshot.js",
-    "test": "standard && tap -J test/*.js && npm run test:typescript",
+    "test": "tap -J test/*.js && npm run test:typescript",
     "test:typescript": "tsd"
   },
   "repository": {
@@ -66,6 +67,10 @@
     "twig": "^1.13.3",
     "typescript": "^4.0.2"
   },
+  "pre-commit": [
+    "lint",
+    "test"
+  ],
   "publishConfig": {
     "access": "public"
   }
