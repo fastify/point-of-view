@@ -4,3 +4,6 @@ flow: false
 coverage: true
 nyc-arg: [--exclude=out]
 check-coverage: false
+
+files:
+  - test/**/*.js

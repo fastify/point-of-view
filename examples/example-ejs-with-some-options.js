@@ -5,7 +5,7 @@ const resolve = require('path').resolve
 const templatesFolder = 'templates'
 const data = { text: 'Hello from EJS Templates' }
 
-fastify.register(require('./index'), {
+fastify.register(require('..'), {
   engine: {
     ejs: require('ejs')
   },
