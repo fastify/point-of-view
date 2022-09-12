@@ -1,6 +1,6 @@
 import fastify from "fastify";
 import pointOfView, { PointOfViewOptions } from "..";
-import { expectAssignable } from "tsd";
+import { expectAssignable, expectType } from "tsd";
 import * as path from "path";
 
 interface Locals {
@@ -63,5 +63,7 @@ app.listen({port: 3000}, (err, address) => {
   if (err) throw err
   console.log(`server listening on ${address} ...`)
 })
+
+expectType<Promise<string>>(app.view("/index", {}, { layout: "/layout-ts"}))
 
 expectAssignable<PointOfViewOptions>({ engine: { twig: require('twig') }, propertyName: 'mobile' })
