@@ -10,6 +10,11 @@ declare module "fastify" {
     view<T extends { [key: string]: any; }>(page: string, data: T, opts?: RouteSpecificOptions): FastifyReply;
     view(page: string, data?: object, opts?: RouteSpecificOptions): FastifyReply;
   }
+
+  interface FastifyInstance {
+    view<T extends { [key: string]: any; }>(page: string, data: T, opts?: RouteSpecificOptions): Promise<string>;
+    view(page: string, data?: object, opts?: RouteSpecificOptions): Promise<string>;
+  }
 }
 
 export interface PointOfViewOptions {
