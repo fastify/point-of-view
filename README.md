@@ -101,6 +101,7 @@ fastify.get("/", async (req, reply) => {
 - `includeViewExtension`: Setting this to `true` will automatically append the default extension for the used template engine **if ommited from the template name** . So instead of `template.hbs`, just `template` can be used. Default: `false`.
 - `viewExt`: Let's you override the default extension for a given template engine. This has precedence over `includeViewExtension` and will lead to the same behavior, just with a custom extension. Default `""`. Example: `"handlebars"`.
 - `defaultContext`: The template variables defined here will be available to all views. Variables provided on render have precendence and will **override** this if they have the same name. Default: `{}`. Example: `{ siteName: "MyAwesomeSite" }`.
+- `maxCache`: In `production` mode, maximum number of templates file and functions caches. Default: `100`. Example: `{ maxCache: 100 }`.
 
 Example:
 
