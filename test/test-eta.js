@@ -1011,9 +1011,9 @@ test('fastify.view with eta engine and async in production mode', t => {
       fastify.view('templates/index.eta', null)
         .then(() => { t.fail('should not be here') })
         .catch((err) => {
-        t.ok(err instanceof Error)
-        fastify.close()
-      })
+          t.ok(err instanceof Error)
+          fastify.close()
+        })
     })
   })
 })
