@@ -1008,7 +1008,7 @@ test('fastify.view with eta engine and async in production mode', t => {
 
     fastify.view('templates/index.eta', data).then((compiled) => {
       t.equal(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), compiled)
-      fastify.view('templates/index.eta', null).then(() => { console.log('aaaaaaaaaaaa') }).catch((err) => {
+      fastify.view('templates/index.eta', null).then(() => { }).catch((err) => {
         t.ok(err instanceof Error)
         fastify.close()
       })
