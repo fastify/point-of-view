@@ -986,3 +986,32 @@ test('fastify.view with eta engine, should throw page missing', t => {
     })
   })
 })
+
+test('fastify.view with eta engine and async in production mode', t => {
+  t.plan(3)
+  const fastify = Fastify()
+
+  const data = { text: 'text' }
+
+  fastify.register(pointOfView, {
+    engine: {
+      eta
+    },
+    production: true,
+    options: {
+      async: true
+    }
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.view('templates/index.eta', data).then((compiled) => {
+      t.equal(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), compiled)
+      fastify.view('templates/index.eta', null).then(() => { console.log('aaaaaaaaaaaa') }).catch((err) => {
+        t.ok(err instanceof Error)
+        fastify.close()
+      })
+    })
+  })
+})
