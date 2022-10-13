@@ -648,11 +648,17 @@ function fastifyView (fastify, opts, next) {
     engine.configure({
       templates: globalOptions.templates ? globalOptions.templates : lru
     })
-    const fReturnHtml = (html) => {
+
+    const config = Object.assign({
+      cache: prod,
+      views: templatesDir
+    }, globalOptions)
+
+    const sendContent = html => {
       if (
         config.useHtmlMinifier &&
-            typeof config.useHtmlMinifier.minify === 'function' &&
-            !isPathExcludedMinification(getRequestedPath(this), config.pathsToExcludeHtmlMinifier)
+        typeof config.useHtmlMinifier.minify === 'function' &&
+        !isPathExcludedMinification(getRequestedPath(this), config.pathsToExcludeHtmlMinifier)
       ) {
         html = config.useHtmlMinifier.minify(
           html,
@@ -663,23 +669,20 @@ function fastifyView (fastify, opts, next) {
       this.send(html)
     }
 
-    const config = Object.assign({
-      cache: prod,
-      views: templatesDir
-    }, globalOptions)
-
     data = Object.assign({}, defaultCtx, this.locals, data)
     // Append view extension (Eta will append '.eta' by default,
     // but this also allows custom extensions)
     page = getPage(page, 'eta')
     if (opts?.async ?? globalOptions.async) {
-      engine.renderFile(page, data, config).then((html) => {
-        fReturnHtml(html)
-      }).catch(err => this.send(err))
+      engine
+        .renderFile(page, data, config)
+        .then(sendContent)
+        .catch(err => this.send(err))
     } else {
       engine.renderFile(page, data, config, (err, html) => {
-        if (err) return this.send(err)
-        fReturnHtml(html)
+        err
+          ? this.send(err)
+          : sendContent(html)
       })
     }
   }
