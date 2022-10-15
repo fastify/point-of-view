@@ -654,12 +654,7 @@ function fastifyView (fastify, opts, next) {
       views: templatesDir
     }, globalOptions)
 
-    data = Object.assign({}, defaultCtx, this.locals, data)
-    // Append view extension (Eta will append '.eta' by default,
-    // but this also allows custom extensions)
-    page = getPage(page, 'eta')
-    engine.renderFile(page, data, config, (err, html) => {
-      if (err) return this.send(err)
+    const sendContent = html => {
       if (
         config.useHtmlMinifier &&
         typeof config.useHtmlMinifier.minify === 'function' &&
@@ -672,7 +667,24 @@ function fastifyView (fastify, opts, next) {
       }
       this.header('Content-Type', 'text/html; charset=' + charset)
       this.send(html)
-    })
+    }
+
+    data = Object.assign({}, defaultCtx, this.locals, data)
+    // Append view extension (Eta will append '.eta' by default,
+    // but this also allows custom extensions)
+    page = getPage(page, 'eta')
+    if (opts?.async ?? globalOptions.async) {
+      engine
+        .renderFile(page, data, config)
+        .then(sendContent)
+        .catch(err => this.send(err))
+    } else {
+      engine.renderFile(page, data, config, (err, html) => {
+        err
+          ? this.send(err)
+          : sendContent(html)
+      })
+    }
   }
 
   if (prod && type === 'handlebars' && globalOptions.partials) {
