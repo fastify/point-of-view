@@ -121,6 +121,15 @@ function fastifyView (fastify, opts, next) {
     return this
   })
 
+  if (!fastify.hasReplyDecorator('locals')) {
+    fastify.decorateReply('locals', null)
+
+    fastify.addHook('onRequest', (req, reply, done) => {
+      reply.locals = {}
+      done()
+    })
+  }
+
   function getPage (page, extension) {
     const pageLRU = `getPage-${page}-${extension}`
     let result = lru.get(pageLRU)
