@@ -133,6 +133,37 @@ test('reply.view exist', t => {
   })
 })
 
+test('reply.locals exist', t => {
+  t.plan(6)
+  const fastify = Fastify()
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: require('ejs')
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    t.ok(reply.locals)
+    reply.send({ hello: 'world' })
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.same(JSON.parse(body), { hello: 'world' })
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view can be returned from async function to indicate response processing finished', t => {
   t.plan(6)
   const fastify = Fastify()
