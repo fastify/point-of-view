@@ -1,6 +1,6 @@
 {
   "name": "@fastify/view",
-  "version": "7.1.1",
+  "version": "7.1.2",
   "description": "Template plugin for Fastify",
   "main": "index.js",
   "types": "types/index.d.ts",
