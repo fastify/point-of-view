@@ -457,7 +457,9 @@ function fastifyView (fastify, opts, next) {
       if (useHtmlMinification(globalOptions, requestedPath)) {
         html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
       }
-      this.header('Content-Type', 'text/html; charset=' + charset)
+      if (!this.getHeader('content-type')) {
+        this.header('Content-Type', 'text/html; charset=' + charset)
+      }
       this.send(html)
     })
   }

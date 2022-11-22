@@ -304,6 +304,40 @@ test('reply.view for nunjucks engine with data-parameter and reply.locals and de
   })
 })
 
+test('reply.view with nunjucks engine, will preserve content-type', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const nunjucks = require('nunjucks')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      nunjucks
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.header('Content-Type', 'text/xml')
+    reply.view('./templates/index.njk', data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/xml')
+      t.equal(nunjucks.render('./templates/index.njk', data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with nunjucks engine and full path templates folder', t => {
   t.plan(6)
   const fastify = Fastify()
