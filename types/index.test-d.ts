@@ -1,6 +1,6 @@
 import fastify from "fastify";
-import pointOfView, { PointOfViewOptions } from "..";
-import { expectAssignable, expectType } from "tsd";
+import fastifyView, { PointOfViewOptions, FastifyViewOptions } from "..";
+import { expectAssignable, expectDeprecated, expectType } from "tsd";
 import * as path from "path";
 
 interface Locals {
@@ -14,7 +14,7 @@ declare module "fastify" {
 }
 const app = fastify();
 
-app.register(pointOfView, {
+app.register(fastifyView, {
   engine: {
     ejs: require("ejs"),
   },
@@ -66,4 +66,6 @@ app.listen({port: 3000}, (err, address) => {
 
 expectType<Promise<string>>(app.view("/index", {}, { layout: "/layout-ts"}))
 
-expectAssignable<PointOfViewOptions>({ engine: { twig: require('twig') }, propertyName: 'mobile' })
+expectAssignable<FastifyViewOptions>({ engine: { twig: require('twig') }, propertyName: 'mobile' })
+
+expectDeprecated({} as PointOfViewOptions)

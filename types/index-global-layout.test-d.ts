@@ -1,5 +1,5 @@
 import fastify from "fastify";
-import pointOfView, { PointOfViewOptions } from "..";
+import fastifyView, { FastifyViewOptions } from "..";
 import { expectAssignable } from "tsd";
 import * as path from "path";
 
@@ -14,7 +14,7 @@ declare module "fastify" {
 }
 const app = fastify();
 
-app.register(pointOfView, {
+app.register(fastifyView, {
   engine: {
     ejs: require("ejs"),
   },
@@ -61,4 +61,4 @@ app.listen({port: 3000}, (err, address) => {
   console.log(`server listening on ${address} ...`)
 })
 
-expectAssignable<PointOfViewOptions>({ engine: { twig: require('twig') }, propertyName: 'mobile' })
+expectAssignable<FastifyViewOptions>({ engine: { twig: require('twig') }, propertyName: 'mobile' })
