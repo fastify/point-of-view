@@ -761,3 +761,5 @@ module.exports = fp(fastifyView, {
   fastify: '4.x',
   name: '@fastify/view'
 })
+module.exports.default = fastifyView
+module.exports.fastifyView = fastifyView

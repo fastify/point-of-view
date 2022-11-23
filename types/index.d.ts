@@ -17,31 +17,43 @@ declare module "fastify" {
   }
 }
 
-export interface PointOfViewOptions {
-  engine: {
-    ejs?: any;
-    eta?: any;
-    nunjucks?: any;
-    pug?: any;
-    handlebars?: any;
-    mustache?: any;
-    'art-template'?: any;
-    twig?: any;
-    liquid?: any;
-    dot?: any;
-  };
-  templates?: string;
-  includeViewExtension?: boolean;
-  options?: object;
-  charset?: string;
-  maxCache?: number;
-  production?: boolean;
-  defaultContext?: object;
-  layout?: string;
-  root?: string;
-  viewExt?: string;
-  propertyName?: string;
+type FastifyView = FastifyPluginCallback<fastifyView.FastifyViewOptions>
+
+declare namespace fastifyView {
+  export interface FastifyViewOptions {
+    engine: {
+      ejs?: any;
+      eta?: any;
+      nunjucks?: any;
+      pug?: any;
+      handlebars?: any;
+      mustache?: any;
+      'art-template'?: any;
+      twig?: any;
+      liquid?: any;
+      dot?: any;
+    };
+    templates?: string;
+    includeViewExtension?: boolean;
+    options?: object;
+    charset?: string;
+    maxCache?: number;
+    production?: boolean;
+    defaultContext?: object;
+    layout?: string;
+    root?: string;
+    viewExt?: string;
+    propertyName?: string;
+  }
+
+  /**
+   * @deprecated Use FastifyViewOptions
+   */
+  export type PointOfViewOptions = FastifyViewOptions
+
+  export const fastifyView: FastifyView
+  export { fastifyView as default }
 }
 
-declare const pointOfView: FastifyPluginCallback<PointOfViewOptions>;
-export default pointOfView;
+declare function fastifyView(...params: Parameters<FastifyView>): ReturnType<FastifyView>
+export = fastifyView
