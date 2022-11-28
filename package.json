@@ -53,7 +53,7 @@
     "fastify": "^4.0.0-rc.2",
     "handlebars": "^4.7.6",
     "html-minifier": "^4.0.0",
-    "liquidjs": "^9.15.1",
+    "liquidjs": "^10.0.0",
     "mustache": "^4.0.1",
     "nunjucks": "^3.2.1",
     "pino": "^8.0.0",
