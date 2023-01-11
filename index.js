@@ -50,6 +50,17 @@ function fastifyView (fastify, opts, next) {
     }
   }
 
+  function setupNunjucksEnv (_engine) {
+    if (type === 'nunjucks') {
+      const env = _engine.configure(templatesDir, globalOptions)
+      if (typeof globalOptions.onConfigure === 'function') {
+        globalOptions.onConfigure(env)
+      }
+      return env
+    }
+    return null
+  }
+
   try {
     templatesDirIsValid(templatesDir)
 
@@ -62,7 +73,7 @@ function fastifyView (fastify, opts, next) {
   }
 
   const dotRender = type === 'dot' ? viewDot.call(fastify, preProcessDot.call(fastify, templatesDir, globalOptions)) : null
-  const nunjucksEnv = type === 'nunjucks' ? engine.configure(templatesDir, globalOptions) : null
+  const nunjucksEnv = setupNunjucksEnv(engine)
 
   const renders = {
     ejs: withLayout(viewEjs, globalLayoutFileName),
@@ -444,9 +455,6 @@ function fastifyView (fastify, opts, next) {
     if (!page) {
       this.send(new Error('Missing page'))
       return
-    }
-    if (typeof globalOptions.onConfigure === 'function') {
-      globalOptions.onConfigure(nunjucksEnv)
     }
     data = Object.assign({}, defaultCtx, this.locals, data)
     // Append view extension.
