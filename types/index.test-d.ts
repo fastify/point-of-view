@@ -69,3 +69,25 @@ expectType<Promise<string>>(app.view("/index", {}, { layout: "/layout-ts"}))
 expectAssignable<FastifyViewOptions>({ engine: { twig: require('twig') }, propertyName: 'mobile' })
 
 expectDeprecated({} as PointOfViewOptions)
+
+const nunjucksApp = fastify()
+
+nunjucksApp.register(fastifyView, {
+  engine: {
+    nunjucks: require('nunjucks'),
+  },
+  templates: [
+    'templates/nunjucks-layout',
+    'templates/nunjucks-template'
+  ],
+})
+
+nunjucksApp.get('/', (request, reply) => {
+  reply.view('index.njk', { text: 'Sample data' })
+})
+
+expectType<Promise<string>>(nunjucksApp.view('/', { text: 'Hello world' }))
+
+expectAssignable<FastifyViewOptions>({ engine: { nunjucks: require('nunjucks') }, templates: 'templates' })
+
+expectAssignable<FastifyViewOptions>({ engine: { nunjucks: require('nunjucks') }, templates: ['templates/nunjucks-layout', 'templates/nunjucks-template']})
