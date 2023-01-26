@@ -413,6 +413,34 @@ test('reply.view with handlebars engine catches render error', t => {
   })
 })
 
+test('reply.view with handlebars engine and layout catches render error', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+
+  handlebars.registerHelper('badHelper', () => { throw new Error('kaboom') })
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars
+    },
+    layout: './templates/layout.hbs'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/error.hbs')
+  })
+
+  fastify.inject({
+    method: 'GET',
+    url: '/'
+  }, (err, res) => {
+    t.error(err)
+    t.equal(JSON.parse(res.body).message, 'kaboom')
+    t.equal(res.statusCode, 500)
+  })
+})
+
 test('reply.view with handlebars engine and defaultContext', t => {
   t.plan(6)
   const fastify = Fastify()

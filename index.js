@@ -732,7 +732,8 @@ function fastifyView (fastify, opts, next) {
           header: () => { },
           send: (result) => {
             if (result instanceof Error) {
-              throw result
+              that.send(result)
+              return
             }
 
             data = Object.assign((data || {}), { body: result })
