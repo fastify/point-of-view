@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@fastify/pre-commit": "^2.0.2",
-    "@types/node": "^18.0.0",
+    "@types/node": "^20.1.0",
     "art-template": "^4.13.2",
     "cross-env": "^7.0.2",
     "dot": "^1.1.3",
