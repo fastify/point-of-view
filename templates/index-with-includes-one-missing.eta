@@ -2,9 +2,9 @@
 <html lang="en">
   <head></head>
   <body>
-    <%~ includeFile('fragment-header.eta') %>
-    <%~ includeFile('fragment-content-not-existing.eta') %>
+    <%~ include('fragment-header.eta') %>
+    <%~ include('fragment-content-not-existing.eta') %>
     <p><%= it.text %></p>
-    <%~ includeFile('fragment-footer.html') %>
+    <%~ include('fragment-footer.html') %>
   </body>
 </html>

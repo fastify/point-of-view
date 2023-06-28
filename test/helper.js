@@ -5,7 +5,6 @@ const Fastify = require('fastify')
 const minifier = require('html-minifier')
 const fs = require('fs')
 const dot = require('dot')
-const eta = require('eta')
 const handlebars = require('handlebars')
 const { Liquid } = require('liquidjs')
 const nunjucks = require('nunjucks')
@@ -103,6 +102,9 @@ module.exports.dotHtmlMinifierTests = function (t, compileOptions, withMinifierO
 }
 
 module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
+  const { Eta } = require('eta')
+  const eta = new Eta()
+
   const test = t.test
   const options = withMinifierOptions ? minifierOpts : {}
 
@@ -135,7 +137,7 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
         t.equal(response.statusCode, 200)
         t.equal(response.headers['content-length'], String(body.length))
         t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.equal(minifier.minify(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), body.toString())
+        t.equal(minifier.minify(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), body.toString())
         fastify.close()
       })
     })
@@ -170,7 +172,7 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
         t.equal(response.statusCode, 200)
         t.equal(response.headers['content-length'], String(body.length))
         t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.equal(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+        t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
         fastify.close()
       })
     })
