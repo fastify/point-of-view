@@ -663,14 +663,20 @@ function fastifyView (fastify, opts, next) {
       return
     }
 
+    if (globalOptions.templatesSync) {
+      engine.templatesSync = globalOptions.templatesSync
+    }
+
     lru.define = lru.set
+
     engine.configure({
-      templates: globalOptions.templates ? globalOptions.templates : lru
+      views: templatesDir || lru,
+      cache: prod || globalOptions.templatesSync
     })
 
     const config = Object.assign({
       cache: prod,
-      views: templatesDir
+      views: templatesDir || lru
     }, globalOptions)
 
     const sendContent = html => {
@@ -692,17 +698,23 @@ function fastifyView (fastify, opts, next) {
     // Append view extension (Eta will append '.eta' by default,
     // but this also allows custom extensions)
     page = getPage(page, 'eta')
+
     if (opts?.async ?? globalOptions.async) {
       engine
-        .renderFile(page, data, config)
-        .then(sendContent)
-        .catch(err => this.send(err))
+        .renderAsync(page, data, config)
+        .then((res) => {
+          sendContent(res)
+        })
+        .catch(err => {
+          this.send(err)
+        })
     } else {
-      engine.renderFile(page, data, config, (err, html) => {
-        err
-          ? this.send(err)
-          : sendContent(html)
-      })
+      try {
+        const html = engine.render(page, data, config)
+        sendContent(html)
+      } catch (err) {
+        this.send(err)
+      }
     }
   }
 

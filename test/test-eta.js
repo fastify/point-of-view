@@ -8,10 +8,16 @@ const fs = require('fs')
 const path = require('path')
 
 const pointOfView = require('../index')
-const eta = require('eta')
+const { Eta } = require('eta')
+let eta = new Eta()
 
 require('./helper').etaHtmlMinifierTests(t, true)
 require('./helper').etaHtmlMinifierTests(t, false)
+
+t.beforeEach(async t => {
+  // this is mandatory since some test call eta.configure(customOptions)
+  eta = new Eta()
+})
 
 test('reply.view with eta engine and custom templates folder', t => {
   t.plan(6)
@@ -41,7 +47,7 @@ test('reply.view with eta engine and custom templates folder', t => {
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -76,7 +82,7 @@ test('reply.view with eta engine with layout option', t => {
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -110,7 +116,7 @@ test('reply.view with eta engine with layout option on render', t => {
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -176,7 +182,7 @@ test('reply.view with eta engine and custom ext', t => {
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -211,7 +217,7 @@ test('reply.view for eta without data-parameter but defaultContext', t => {
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -246,7 +252,7 @@ test('reply.view for eta without data-parameter but defaultContext', t => {
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -278,7 +284,7 @@ test('reply.view for eta without data-parameter and without defaultContext', t =
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.render(fs.readFileSync('./templates/index-bare.html', 'utf8')), body.toString())
+      t.equal(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8')), body.toString())
       fastify.close()
     })
   })
@@ -316,7 +322,7 @@ test('reply.view for eta engine without data-parameter and defaultContext but wi
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.render(fs.readFileSync('./templates/index-bare.html', 'utf8'), localsData), body.toString())
+      t.equal(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), localsData), body.toString())
       fastify.close()
     })
   })
@@ -355,7 +361,7 @@ test('reply.view for eta engine without defaultContext but with reply.locals and
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.render(fs.readFileSync('./templates/index-bare.html', 'utf8'), data), body.toString())
+      t.equal(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -395,7 +401,7 @@ test('reply.view for eta engine without data-parameter but with reply.locals and
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.render(fs.readFileSync('./templates/index-bare.html', 'utf8'), localsData), body.toString())
+      t.equal(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), localsData), body.toString())
       fastify.close()
     })
   })
@@ -436,7 +442,7 @@ test('reply.view for eta engine with data-parameter and reply.locals and default
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.render(fs.readFileSync('./templates/index-bare.html', 'utf8'), data), body.toString())
+      t.equal(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -470,7 +476,7 @@ test('reply.view with eta engine and full path templates folder', t => {
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -503,7 +509,7 @@ test('reply.view with eta engine', t => {
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -537,7 +543,7 @@ test('reply.view with eta engine and defaultContext', t => {
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -571,7 +577,7 @@ test('reply.view with eta engine and includeViewExtension property as true', t =
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -612,12 +618,9 @@ test('reply.view with eta engine, template folder specified, include files (eta 
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
       t.equal(response.headers['content-length'], '' + body.length)
 
-      let content = null
-      eta.renderFile('/index-linking-other-pages.eta', data, options, function (err, str) {
-        content = str
-        t.error(err)
-        t.equal(content.length, body.length)
-      })
+      const content = eta.render('/index-linking-other-pages.eta', data, options)
+      t.equal(content.length, body.length)
+      t.equal(content, body.toString())
 
       fastify.close()
     })
@@ -625,7 +628,7 @@ test('reply.view with eta engine, template folder specified, include files (eta 
 })
 
 test('reply.view with eta engine, templates with folder specified, include files and attributes; home', t => {
-  t.plan(7)
+  t.plan(6)
   const fastify = Fastify()
 
   const templatesFolder = path.join(__dirname, '../templates')
@@ -659,17 +662,8 @@ test('reply.view with eta engine, templates with folder specified, include files
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
       t.equal(response.headers['content-length'], '' + body.length)
 
-      let content = null
-      eta.renderFile(
-        '/index.eta',
-        data,
-        options,
-        function (err, str) {
-          content = str
-          t.error(err)
-          t.equal(content.length, body.length)
-        }
-      )
+      const content = eta.render('/index.eta', data, options)
+      t.equal(content.length, body.length)
 
       fastify.close()
     })
@@ -677,7 +671,7 @@ test('reply.view with eta engine, templates with folder specified, include files
 })
 
 test('reply.view with eta engine, templates with folder specified, include files and attributes; page with no data', t => {
-  t.plan(7)
+  t.plan(6)
   const fastify = Fastify()
 
   const templatesFolder = path.join(__dirname, '../templates')
@@ -710,17 +704,8 @@ test('reply.view with eta engine, templates with folder specified, include files
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
       t.equal(response.headers['content-length'], '' + body.length)
 
-      let content = null
-      eta.renderFile(
-        '/index-with-no-data.eta',
-        null,
-        options,
-        function (err, str) {
-          content = str
-          t.error(err)
-          t.equal(content.length, body.length)
-        }
-      )
+      const content = eta.render('/index-with-no-data.eta', null, options)
+      t.equal(content.length, body.length)
 
       fastify.close()
     })
@@ -728,7 +713,7 @@ test('reply.view with eta engine, templates with folder specified, include files
 })
 
 test('reply.view with eta engine, templates with folder specified, include files and attributes; page with includes', t => {
-  t.plan(7)
+  t.plan(6)
   const fastify = Fastify()
 
   const templatesFolder = path.join(__dirname, '../templates')
@@ -757,23 +742,14 @@ test('reply.view with eta engine, templates with folder specified, include files
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port + '/include-test'
-    }, (err, response, body) => {
+    }, async (err, response, body) => {
       t.error(err)
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
       t.equal(response.headers['content-length'], '' + body.length)
 
-      let content = null
-      eta.renderFile(
-        '/index-with-includes.eta',
-        data,
-        options,
-        function (err, str) {
-          content = str
-          t.error(err)
-          t.equal(content.length, body.length)
-        }
-      )
+      const content = await eta.renderAsync('/index-with-includes.eta', data, options)
+      t.equal(content.length, body.length)
 
       fastify.close()
     })
@@ -809,23 +785,19 @@ test('reply.view with eta engine, templates with folder specified, include files
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port + '/include-one-include-missing-test'
-    }, (err, response, body) => {
+    }, async (err, response, body) => {
       t.error(err)
       t.equal(response.statusCode, 500)
       t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
       t.equal(response.headers['content-length'], '' + body.length)
 
       let content = null
-      eta.renderFile(
-        '/index-with-includes-one-missing.eta',
-        data,
-        options,
-        function (err, str) {
-          content = str
-          t.type(err, Error) // expected Error here ...
-          t.equal(content, undefined)
-        }
-      )
+      try {
+        content = await eta.renderAsync('/index-with-includes-one-missing.eta', data, options)
+      } catch (e) {
+        t.type(e, Error) // expected Error here ...
+        t.equal(content, null)
+      }
 
       fastify.close()
     })
@@ -850,14 +822,14 @@ test('fastify.view with eta engine and callback in production mode', t => {
 
     fastify.view('templates/index.eta', data, (err, compiled) => {
       t.error(err)
-      t.equal(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), compiled)
+      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), compiled)
 
       fastify.ready(err => {
         t.error(err)
 
         fastify.view('templates/index.eta', data, (err, compiled) => {
           t.error(err)
-          t.equal(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), compiled)
+          t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), compiled)
           fastify.close()
         })
       })
@@ -888,7 +860,7 @@ test('fastify.view with eta engine in production mode should use cache', t => {
       eta
     },
     options: {
-      templates: cache
+      templatesSync: cache
     }
   })
 
@@ -900,7 +872,7 @@ test('fastify.view with eta engine in production mode should use cache', t => {
 })
 
 test('fastify.view with eta engine and custom cache', t => {
-  t.plan(9)
+  t.plan(8)
   const fastify = Fastify()
 
   const tplPath = 'templates/index.eta'
@@ -921,7 +893,8 @@ test('fastify.view with eta engine and custom cache', t => {
 
   const etaOptions = {
     cache: true,
-    templates: pseudoCache
+    templatesSync: pseudoCache,
+    views: path.join(__dirname, '../templates')
   }
 
   eta.configure(etaOptions)
@@ -934,14 +907,15 @@ test('fastify.view with eta engine and custom cache', t => {
   })
 
   // pre-cache
-  const tplFn = eta.loadFile(tplAbsPath, { filename: tplAbsPath })
+  eta.loadTemplate(path.join(__dirname, tplPath), eta.readFile(tplPath))
+  const tplF = eta.templatesSync.get(path.join(__dirname, tplPath))
 
   fastify.get('/', (req, reply) => {
     try {
       const res = reply.view(tplPath, data)
-      t.equal(eta.config.templates, pseudoCache,
+      t.equal(eta.templatesSync, pseudoCache,
         'Cache instance should be equal to the pre-defined one')
-      t.not(eta.config.templates.get(tplAbsPath), undefined,
+      t.not(eta.templatesSync.get(tplAbsPath), undefined,
         'Template should be pre-cached')
       return res
     } catch (e) {
@@ -957,10 +931,10 @@ test('fastify.view with eta engine and custom cache', t => {
     }, (err, response, body) => {
       t.error(err)
       t.equal(response.statusCode, 200, 'Response should be 200')
-      tplFn(data, eta.config, (err, str) => {
-        t.error(err)
-        t.equal(str, body.toString(), 'Route should return the same result as cached template function')
-      })
+
+      const str = eta.render(tplF, data)
+      t.equal(str, body.toString(), 'Route should return the same result as cached template function')
+
       fastify.close()
     })
   })
@@ -1007,7 +981,7 @@ test('fastify.view with eta engine and async in production mode', t => {
     t.error(err)
 
     fastify.view('templates/index.eta', data).then((compiled) => {
-      t.equal(eta.render(fs.readFileSync('./templates/index.eta', 'utf8'), data), compiled)
+      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), compiled)
       fastify.view('templates/index.eta', null)
         .then(() => { t.fail('should not be here') })
         .catch((err) => {

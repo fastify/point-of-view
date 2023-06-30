@@ -2,8 +2,8 @@
 <html lang="en">
   <head></head>
   <body>
-    <%~ includeFile('fragment-header.eta') %>
+    <%~ include('fragment-header.eta') %>
     <p><%= it.text %></p>
-    <%~ includeFile('fragment-footer.html') %>
+    <%~ include('fragment-footer.html') %>
   </body>
 </html>
