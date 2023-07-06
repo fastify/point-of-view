@@ -196,13 +196,13 @@ Properties from `reply.locals` will override those from `defaultContext`, but no
 
 ## Minifying HTML on render
 
-To utilize [`html-minifier`](https://www.npmjs.com/package/html-minifier) in the rendering process, you can add the option `useHtmlMinifier` with a reference to `html-minifier`,
-and the optional `htmlMinifierOptions` option is used to specify the `html-minifier` options:
+To utilize [`html-minifier-terser`](https://www.npmjs.com/package/html-minifier-terser) in the rendering process, you can add the option `useHtmlMinifier` with a reference to `html-minifier-terser`,
+and the optional `htmlMinifierOptions` option is used to specify the `html-minifier-terser` options:
 
 ```js
-// get a reference to html-minifier
-const minifier = require('html-minifier')
-// optionally defined the html-minifier options
+// get a reference to html-minifier-terser
+const minifier = require('html-minifier-terser')
+// optionally defined the html-minifier-terser options
 const minifierOpts = {
   removeComments: true,
   removeCommentsFromCDATA: true,
@@ -220,9 +220,9 @@ const minifierOpts = {
 
 To filter some paths from minification, you can add the option `pathsToExcludeHtmlMinifier` with list of paths
 ```js
-// get a reference to html-minifier
-const minifier = require('html-minifier')
-// in options configure the use of html-minifier and set paths to exclude from minification
+// get a reference to html-minifier-terser
+const minifier = require('html-minifier-terser')
+// in options configure the use of html-minifier-terser and set paths to exclude from minification
 const options = {
   useHtmlMinifier: minifier,
   pathsToExcludeHtmlMinifier: ['/test']

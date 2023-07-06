@@ -2,7 +2,7 @@
 
 const POV = require('..')
 const Fastify = require('fastify')
-const minifier = require('html-minifier')
+const minifier = require('html-minifier-terser')
 const fs = require('node:fs')
 const dot = require('dot')
 const handlebars = require('handlebars')
@@ -26,7 +26,7 @@ module.exports.dotHtmlMinifierTests = function (t, compileOptions, withMinifierO
   const test = t.test
   const options = withMinifierOptions ? minifierOpts : {}
 
-  test('reply.view with dot engine and html-minifier', t => {
+  test('reply.view with dot engine and html-minifier-terser', t => {
     t.plan(6)
     const fastify = Fastify()
     dot.log = false
@@ -52,17 +52,17 @@ module.exports.dotHtmlMinifierTests = function (t, compileOptions, withMinifierO
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port
-      }, (err, response, body) => {
+      }, async (err, response, body) => {
         t.error(err)
         t.equal(response.statusCode, 200)
         t.equal(response.headers['content-length'], String(body.length))
         t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.equal(minifier.minify(dot.process(compileOptions).testdot(data), options), body.toString())
+        t.equal(await minifier.minify(dot.process(compileOptions).testdot(data), options), body.toString())
         fastify.close()
       })
     })
   })
-  test('reply.view with dot engine and paths excluded from html-minifier', t => {
+  test('reply.view with dot engine and paths excluded from html-minifier-terser', t => {
     t.plan(6)
     const fastify = Fastify()
     dot.log = false
@@ -108,7 +108,7 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
   const test = t.test
   const options = withMinifierOptions ? minifierOpts : {}
 
-  test('reply.view with eta engine and html-minifier', t => {
+  test('reply.view with eta engine and html-minifier-terser', t => {
     t.plan(6)
     const fastify = Fastify()
 
@@ -132,18 +132,18 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port
-      }, (err, response, body) => {
+      }, async (err, response, body) => {
         t.error(err)
         t.equal(response.statusCode, 200)
         t.equal(response.headers['content-length'], String(body.length))
         t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.equal(minifier.minify(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), body.toString())
+        t.equal(await minifier.minify(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), body.toString())
         fastify.close()
       })
     })
   })
 
-  test('reply.view with eta engine and async and html-minifier', t => {
+  test('reply.view with eta engine and async and html-minifier-terser', t => {
     t.plan(6)
     const fastify = Fastify()
 
@@ -168,17 +168,17 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port
-      }, (err, response, body) => {
+      }, async (err, response, body) => {
         t.error(err)
         t.equal(response.statusCode, 200)
         t.equal(response.headers['content-length'], String(body.length))
         t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.equal(minifier.minify(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), body.toString())
+        t.equal(await minifier.minify(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), body.toString())
         fastify.close()
       })
     })
   })
-  test('reply.view with eta engine and paths excluded from html-minifier', t => {
+  test('reply.view with eta engine and paths excluded from html-minifier-terser', t => {
     t.plan(6)
     const fastify = Fastify()
 
@@ -219,7 +219,7 @@ module.exports.handleBarsHtmlMinifierTests = function (t, withMinifierOptions) {
   const test = t.test
   const options = withMinifierOptions ? minifierOpts : {}
 
-  test('fastify.view with handlebars engine and html-minifier', t => {
+  test('fastify.view with handlebars engine and html-minifier-terser', t => {
     t.plan(2)
     const fastify = Fastify()
 
@@ -237,8 +237,8 @@ module.exports.handleBarsHtmlMinifierTests = function (t, withMinifierOptions) {
     fastify.ready(err => {
       t.error(err)
 
-      fastify.view('./templates/index.html', data).then(compiled => {
-        t.equal(minifier.minify(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), options), compiled)
+      fastify.view('./templates/index.html', data).then(async compiled => {
+        t.equal(await minifier.minify(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), options), compiled)
         fastify.close()
       })
     })
@@ -249,7 +249,7 @@ module.exports.liquidHtmlMinifierTests = function (t, withMinifierOptions) {
   const test = t.test
   const options = withMinifierOptions ? minifierOpts : {}
 
-  test('reply.view with liquid engine and html-minifier', t => {
+  test('reply.view with liquid engine and html-minifier-terser', t => {
     t.plan(7)
     const fastify = Fastify()
     const engine = new Liquid()
@@ -280,15 +280,15 @@ module.exports.liquidHtmlMinifierTests = function (t, withMinifierOptions) {
         t.equal(response.headers['content-length'], String(body.length))
         t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
         engine.renderFile('./templates/index.liquid', data)
-          .then((html) => {
+          .then(async (html) => {
             t.error(err)
-            t.equal(minifier.minify(html, options), body.toString())
+            t.equal(await minifier.minify(html, options), body.toString())
           })
         fastify.close()
       })
     })
   })
-  test('reply.view with liquid engine and paths excluded from html-minifier', t => {
+  test('reply.view with liquid engine and paths excluded from html-minifier-terser', t => {
     t.plan(7)
     const fastify = Fastify()
     const engine = new Liquid()
@@ -334,7 +334,7 @@ module.exports.nunjucksHtmlMinifierTests = function (t, withMinifierOptions) {
   const test = t.test
   const options = withMinifierOptions ? minifierOpts : {}
 
-  test('reply.view with nunjucks engine, full path templates folder, and html-minifier', t => {
+  test('reply.view with nunjucks engine, full path templates folder, and html-minifier-terser', t => {
     t.plan(6)
     const fastify = Fastify()
 
@@ -359,18 +359,18 @@ module.exports.nunjucksHtmlMinifierTests = function (t, withMinifierOptions) {
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port
-      }, (err, response, body) => {
+      }, async (err, response, body) => {
         t.error(err)
         t.equal(response.statusCode, 200)
         t.equal(response.headers['content-length'], String(body.length))
         t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
         // Global Nunjucks templates dir changed here.
-        t.equal(minifier.minify(nunjucks.render('./index.njk', data), options), body.toString())
+        t.equal(await minifier.minify(nunjucks.render('./index.njk', data), options), body.toString())
         fastify.close()
       })
     })
   })
-  test('reply.view with nunjucks engine, full path templates folder, and paths excluded from html-minifier', t => {
+  test('reply.view with nunjucks engine, full path templates folder, and paths excluded from html-minifier-terser', t => {
     t.plan(6)
     const fastify = Fastify()
 
@@ -413,7 +413,7 @@ module.exports.pugHtmlMinifierTests = function (t, withMinifierOptions) {
   const test = t.test
   const options = withMinifierOptions ? minifierOpts : {}
 
-  test('reply.view with pug engine and html-minifier', t => {
+  test('reply.view with pug engine and html-minifier-terser', t => {
     t.plan(6)
     const fastify = Fastify()
 
@@ -437,17 +437,17 @@ module.exports.pugHtmlMinifierTests = function (t, withMinifierOptions) {
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port
-      }, (err, response, body) => {
+      }, async (err, response, body) => {
         t.error(err)
         t.equal(response.statusCode, 200)
         t.equal(response.headers['content-length'], String(body.length))
         t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.equal(minifier.minify(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), options), body.toString())
+        t.equal(await minifier.minify(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), options), body.toString())
         fastify.close()
       })
     })
   })
-  test('reply.view with pug engine and paths excluded from html-minifier', t => {
+  test('reply.view with pug engine and paths excluded from html-minifier-terser', t => {
     t.plan(6)
     const fastify = Fastify()
 
@@ -488,7 +488,7 @@ module.exports.twigHtmlMinifierTests = function (t, withMinifierOptions) {
   const test = t.test
   const options = withMinifierOptions ? minifierOpts : {}
 
-  test('reply.view with twig engine and html-minifier', t => {
+  test('reply.view with twig engine and html-minifier-terser', t => {
     t.plan(7)
     const fastify = Fastify()
 
@@ -517,15 +517,15 @@ module.exports.twigHtmlMinifierTests = function (t, withMinifierOptions) {
         t.equal(response.statusCode, 200)
         t.equal(response.headers['content-length'], String(body.length))
         t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-        Twig.renderFile('./templates/index.twig', data, (err, html) => {
+        Twig.renderFile('./templates/index.twig', data, async (err, html) => {
           t.error(err)
-          t.equal(minifier.minify(html, options), body.toString())
+          t.equal(await minifier.minify(html, options), body.toString())
         })
         fastify.close()
       })
     })
   })
-  test('reply.view with twig engine and paths excluded from html-minifier', t => {
+  test('reply.view with twig engine and paths excluded from html-minifier-terser', t => {
     t.plan(7)
     const fastify = Fastify()
 

@@ -5,6 +5,7 @@ const test = t.test
 const sget = require('simple-get').concat
 const Fastify = require('fastify')
 const fs = require('node:fs')
+const minifier = require('html-minifier-terser')
 
 test('reply.view with ejs engine and async: true (global option)', t => {
   t.plan(6)
@@ -77,9 +78,8 @@ test('reply.view with ejs engine, async: true (global option), and production: t
   })
 })
 
-const minifier = require('html-minifier')
 const minifierOpts = { collapseWhitespace: true }
-test('reply.view with ejs engine, async: true (global option), and html-minifier', t => {
+test('reply.view with ejs engine, async: true (global option), and html-minifier-terser', t => {
   t.plan(6)
   const fastify = Fastify()
   const ejs = require('ejs')
@@ -109,7 +109,7 @@ test('reply.view with ejs engine, async: true (global option), and html-minifier
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), minifierOpts), body.toString())
+      t.equal(await minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), minifierOpts), body.toString())
       fastify.close()
     })
   })
@@ -144,7 +144,7 @@ test('reply.view with ejs engine, async: true (global option), and html-minifier
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true })), body.toString())
+      t.equal(await minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true })), body.toString())
       fastify.close()
     })
   })
@@ -184,7 +184,7 @@ test('reply.view with ejs engine, async: true (global option), and html-minifier
           t.equal(response.statusCode, 200)
           t.equal(response.headers['content-length'], '' + body.length)
           t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-          t.equal(minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), minifierOpts), body.toString())
+          t.equal(await minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), minifierOpts), body.toString())
           if (i === numTests - 1) fastify.close()
           resolve()
         })
@@ -262,7 +262,7 @@ test('reply.view with ejs engine, async: true (local option), and production: tr
   })
 })
 
-test('reply.view with ejs engine, async: true (local override), and html-minifier', t => {
+test('reply.view with ejs engine, async: true (local override), and html-minifier-terser', t => {
   t.plan(6)
   const fastify = Fastify()
   const ejs = require('ejs')
@@ -292,13 +292,13 @@ test('reply.view with ejs engine, async: true (local override), and html-minifie
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), { }, { async: true }), minifierOpts), body.toString())
+      t.equal(await minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), { }, { async: true }), minifierOpts), body.toString())
       fastify.close()
     })
   })
 })
 
-test('reply.view with ejs engine, async: false (local override), and html-minifier', t => {
+test('reply.view with ejs engine, async: false (local override), and html-minifier-terser', t => {
   t.plan(6)
   const fastify = Fastify()
   const ejs = require('ejs')
@@ -328,13 +328,13 @@ test('reply.view with ejs engine, async: false (local override), and html-minifi
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(minifier.minify(await ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), { text: 'text' }, { async: false }), minifierOpts), body.toString())
+      t.equal(await minifier.minify(await ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), { text: 'text' }, { async: false }), minifierOpts), body.toString())
       fastify.close()
     })
   })
 })
 
-test('reply.view with ejs engine, async: true (local override), and html-minifier in production mode', t => {
+test('reply.view with ejs engine, async: true (local override), and html-minifier-terser in production mode', t => {
   const numTests = 3
   t.plan(numTests * 5 + 1)
   const fastify = Fastify()
@@ -368,7 +368,7 @@ test('reply.view with ejs engine, async: true (local override), and html-minifie
           t.equal(response.statusCode, 200)
           t.equal(response.headers['content-length'], '' + body.length)
           t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-          t.equal(minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), minifierOpts), body.toString())
+          t.equal(await minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), minifierOpts), body.toString())
           if (i === numTests - 1) fastify.close()
           resolve()
         })
@@ -377,7 +377,7 @@ test('reply.view with ejs engine, async: true (local override), and html-minifie
   })
 })
 
-test('reply.view with ejs engine, async: false (local override), and html-minifier in production mode', t => {
+test('reply.view with ejs engine, async: false (local override), and html-minifier-terser in production mode', t => {
   const numTests = 2
   t.plan(numTests * 5 + 1)
   const fastify = Fastify()
@@ -411,7 +411,7 @@ test('reply.view with ejs engine, async: false (local override), and html-minifi
           t.equal(response.statusCode, 200)
           t.equal(response.headers['content-length'], '' + body.length)
           t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-          t.equal(minifier.minify(await ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), { text: 'text' }, { async: false }), minifierOpts), body.toString())
+          t.equal(await minifier.minify(await ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), { text: 'text' }, { async: false }), minifierOpts), body.toString())
           if (i === numTests - 1) fastify.close()
           resolve()
         })

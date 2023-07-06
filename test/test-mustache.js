@@ -5,7 +5,7 @@ const test = t.test
 const sget = require('simple-get').concat
 const Fastify = require('fastify')
 const fs = require('node:fs')
-const minifier = require('html-minifier')
+const minifier = require('html-minifier-terser')
 const proxyquire = require('proxyquire')
 const minifierOpts = {
   removeComments: true,
@@ -433,7 +433,7 @@ test('reply.view with mustache engine with partials in production mode should ca
   })
 })
 
-test('reply.view with mustache engine with partials and html-minifier', t => {
+test('reply.view with mustache engine with partials and html-minifier-terser', t => {
   t.plan(6)
   const fastify = Fastify()
   const mustache = require('mustache')
@@ -458,18 +458,18 @@ test('reply.view with mustache engine with partials and html-minifier', t => {
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, replyBody) => {
+    }, async (err, response, replyBody) => {
       t.error(err)
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + replyBody.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(minifier.minify(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), minifierOpts), replyBody.toString())
+      t.equal(await minifier.minify(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), minifierOpts), replyBody.toString())
       fastify.close()
     })
   })
 })
 
-test('reply.view with mustache engine with partials and paths excluded from html-minifier', t => {
+test('reply.view with mustache engine with partials and paths excluded from html-minifier-terser', t => {
   t.plan(6)
   const fastify = Fastify()
   const mustache = require('mustache')
