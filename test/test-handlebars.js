@@ -800,6 +800,82 @@ test('fastify.view with handlebars engine with missing partials path in producti
   })
 })
 
+test('reply.view with handlebars engine with compile options', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const handlebars = require('handlebars').create()
+  const compileOptions = { preventIndent: true, strict: true }
+  const data = { text: 'hello\nworld' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars
+    },
+    options: {
+      compileOptions,
+      partials: { body: './templates/body.hbs' }
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index-with-partials.hbs', data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, replyBody) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + replyBody.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'), compileOptions)(data), replyBody.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with handlebars engine with useDataVariables', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const handlebars = require('handlebars').create()
+  const compileOptions = { strict: true }
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars
+    },
+    options: {
+      compileOptions,
+      useDataVariables: true,
+      partials: { body: './templates/body-data.hbs' }
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.locals = data
+    reply.view('./templates/index-with-partials.hbs', null)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, replyBody) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + replyBody.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'), compileOptions)(null, { data }), replyBody.toString())
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with handlebars engine with layout option', t => {
   t.plan(6)
   const fastify = Fastify()

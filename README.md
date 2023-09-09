@@ -297,6 +297,24 @@ To use partials in handlebars you will need to pass the names and paths in the o
   }
 ```
 
+You can specify [compile options](https://handlebarsjs.com/api-reference/compilation.html#handlebars-compile-template-options) as well:
+
+```js
+  options: {
+    compileOptions: {
+      preventIndent: true
+    }
+  }
+```
+
+To access `defaultContext` and `reply.locals` as [`@data` variables](https://handlebarsjs.com/api-reference/data-variables.html):
+
+```js
+  options: {
+    useDataVariables: true
+  }
+```
+
 To use layouts in handlebars you will need to pass the `layout` parameter:
 
 ```js
