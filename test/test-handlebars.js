@@ -4,8 +4,8 @@ const t = require('tap')
 const test = t.test
 const sget = require('simple-get').concat
 const Fastify = require('fastify')
-const fs = require('fs')
-const { join } = require('path')
+const fs = require('node:fs')
+const { join } = require('node:path')
 const proxyquire = require('proxyquire')
 
 require('./helper').handleBarsHtmlMinifierTests(t, true)
@@ -513,7 +513,7 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
   t.plan(7)
   const fastify = Fastify()
   const ejs = require('ejs')
-  const resolve = require('path').resolve
+  const resolve = require('node:path').resolve
   const templatesFolder = 'templates'
   const options = {
     filename: resolve(templatesFolder), // needed for include files to be resolved in include directive ...
@@ -563,7 +563,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
   t.plan(7)
   const fastify = Fastify()
   const ejs = require('ejs')
-  const resolve = require('path').resolve
+  const resolve = require('node:path').resolve
   const templatesFolder = 'templates'
   const options = {
     filename: resolve(templatesFolder),

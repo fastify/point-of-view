@@ -1,11 +1,11 @@
 'use strict'
 
-const os = require('os')
+const os = require('node:os')
 const t = require('tap')
 const test = t.test
 const sget = require('simple-get').concat
-const path = require('path')
-const fs = require('fs')
+const path = require('node:path')
+const fs = require('node:fs')
 const Fastify = require('fastify')
 
 test('fastify.view exist', t => {

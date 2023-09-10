@@ -4,8 +4,8 @@ const t = require('tap')
 const test = t.test
 const sget = require('simple-get').concat
 const Fastify = require('fastify')
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 
 const pointOfView = require('../index')
 const { Eta } = require('eta')
