@@ -80,7 +80,7 @@ If your handler function is asynchronous, make sure to return the result - other
 ```js
 // This is an async function
 fastify.get("/", async (req, reply) => {
-  // We are awaiting a functioon result
+  // We are awaiting a function result
   const t = await something();
 
   // Note the return statement
@@ -98,9 +98,9 @@ fastify.get("/", async (req, reply) => {
 - `layout`: @fastify/view supports layouts for **EJS**, **Handlebars**, **Eta** and **doT**. This option lets you specify a global layout file to be used when rendering your templates. Settings like `root` or `viewExt` apply as for any other template file. Example: `./templates/layouts/main.hbs`
 - `propertyName`: The property that should be used to decorate `reply` and `fastify` - E.g. `reply.view()` and `fastify.view()` where `"view"` is the property name. Default: `"view"`.
 - `root`: The root path of your templates folder. The template name or path passed to the render function will be resolved relative to this path. Default: `"./"`.
-- `includeViewExtension`: Setting this to `true` will automatically append the default extension for the used template engine **if ommited from the template name** . So instead of `template.hbs`, just `template` can be used. Default: `false`.
+- `includeViewExtension`: Setting this to `true` will automatically append the default extension for the used template engine **if omitted from the template name** . So instead of `template.hbs`, just `template` can be used. Default: `false`.
 - `viewExt`: Let's you override the default extension for a given template engine. This has precedence over `includeViewExtension` and will lead to the same behavior, just with a custom extension. Default `""`. Example: `"handlebars"`.
-- `defaultContext`: The template variables defined here will be available to all views. Variables provided on render have precendence and will **override** this if they have the same name. Default: `{}`. Example: `{ siteName: "MyAwesomeSite" }`.
+- `defaultContext`: The template variables defined here will be available to all views. Variables provided on render have precedence and will **override** this if they have the same name. Default: `{}`. Example: `{ siteName: "MyAwesomeSite" }`.
 - `maxCache`: In `production` mode, maximum number of templates file and functions caches. Default: `100`. Example: `{ maxCache: 100 }`.
 
 Example:
@@ -138,7 +138,7 @@ fastify.view("/templates/index.ejs", { text: "text" }, (err, html) => {
 
 ## Registering multiple engines
 
-Registering multiple engines with different configurations is supported. They are dinguished via their `propertyName`:
+Registering multiple engines with different configurations is supported. They are distinguished via their `propertyName`:
 
 ```js
 fastify.register(require("@fastify/view"), {
@@ -169,7 +169,7 @@ fastify.get("/desktop", (req, reply) => {
 @fastify/view supports layouts for **EJS**, **Handlebars**, **Eta** and **doT**.
 These engines also support providing a layout on render.
 
-**Please note:** Global layouts and provding layouts on render are mutually exclusive. They can not be mixed.
+**Please note:** Global layouts and providing layouts on render are mutually exclusive. They can not be mixed.
 
 ```js
 fastify.get('/', (req, reply) => {
@@ -178,7 +178,7 @@ fastify.get('/', (req, reply) => {
 ```
 
 ## Setting request-global variables
-Sometimes, several templates should have access to the same request-sceific variables. E.g. when setting the current username.
+Sometimes, several templates should have access to the same request-specific variables. E.g. when setting the current username.
 
 If you want to provide data, which will be depended on by a request and available in all views, you have to add property `locals` to `reply` object, like in the example below:
 
@@ -328,7 +328,7 @@ fastify.register(require("@fastify/view"), {
 });
 ```
 
-To configure nunjucks environment after initialisation, you can pass callback function to options:
+To configure nunjucks environment after initialization, you can pass callback function to options:
 
 ```js
 options: {
@@ -366,7 +366,7 @@ fastify.get("/", (req, reply) => {
 
 When using [doT](https://github.com/olado/doT) the plugin compiles all templates when the application starts, this way all `.def` files are loaded and
 both `.jst` and `.dot` files are loaded as in-memory functions.
-This behaviour is recommended by the doT team [here](https://github.com/olado/doT#security-considerations).
+This behavior is recommended by the doT team [here](https://github.com/olado/doT#security-considerations).
 To make it possible it is necessary to provide a `root` or `templates` option with the path to the template directory.
 
 ```js
@@ -459,7 +459,7 @@ fastify.view.clearCache();
 ## Note
 
 By default views are served with the mime type 'text/html; charset=utf-8',
-but you can specify a different value using the type function of reply, or by specifying the desired charset in the property 'charset' in the opts object given to the plugin.
+but you can specify a different value using the type function of reply, or by specifying the desired charset in the property 'charset' in the options object given to the plugin.
 
 ## Acknowledgements
 
