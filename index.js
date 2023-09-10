@@ -1,14 +1,14 @@
 'use strict'
 
 const fp = require('fastify-plugin')
-const readFile = require('fs').readFile
-const accessSync = require('fs').accessSync
-const existsSync = require('fs').existsSync
-const mkdirSync = require('fs').mkdirSync
-const readdirSync = require('fs').readdirSync
-const resolve = require('path').resolve
-const join = require('path').join
-const { basename, dirname, extname } = require('path')
+const readFile = require('node:fs').readFile
+const accessSync = require('node:fs').accessSync
+const existsSync = require('node:fs').existsSync
+const mkdirSync = require('node:fs').mkdirSync
+const readdirSync = require('node:fs').readdirSync
+const resolve = require('node:path').resolve
+const join = require('node:path').join
+const { basename, dirname, extname } = require('node:path')
 const HLRU = require('hashlru')
 const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'mustache', 'art-template', 'twig', 'liquid', 'dot', 'eta']
 

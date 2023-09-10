@@ -4,7 +4,7 @@ const t = require('tap')
 const test = t.test
 const sget = require('simple-get').concat
 const Fastify = require('fastify')
-const fs = require('fs')
+const fs = require('node:fs')
 
 test('reply.view with ejs engine and async: true (global option)', t => {
   t.plan(6)

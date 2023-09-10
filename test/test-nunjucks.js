@@ -4,7 +4,7 @@ const t = require('tap')
 const test = t.test
 const sget = require('simple-get').concat
 const Fastify = require('fastify')
-const path = require('path')
+const path = require('node:path')
 
 require('./helper').nunjucksHtmlMinifierTests(t, true)
 require('./helper').nunjucksHtmlMinifierTests(t, false)

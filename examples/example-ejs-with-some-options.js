@@ -1,7 +1,7 @@
 'use strict'
 
 const fastify = require('fastify')()
-const resolve = require('path').resolve
+const resolve = require('node:path').resolve
 const templatesFolder = 'templates'
 const data = { text: 'Hello from EJS Templates' }
 

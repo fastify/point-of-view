@@ -254,7 +254,7 @@ To use include files please extend your template options as follows:
 
 ```js
 // get a reference to resolve
-const resolve = require("path").resolve;
+const resolve = require('node:path').resolve;
 // other code ...
 // in template engine options configure how to resolve templates folder
 options: {
@@ -344,7 +344,7 @@ To configure liquid you need to pass the engine instance as engine option:
 
 ```js
 const { Liquid } = require("liquidjs");
-const path = require("path");
+const path = require('node:path');
 
 const engine = new Liquid({
   root: path.join(__dirname, "templates"),
@@ -370,7 +370,7 @@ This behaviour is recommended by the doT team [here](https://github.com/olado/do
 To make it possible it is necessary to provide a `root` or `templates` option with the path to the template directory.
 
 ```js
-const path = require("path");
+const path = require('node:path');
 
 fastify.register(require("@fastify/view"), {
   engine: {

@@ -1,6 +1,6 @@
 'use strict'
 
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 const sleep = promisify(setTimeout)
 const templates = 'templates'
 

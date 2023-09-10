@@ -4,7 +4,7 @@ const t = require('tap')
 const test = t.test
 const sget = require('simple-get').concat
 const Fastify = require('fastify')
-const fs = require('fs')
+const fs = require('node:fs')
 const proxyquire = require('proxyquire')
 
 require('./helper').pugHtmlMinifierTests(t, true)

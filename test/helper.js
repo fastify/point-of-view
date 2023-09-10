@@ -3,7 +3,7 @@
 const POV = require('..')
 const Fastify = require('fastify')
 const minifier = require('html-minifier')
-const fs = require('fs')
+const fs = require('node:fs')
 const dot = require('dot')
 const handlebars = require('handlebars')
 const { Liquid } = require('liquidjs')

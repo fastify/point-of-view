@@ -4,7 +4,7 @@ const t = require('tap')
 const test = t.test
 const sget = require('simple-get').concat
 const Fastify = require('fastify')
-const path = require('path')
+const path = require('node:path')
 
 test('reply.view with art-template engine and custom templates folder', t => {
   t.plan(6)
