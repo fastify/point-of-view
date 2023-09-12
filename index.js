@@ -25,7 +25,7 @@ function fastifyView (fastify, opts, next) {
   const includeViewExtension = opts.includeViewExtension || false
   const viewExt = opts.viewExt || ''
   const prod = typeof opts.production === 'boolean' ? opts.production : process.env.NODE_ENV === 'production'
-  const defaultCtx = opts.defaultContext || {}
+  const defaultCtx = opts.defaultContext
   const globalLayoutFileName = opts.layout
 
   function templatesDirIsValid (_templatesDir) {
@@ -200,7 +200,7 @@ function fastifyView (fastify, opts, next) {
           data = globalOptions.useHtmlMinifier.minify(data, globalOptions.htmlMinifierOptions || {})
         }
         if (type === 'handlebars') {
-          data = engine.compile(data)
+          data = engine.compile(data, globalOptions.compileOptions)
         }
         lru.set(file, data)
         callback(null, data)
@@ -483,8 +483,16 @@ function fastifyView (fastify, opts, next) {
       return
     }
 
-    const options = Object.assign({}, globalOptions)
-    data = Object.assign({}, defaultCtx, this.locals, data)
+    let options
+
+    if (globalOptions.useDataVariables) {
+      options = {
+        data: defaultCtx ? Object.assign({}, defaultCtx, this.locals) : this.locals
+      }
+    } else {
+      data = Object.assign({}, defaultCtx, this.locals, data)
+    }
+
     // append view extension
     page = getPage(page, 'hbs')
     const requestedPath = getRequestedPath(this)
@@ -496,7 +504,7 @@ function fastifyView (fastify, opts, next) {
 
       if (prod) {
         try {
-          const html = template(data)
+          const html = template(data, options)
           if (!this.getHeader('content-type')) {
             this.header('Content-Type', 'text/html; charset=' + charset)
           }
@@ -505,7 +513,7 @@ function fastifyView (fastify, opts, next) {
           this.send(e)
         }
       } else {
-        getPartials(type, { partials: options.partials || {}, requestedPath }, (err, partialsObject) => {
+        getPartials(type, { partials: globalOptions.partials || {}, requestedPath }, (err, partialsObject) => {
           if (err) {
             this.send(err)
             return
@@ -513,10 +521,10 @@ function fastifyView (fastify, opts, next) {
 
           try {
             Object.keys(partialsObject).forEach((name) => {
-              engine.registerPartial(name, engine.compile(partialsObject[name]))
+              engine.registerPartial(name, engine.compile(partialsObject[name], globalOptions.compileOptions))
             })
 
-            const html = template(data)
+            const html = template(data, options)
 
             if (!this.getHeader('content-type')) {
               this.header('Content-Type', 'text/html; charset=' + charset)
@@ -719,7 +727,7 @@ function fastifyView (fastify, opts, next) {
         return
       }
       Object.keys(partialsObject).forEach((name) => {
-        engine.registerPartial(name, engine.compile(partialsObject[name]))
+        engine.registerPartial(name, engine.compile(partialsObject[name], globalOptions.compileOptions))
       })
       next()
     })
