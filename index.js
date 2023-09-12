@@ -181,7 +181,7 @@ function fastifyView (fastify, opts, next) {
   }
 
   function getRequestedPath (fastify) {
-    return (fastify && fastify.request) ? fastify.request.routeOptions.config.url : null
+    return (fastify && fastify.request) ? fastify.request.routeOptions.url : null
   }
   // Gets template as string (or precompiled for Handlebars)
   // from LRU cache or filesystem.
