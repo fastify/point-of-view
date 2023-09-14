@@ -991,3 +991,132 @@ test('fastify.view with eta engine and async in production mode', t => {
     })
   })
 })
+
+test('reply.view with eta engine and raw template', t => {
+  t.plan(6)
+  const fastify = Fastify()
+
+  const data = { text: 'text' }
+
+  fastify.register(pointOfView, {
+    engine: {
+      eta
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view({ raw: fs.readFileSync('./templates/index.eta', 'utf8') }, data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with eta engine and function template', t => {
+  t.plan(6)
+  const fastify = Fastify()
+
+  const data = { text: 'text' }
+
+  fastify.register(pointOfView, {
+    engine: {
+      eta
+    },
+    templates: 'templates'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view(eta.compile(fs.readFileSync('./templates/index.eta', 'utf8')), data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view should return 500 if function return sync error', t => {
+  t.plan(3)
+  const fastify = Fastify()
+
+  const data = { text: 'text' }
+
+  fastify.register(pointOfView, {
+    engine: {
+      eta
+    },
+    root: path.join(__dirname, '../templates')
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view(() => { throw new Error('kaboom') }, data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 500)
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view should return 500 if function return async error', t => {
+  t.plan(3)
+  const fastify = Fastify()
+
+  const data = { text: 'text' }
+
+  fastify.register(pointOfView, {
+    engine: {
+      eta
+    },
+    root: path.join(__dirname, '../templates')
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view(() => Promise.reject(new Error('kaboom')), data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 500)
+      fastify.close()
+    })
+  })
+})

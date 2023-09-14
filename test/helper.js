@@ -142,6 +142,42 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
       })
     })
   })
+
+  test('reply.view with eta engine and async and html-minifier', t => {
+    t.plan(6)
+    const fastify = Fastify()
+
+    fastify.register(POV, {
+      engine: {
+        eta
+      },
+      options: {
+        useHtmlMinifier: minifier,
+        async: true,
+        ...(withMinifierOptions && { htmlMinifierOptions: minifierOpts })
+      }
+    })
+
+    fastify.get('/', (req, reply) => {
+      reply.view('templates/index.eta', data)
+    })
+
+    fastify.listen({ port: 0 }, err => {
+      t.error(err)
+
+      sget({
+        method: 'GET',
+        url: 'http://localhost:' + fastify.server.address().port
+      }, (err, response, body) => {
+        t.error(err)
+        t.equal(response.statusCode, 200)
+        t.equal(response.headers['content-length'], String(body.length))
+        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.equal(minifier.minify(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), body.toString())
+        fastify.close()
+      })
+    })
+  })
   test('reply.view with eta engine and paths excluded from html-minifier', t => {
     t.plan(6)
     const fastify = Fastify()
