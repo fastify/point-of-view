@@ -370,7 +370,6 @@ function fastifyView (fastify, opts, next) {
 
     data = Object.assign({}, defaultCtx, this.locals, data)
     if (typeof page === 'function') {
-      // readCallback(this, page, data, opts)
       readCallbackEnd(this, page, data, opts)
       return
     }
