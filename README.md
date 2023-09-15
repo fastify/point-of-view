@@ -284,6 +284,37 @@ To use partials in mustache you will need to pass the names and paths in the opt
   }
 ```
 
+```js
+fastify.get('/', (req, reply) => {
+  reply.view('./templates/index.mustache', data)
+})
+```
+
+```js
+fastify.get('/', (req, reply) => {
+  fs.readFile('./templates/index.mustache', 'utf8', (err, file) => {
+    if (err) {
+      reply.send(err)
+    } else {
+      const render = mustache.render.bind(mustache, file)
+      reply.view(render, data)
+    }
+  })
+})
+```
+
+```js
+fastify.get('/', (req, reply) => {
+  fs.readFile('./templates/index.mustache', 'utf8', (err, file) => {
+    if (err) {
+      reply.send(err)
+    } else {
+      reply.view({ raw: file }, data)
+    }
+  })
+})
+```
+
 ### Handlebars
 
 To use partials in handlebars you will need to pass the names and paths in the options parameter:
@@ -330,6 +361,31 @@ fastify.get("/", (req, reply) => {
 });
 ```
 
+```js
+fastify.get('/', (req, reply) => {
+  fs.readFile('./templates/index.hbs', 'utf8', (err, file) => {
+    if (err) {
+      reply.send(err)
+    } else {
+      const render = handlebars.compile(file)
+      reply.view(render, data)
+    }
+  })
+})
+```
+
+```js
+fastify.get('/', (req, reply) => {
+  fs.readFile('./templates/index.hbs', 'utf8', (err, file) => {
+    if (err) {
+      reply.send(err)
+    } else {
+      reply.view({ raw: file }, data)
+    }
+  })
+})
+```
+
 ### Nunjucks
 
 You can load templates from multiple paths when using the nunjucks engine:
@@ -356,6 +412,37 @@ options: {
 }
 ```
 
+```js
+fastify.get('/', (req, reply) => {
+  reply.view('./templates/index.njk', data)
+})
+```
+
+```js
+fastify.get('/', (req, reply) => {
+  fs.readFile('./templates/index.njk', 'utf8', (err, file) => {
+    if (err) {
+      reply.send(err)
+    } else {
+      const render = nunjucks.compile(file)
+      reply.view(render, data)
+    }
+  })
+})
+```
+
+```js
+fastify.get('/', (req, reply) => {
+  fs.readFile('./templates/index.njk', 'utf8', (err, file) => {
+    if (err) {
+      reply.send(err)
+    } else {
+      reply.view({ raw: file }, data)
+    }
+  })
+})
+```
+
 ### Liquid
 
 To configure liquid you need to pass the engine instance as engine option:
@@ -380,6 +467,31 @@ fastify.get("/", (req, reply) => {
 });
 ```
 
+```js
+fastify.get('/', (req, reply) => {
+  fs.readFile('./templates/index.liquid', 'utf8', (err, file) => {
+    if (err) {
+      reply.send(err)
+    } else {
+      const render = engine.renderFile.bind(engine, './templates/index.liquid')
+      reply.view(render, data)
+    }
+  })
+})
+```
+
+```js
+fastify.get('/', (req, reply) => {
+  fs.readFile('./templates/index.liquid', 'utf8', (err, file) => {
+    if (err) {
+      reply.send(err)
+    } else {
+      reply.view({ raw: file }, data)
+    }
+  })
+})
+```
+
 ### doT
 
 When using [doT](https://github.com/olado/doT) the plugin compiles all templates when the application starts, this way all `.def` files are loaded and
@@ -388,8 +500,6 @@ This behavior is recommended by the doT team [here](https://github.com/olado/doT
 To make it possible it is necessary to provide a `root` or `templates` option with the path to the template directory.
 
 ```js
-const path = require('node:path');
-
 fastify.register(require("@fastify/view"), {
   engine: {
     dot: require("dot"),
@@ -404,6 +514,220 @@ fastify.get("/", (req, reply) => {
   // this works both for .jst and .dot files
   reply.view("index", { text: "text" });
 });
+```
+
+```js
+const d = dot.process({ path: 'templates', destination: 'out' })
+fastify.get('/', (req, reply) => {
+  reply.view(d.index, data)
+})
+```
+
+```js
+fastify.get('/', (req, reply) => {
+  reply.view({ raw: readFileSync('./templates/index.dot'), imports: { def: readFileSync('./templates/index.def') } }, data)
+})
+```
+
+### eta
+
+```js
+const { Eta } = require('eta')
+let eta = new Eta()
+fastify.register(pointOfView, {
+  engine: {
+    eta
+  },
+  templates: 'templates'
+})
+
+fastify.get("/", (req, reply) => {
+  reply.view("index.eta", { text: "text" });
+});
+```
+
+```js
+fastify.get('/', (req, reply) => {
+  fs.readFile('./templates/index.eta', 'utf8', (err, file) => {
+    if (err) {
+      reply.send(err)
+    } else {
+      reply.view(eta.compile(file), data)
+    }
+  })
+})
+```
+
+```js
+fastify.get('/', (req, reply) => {
+  fs.readFile('./templates/index.eta', 'utf8', (err, file) => {
+    if (err) {
+      reply.send(err)
+    } else {
+      reply.view({ raw: file }, data)
+    }
+  })
+})
+```
+
+### ejs
+
+```js
+const ejs = require('ejs')
+fastify.register(pointOfView, {
+  engine: {
+    ejs
+  },
+  templates: 'templates'
+})
+
+fastify.get("/", (req, reply) => {
+  reply.view("index.ejs", { text: "text" });
+});
+```
+
+```js
+fastify.get('/', (req, reply) => {
+  fs.readFile('./templates/index.ejs', 'utf8', (err, file) => {
+    if (err) {
+      reply.send(err)
+    } else {
+      reply.view(ejs.compile(file), data)
+    }
+  })
+})
+```
+
+```js
+fastify.get('/', (req, reply) => {
+  fs.readFile('./templates/index.ejs', 'utf8', (err, file) => {
+    if (err) {
+      reply.send(err)
+    } else {
+      reply.view({ raw: file }, data)
+    }
+  })
+})
+```
+
+### pug
+
+```js
+const pug = require('pug')
+fastify.register(pointOfView, {
+  engine: {
+    pug
+  }
+})
+
+
+fastify.get("/", (req, reply) => {
+  reply.view("index.pug", { text: "text" });
+});
+```
+
+```js
+fastify.get('/', (req, reply) => {
+  fs.readFile('./templates/index.pug', 'utf8', (err, file) => {
+    if (err) {
+      reply.send(err)
+    } else {
+      reply.view(pug.compile(file), data)
+    }
+  })
+})
+```
+
+```js
+fastify.get('/', (req, reply) => {
+  fs.readFile('./templates/index.pug', 'utf8', (err, file) => {
+    if (err) {
+      reply.send(err)
+    } else {
+      reply.view({ raw: file }, data)
+    }
+  })
+})
+```
+
+### twig
+
+```js
+const twig = require('twig')
+fastify.register(pointOfView, {
+  engine: {
+    twig
+  }
+})
+
+
+fastify.get("/", (req, reply) => {
+  reply.view("index.twig", { text: "text" });
+});
+```
+
+```js
+fastify.get('/', (req, reply) => {
+  fs.readFile('./templates/index.twig', 'utf8', (err, file) => {
+    if (err) {
+      reply.send(err)
+    } else {
+      reply.view(twig.twig({ data: file }), data)
+    }
+  })
+})
+```
+
+```js
+fastify.get('/', (req, reply) => {
+  fs.readFile('./templates/index.twig', 'utf8', (err, file) => {
+    if (err) {
+      reply.send(err)
+    } else {
+      reply.view({ raw: file }, data)
+    }
+  })
+})
+```
+
+### art
+
+```js
+const art = require('art-template')
+fastify.register(pointOfView, {
+  engine: {
+    'art-template': art
+  }
+})
+
+
+fastify.get("/", (req, reply) => {
+  reply.view("./index.art", { text: "text" });
+});
+```
+
+```js
+fastify.get('/', (req, reply) => {
+  fs.readFile('./templates/index.art', 'utf8', (err, file) => {
+    if (err) {
+      reply.send(err)
+    } else {
+      reply.view(art.compile({ filename: path.join(__dirname, '..', 'templates', 'index.art') }), data)
+    }
+  })
+})
+```
+
+```js
+fastify.get('/', (req, reply) => {
+  fs.readFile('./templates/index.art', 'utf8', (err, file) => {
+    if (err) {
+      reply.send(err)
+    } else {
+      reply.view({ raw: file }, data)
+    }
+  })
+})
 ```
 
 <!---
