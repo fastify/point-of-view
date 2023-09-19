@@ -498,3 +498,69 @@ test('reply.view with pug engine should return 500 if compile fails', t => {
     })
   })
 })
+
+test('reply.view with pug engine and raw template', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const pug = require('pug')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      pug
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view({ raw: fs.readFileSync('./templates/index.pug', 'utf8') }, data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with pug engine and function template', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const pug = require('pug')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      pug
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view(pug.compile(fs.readFileSync('./templates/index.pug', 'utf8')), data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})

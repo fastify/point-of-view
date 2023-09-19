@@ -3,6 +3,7 @@
 const t = require('tap')
 const test = t.test
 const sget = require('simple-get').concat
+const fs = require('node:fs')
 const Fastify = require('fastify')
 
 require('./helper').liquidHtmlMinifierTests(t, true)
@@ -477,6 +478,116 @@ test('fastify.view with liquid engine template that does not exist errors correc
     fastify.view('./I-Dont-Exist', {}, err => {
       t.ok(err instanceof Error)
       t.match(err.message, 'ENOENT')
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with liquid engine and raw template', t => {
+  t.plan(7)
+  const fastify = Fastify()
+  const { Liquid } = require('liquidjs')
+  const data = { text: 'text' }
+
+  const engine = new Liquid()
+
+  fastify.register(require('../index'), {
+    engine: {
+      liquid: engine
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view({ raw: fs.readFileSync('./templates/index.liquid', 'utf8') }, data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      engine.renderFile('./templates/index.liquid', data)
+        .then((html) => {
+          t.error(err)
+          t.equal(html, body.toString())
+        })
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with liquid engine and function template', t => {
+  t.plan(7)
+  const fastify = Fastify()
+  const { Liquid } = require('liquidjs')
+  const data = { text: 'text' }
+
+  const engine = new Liquid()
+
+  fastify.register(require('../index'), {
+    engine: {
+      liquid: engine
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.header('Content-Type', 'text/html').view(engine.renderFile.bind(engine, './templates/index.liquid'), data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html')
+      engine.renderFile('./templates/index.liquid', data)
+        .then((html) => {
+          t.error(err)
+          t.equal(html, body.toString())
+        })
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with liquid engine and unknown template type', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const { Liquid } = require('liquidjs')
+  const data = { text: 'text' }
+
+  const engine = new Liquid()
+
+  fastify.register(require('../index'), {
+    engine: {
+      liquid: engine
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view({ }, data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 500)
       fastify.close()
     })
   })

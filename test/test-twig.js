@@ -3,6 +3,7 @@
 const t = require('tap')
 const test = t.test
 const sget = require('simple-get').concat
+const fs = require('node:fs')
 const Fastify = require('fastify')
 
 require('./helper').twigHtmlMinifierTests(t, true)
@@ -447,6 +448,108 @@ test('reply.view with twig engine should return 500 if renderFile fails', t => {
       t.equal(response.statusCode, 500)
       t.equal('RenderFile Error', message)
 
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with twig engine and raw template', t => {
+  t.plan(7)
+  const fastify = Fastify()
+  const Twig = require('twig')
+  const data = { title: 'fastify', text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      twig: Twig
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view({ raw: fs.readFileSync('./templates/index.twig') }, data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      Twig.renderFile('./templates/index.twig', data, (err, html) => {
+        t.error(err)
+        t.equal(html, body.toString())
+      })
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with twig engine and function template', t => {
+  t.plan(7)
+  const fastify = Fastify()
+  const Twig = require('twig')
+  const data = { title: 'fastify', text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      twig: Twig
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view(Twig.twig({ data: fs.readFileSync('./templates/index.twig').toString() }), data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      Twig.renderFile('./templates/index.twig', data, (err, html) => {
+        t.error(err)
+        t.equal(html, body.toString())
+      })
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with twig engine and unknown template type', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const Twig = require('twig')
+  const data = { title: 'fastify', text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      twig: Twig
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view({ }, data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 500)
       fastify.close()
     })
   })

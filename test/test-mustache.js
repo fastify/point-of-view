@@ -721,3 +721,70 @@ test('fastify.view with mustache engine, should throw page missing', t => {
     })
   })
 })
+test('reply.view for mustache and raw template', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const mustache = require('mustache')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      mustache
+    },
+    defaultContext: data
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view({ raw: fs.readFileSync('./templates/index.html', 'utf8') })
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view for mustache and function template', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const mustache = require('mustache')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      mustache
+    },
+    defaultContext: data
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.header('Content-Type', 'text/html').view((mustache.render.bind(mustache, fs.readFileSync('./templates/index.html', 'utf8'))))
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html')
+      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})

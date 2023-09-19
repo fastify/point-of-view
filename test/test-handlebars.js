@@ -876,6 +876,45 @@ test('reply.view with handlebars engine with useDataVariables', t => {
   })
 })
 
+test('reply.view with handlebars engine with useDataVariables and global Ctx', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const handlebars = require('handlebars').create()
+  const compileOptions = { strict: true }
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars
+    },
+    options: {
+      compileOptions,
+      useDataVariables: true,
+      partials: { body: './templates/body-data.hbs' }
+    },
+    defaultContext: data
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./templates/index-with-partials.hbs', null)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, replyBody) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + replyBody.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'), compileOptions)(null, { data }), replyBody.toString())
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view with handlebars engine with layout option', t => {
   t.plan(6)
   const fastify = Fastify()
@@ -1035,7 +1074,7 @@ test('reply.view with handlebars engine should return 500 if template fails in p
   })
 
   fastify.get('/', (req, reply) => {
-    reply.view('./templates/index.hbs')
+    reply.view('./templates/index-for-layout.hbs')
   })
 
   fastify.listen({ port: 0 }, err => {
@@ -1050,6 +1089,167 @@ test('reply.view with handlebars engine should return 500 if template fails in p
       t.equal(response.statusCode, 500)
       t.equal('Template Error', message)
 
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with handlebars engine and raw template', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.header('Content-Type', 'text/html').view({ raw: fs.readFileSync('./templates/index.html', 'utf8') }, data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html')
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with handlebars engine and function template', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8')), data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with handlebars engine and empty template', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view(null, data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 500)
+      fastify.close()
+    })
+  })
+})
+
+test('fastify.view with handlebars engine and callback in production mode and header', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars
+    },
+    production: true,
+    layout: './templates/layout.hbs'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.header('Content-Type', 'text/html').view('./templates/index-for-layout.hbs', null)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html')
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('fastify.view with handlebars engine and both layout', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars
+    },
+    layout: './templates/layout.hbs'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.header('Content-Type', 'text/html').view('./templates/index.hbs', data, { layout: './templates/layout.hbs' })
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 500)
       fastify.close()
     })
   })

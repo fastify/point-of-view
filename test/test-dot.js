@@ -4,7 +4,7 @@ const t = require('tap')
 const test = t.test
 const sget = require('simple-get').concat
 const Fastify = require('fastify')
-const { existsSync, rmdirSync } = require('node:fs')
+const { existsSync, rmdirSync, readFileSync } = require('node:fs')
 const { join } = require('node:path')
 const pino = require('pino')
 const split = require('split2')
@@ -576,6 +576,74 @@ test('reply.view should return 500 if layout is missing on render', t => {
     }, (err, response, body) => {
       t.error(err)
       t.equal(response.statusCode, 500)
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with dot engine and raw template', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const data = { text: 'text' }
+  const engine = require('dot')
+  engine.log = false
+
+  fastify.register(require('../index'), {
+    engine: {
+      dot: engine
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view({ raw: readFileSync('./templates/testdot.dot'), imports: { testdef: readFileSync('./templates/testdef.def') } }, data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(body.toString(), engine.process({ path: 'templates', destination: 'out' }).testdot(data))
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with dot engine and function template', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const data = { text: 'text' }
+  const engine = require('dot')
+  engine.log = false
+
+  fastify.register(require('../index'), {
+    engine: {
+      dot: engine
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.header('Content-Type', 'text/html').view(engine.process({ path: 'templates', destination: 'out' }).testdot, data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html')
+      t.equal(body.toString(), engine.process({ path: 'templates', destination: 'out' }).testdot(data))
       fastify.close()
     })
   })

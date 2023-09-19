@@ -3,6 +3,7 @@
 const t = require('tap')
 const test = t.test
 const sget = require('simple-get').concat
+const fs = require('node:fs')
 const Fastify = require('fastify')
 const path = require('node:path')
 
@@ -533,6 +534,105 @@ test('fastify.view with nunjucks engine should return 500 if render fails', t =>
       t.equal(response.statusCode, 500)
       t.equal('Render Error', message)
 
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with nunjucks engine and raw template', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const nunjucks = require('nunjucks')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      nunjucks
+    },
+    templates: 'templates'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view({ raw: fs.readFileSync('./templates/index.njk') }, data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(nunjucks.render('index.njk', data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with nunjucks engine and function template', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const nunjucks = require('nunjucks')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      nunjucks
+    },
+    templates: 'templates'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view(nunjucks.compile(fs.readFileSync('./templates/index.njk').toString()), data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(nunjucks.render('index.njk', data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.view with nunjucks engine and unknown template type', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const nunjucks = require('nunjucks')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      nunjucks
+    },
+    templates: 'templates'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view({ }, data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 500)
       fastify.close()
     })
   })
