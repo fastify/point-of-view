@@ -3,6 +3,7 @@
   "version": "8.2.0",
   "description": "Template plugin for Fastify",
   "main": "index.js",
+  "type": "commonjs",
   "types": "types/index.d.ts",
   "scripts": {
     "example": "node examples/example.js",
