@@ -844,7 +844,7 @@ test('fastify.view with eta engine in production mode should use cache', t => {
   const cache = {
     cache: {},
     get (k) {
-      if (typeof this.cache[k] !== 'undefined') {
+      if (this.cache[k] !== undefined) {
         t.pass()
       }
       return this.cache[k]
