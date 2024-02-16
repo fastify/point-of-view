@@ -85,7 +85,11 @@ async function fastifyView (fastify, opts) {
       done = args.pop()
     }
 
-    const promise = renderer.apply(this, args)
+    let promise = renderer.apply(this, args)
+
+    if (minify) {
+      promise = promise.then((result) => minify(result, globalOptions.htmlMinifierOptions))
+    }
 
     if (done && typeof done === 'function') {
       promise.then(done.bind(null, null), done)
@@ -107,7 +111,12 @@ async function fastifyView (fastify, opts) {
       if (!this.getHeader('content-type')) {
         this.header('Content-Type', 'text/html; charset=' + charset)
       }
-      this.send(result)
+
+      if (minify && !isPathExcludedMinification(this)) {
+        this.send(minify(result, globalOptions.htmlMinifierOptions))
+      } else {
+        this.send(result)
+      }
     } catch (err) {
       this.send(err)
     }
@@ -158,23 +167,20 @@ async function fastifyView (fastify, opts) {
     return viewExt ? `.${viewExt}` : (includeViewExtension ? `.${extension}` : filextension)
   }
 
-  function isPathExcludedMinification (currentPath, pathsToExclude) {
-    return (pathsToExclude && Array.isArray(pathsToExclude)) ? pathsToExclude.includes(currentPath) : false
-  }
+  const minify = typeof globalOptions.useHtmlMinifier?.minify === 'function' &&
+    globalOptions.useHtmlMinifier.minify
 
-  function useHtmlMinification (globalOpts, requestedPath) {
-    return globalOptions.useHtmlMinifier &&
-      (typeof globalOptions.useHtmlMinifier.minify === 'function') &&
-      !isPathExcludedMinification(requestedPath, globalOptions.pathsToExcludeHtmlMinifier)
-  }
+  const minifyExcludedPaths = Array.isArray(globalOptions.pathsToExcludeHtmlMinifier)
+    ? new Set(globalOptions.pathsToExcludeHtmlMinifier)
+    : null
 
   function getRequestedPath (fastify) {
-    return (fastify && fastify.request) ? fastify.request.routeOptions.url : null
+    return fastify?.request?.routeOptions?.url ?? null
   }
-  function onTemplatesLoaded (file, data, requestedPath) {
-    if (useHtmlMinification(globalOptions, requestedPath)) {
-      data = globalOptions.useHtmlMinifier.minify(data, globalOptions.htmlMinifierOptions || {})
-    }
+  function isPathExcludedMinification (that) {
+    return minifyExcludedPaths?.has(getRequestedPath(that))
+  }
+  function onTemplatesLoaded (file, data) {
     if (type === 'handlebars') {
       data = engine.compile(data, globalOptions.compileOptions)
     }
@@ -184,7 +190,7 @@ async function fastifyView (fastify, opts) {
 
   // Gets template as string (or precompiled for Handlebars)
   // from LRU cache or filesystem.
-  const getTemplate = async function (file, requestedPath) {
+  const getTemplate = async function (file) {
     if (typeof file === 'function') {
       return file
     }
@@ -198,10 +204,10 @@ async function fastifyView (fastify, opts) {
       return data
     }
     if (isRaw) {
-      return onTemplatesLoaded(file, file, requestedPath)
+      return onTemplatesLoaded(file, file)
     }
     const fileData = await readFile(join(templatesDir, file), 'utf-8')
-    return onTemplatesLoaded(file, fileData, requestedPath)
+    return onTemplatesLoaded(file, fileData)
   }
 
   // Gets partials as collection of strings from LRU cache or filesystem.
@@ -217,11 +223,7 @@ async function fastifyView (fastify, opts) {
       }
       const partialsHtml = {}
       await Promise.all(partialKeys.map(async (key) => {
-        let data = await readFile(join(templatesDir, partials[key]), 'utf-8')
-        if (useHtmlMinification(globalOptions, requestedPath)) {
-          data = globalOptions.useHtmlMinifier.minify(data, globalOptions.htmlMinifierOptions || {})
-        }
-        partialsHtml[key] = data
+        partialsHtml[key] = await readFile(join(templatesDir, partials[key]), 'utf-8')
       }))
       lru.set(cacheKey, partialsHtml)
       return partialsHtml
@@ -243,16 +245,13 @@ async function fastifyView (fastify, opts) {
   async function readCallbackEnd (that, compile, data, localOptions) {
     let cachedPage = compile(data)
 
-    const requestedPath = getRequestedPath(that)
     if (!localOptions) {
       localOptions = globalOptions
     }
     if (type === 'ejs' && ((localOptions.async ?? globalOptions.async) || cachedPage instanceof Promise)) {
       cachedPage = await cachedPage
     }
-    if (useHtmlMinification(globalOptions, requestedPath)) {
-      cachedPage = globalOptions.useHtmlMinifier.minify(cachedPage, globalOptions.htmlMinifierOptions || {})
-    }
+
     return cachedPage
   }
 
@@ -424,7 +423,6 @@ async function fastifyView (fastify, opts) {
     if (typeof page === 'string') {
       // Append view extension.
       page = getPage(page, 'njk')
-      // template = nunjucksEnv.getTemplate(page)
       render = nunjucksEnv.render.bind(nunjucksEnv, page)
     } else if (typeof page === 'object' && typeof page.render === 'function') {
       render = page.render.bind(page)
@@ -435,13 +433,9 @@ async function fastifyView (fastify, opts) {
     }
     return new Promise((resolve, reject) => {
       render(data, (err, html) => {
-        const requestedPath = getRequestedPath(this)
         if (err) {
           reject(err)
           return
-        }
-        if (useHtmlMinification(globalOptions, requestedPath)) {
-          html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
         }
 
         resolve(html)
@@ -474,7 +468,7 @@ async function fastifyView (fastify, opts) {
       page = getPage(page, 'hbs')
     }
     const requestedPath = getRequestedPath(this)
-    const template = await getTemplate(page, requestedPath)
+    const template = await getTemplate(page)
 
     if (prod) {
       const html = template(data, options)
@@ -504,7 +498,7 @@ async function fastifyView (fastify, opts) {
       page = getPage(page, 'mustache')
     }
     const requestedPath = getRequestedPath(this)
-    const templateString = await getTemplate(page, requestedPath)
+    const templateString = await getTemplate(page)
     const partialsObject = await getPartials(page, { partials: options.partials || {}, requestedPath })
 
     let html
@@ -537,14 +531,11 @@ async function fastifyView (fastify, opts) {
     }
     return new Promise((resolve, reject) => {
       render(data, (err, html) => {
-        const requestedPath = getRequestedPath(this)
         if (err) {
           reject(err)
           return
         }
-        if (useHtmlMinification(globalOptions, requestedPath)) {
-          html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
-        }
+
         resolve(html)
       })
     })
@@ -568,12 +559,7 @@ async function fastifyView (fastify, opts) {
       render = engine.render.bind(engine, templates)
     }
 
-    let html = await render(data, opts)
-    const requestedPath = getRequestedPath(this)
-    if (useHtmlMinification(globalOptions, requestedPath)) {
-      html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
-    }
-    return html
+    return render(data, opts)
   }
 
   function viewDot (renderModule) {
@@ -594,12 +580,7 @@ async function fastifyView (fastify, opts) {
       } else {
         render = renderModule[page]
       }
-      let html = render(data)
-      const requestedPath = getRequestedPath(this)
-      if (useHtmlMinification(globalOptions, requestedPath)) {
-        html = globalOptions.useHtmlMinifier.minify(html, globalOptions.htmlMinifierOptions || {})
-      }
-      return html
+      return render(data)
     }
   }
 
@@ -629,25 +610,11 @@ async function fastifyView (fastify, opts) {
       views: templatesDir
     }, globalOptions)
 
-    const sendContent = html => {
-      if (
-        config.useHtmlMinifier &&
-        typeof config.useHtmlMinifier.minify === 'function' &&
-        !isPathExcludedMinification(getRequestedPath(this), config.pathsToExcludeHtmlMinifier)
-      ) {
-        html = config.useHtmlMinifier.minify(
-          html,
-          config.htmlMinifierOptions || {}
-        )
-      }
-      return html
-    }
-
     data = Object.assign({}, defaultCtx, this.locals, data)
 
     if (typeof page === 'function') {
       const ret = await page.call(engine, data, config)
-      return sendContent(ret)
+      return ret
     }
 
     let render, renderAsync
@@ -665,10 +632,10 @@ async function fastifyView (fastify, opts) {
 
     if (opts?.async ?? globalOptions.async) {
       const res = await renderAsync(page, data, config)
-      return sendContent(res)
+      return res
     } else {
       const html = render(page, data, config)
-      return sendContent(html)
+      return html
     }
   }
 
