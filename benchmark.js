@@ -22,6 +22,8 @@ process.on('SIGINT', () => {
 
 ;(async function () {
   const benchmarkFiles = readdirSync(benchmarkDir)
+    // don't include setup file as a benchmark
+    .filter((fileName) => fileName !== 'setup.js')
     // sort by filename length to ensure base benchmarks run first
     .sort((a, b) => a.length - b.length)
 
