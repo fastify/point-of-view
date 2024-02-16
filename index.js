@@ -91,7 +91,7 @@ async function fastifyView (fastify, opts) {
       promise = promise.then((result) => minify(result, globalOptions.htmlMinifierOptions))
     }
 
-    if (done && typeof done === 'function') {
+    if (typeof done === 'function') {
       promise.then(done.bind(null, null), done)
       return
     }
@@ -111,7 +111,7 @@ async function fastifyView (fastify, opts) {
     }
     try {
       const result = await renderer.apply(this, arguments)
-      if (!this.getHeader('content-type')) {
+      if (!this.getHeader('Content-Type')) {
         this.header('Content-Type', 'text/html; charset=' + charset)
       }
 
@@ -170,15 +170,16 @@ async function fastifyView (fastify, opts) {
     return viewExt ? `.${viewExt}` : (includeViewExtension ? `.${extension}` : filextension)
   }
 
-  const minify = typeof globalOptions.useHtmlMinifier?.minify === 'function' &&
-    globalOptions.useHtmlMinifier.minify
+  const minify = typeof globalOptions.useHtmlMinifier?.minify === 'function'
+    ? globalOptions.useHtmlMinifier.minify
+    : null
 
   const minifyExcludedPaths = Array.isArray(globalOptions.pathsToExcludeHtmlMinifier)
     ? new Set(globalOptions.pathsToExcludeHtmlMinifier)
     : null
 
   function getRequestedPath (fastify) {
-    return fastify?.request?.routeOptions?.url ?? null
+    return fastify?.request?.routeOptions.url ?? null
   }
   function isPathExcludedMinification (that) {
     return minifyExcludedPaths?.has(getRequestedPath(that))
@@ -326,7 +327,7 @@ async function fastifyView (fastify, opts) {
   }
 
   async function viewEjs (page, data, opts) {
-    if (opts && opts.layout) {
+    if (opts?.layout) {
       layoutIsValid(opts.layout)
       return withLayout(viewEjs, opts.layout).call(this, page, data)
     }
@@ -388,9 +389,7 @@ async function fastifyView (fastify, opts) {
       return render(data)
     }
 
-    const html = render(page, data)
-
-    return html
+    return render(page, data)
   }
 
   async function viewNunjucks (page, data) {
@@ -420,7 +419,7 @@ async function fastifyView (fastify, opts) {
   }
 
   async function viewHandlebars (page, data, opts) {
-    if (opts && opts.layout) {
+    if (opts?.layout) {
       layoutIsValid(opts.layout)
       return withLayout(viewHandlebars, opts.layout).call(this, page, data)
     }
@@ -452,9 +451,7 @@ async function fastifyView (fastify, opts) {
         engine.registerPartial(name, engine.compile(partialsObject[name], globalOptions.compileOptions))
       })
 
-      const html = template(data, options)
-
-      return html
+      return template(data, options)
     }
   }
 
@@ -524,7 +521,7 @@ async function fastifyView (fastify, opts) {
 
   function viewDot (renderModule) {
     return async function _viewDot (page, data, opts) {
-      if (opts && opts.layout) {
+      if (opts?.layout) {
         layoutIsValid(opts.layout)
         return withLayout(dotRender, opts.layout).call(this, page, data)
       }
@@ -542,7 +539,7 @@ async function fastifyView (fastify, opts) {
   }
 
   async function viewEta (page, data, opts) {
-    if (opts && opts.layout) {
+    if (opts?.layout) {
       layoutIsValid(opts.layout)
       return withLayout(viewEta, opts.layout).call(this, page, data)
     }
@@ -584,11 +581,9 @@ async function fastifyView (fastify, opts) {
     }
 
     if (opts?.async ?? globalOptions.async) {
-      const res = await renderAsync(page, data, config)
-      return res
+      return renderAsync(page, data, config)
     } else {
-      const html = render(page, data, config)
-      return html
+      return render(page, data, config)
     }
   }
 
@@ -602,7 +597,7 @@ async function fastifyView (fastify, opts) {
   function withLayout (render, layout) {
     if (layout) {
       return async function (page, data, opts) {
-        if (opts && opts.layout) throw new Error('A layout can either be set globally or on render, not both.')
+        if (opts?.layout) throw new Error('A layout can either be set globally or on render, not both.')
         data = Object.assign({}, defaultCtx, this.locals, data)
         const result = await render.call(this, page, data, opts)
         data = Object.assign(data, { body: result })
