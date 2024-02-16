@@ -242,19 +242,6 @@ async function fastifyView (fastify, opts) {
     return cacheKey
   }
 
-  async function readCallbackEnd (that, compile, data, localOptions) {
-    let cachedPage = compile(data)
-
-    if (!localOptions) {
-      localOptions = globalOptions
-    }
-    if (type === 'ejs' && ((localOptions.async ?? globalOptions.async) || cachedPage instanceof Promise)) {
-      cachedPage = await cachedPage
-    }
-
-    return cachedPage
-  }
-
   function readCallbackParser (page, html, localOptions) {
     if ((type === 'ejs') && viewExt && !globalOptions.includer) {
       globalOptions.includer = (originalPath, parsedPath) => {
@@ -315,7 +302,7 @@ async function fastifyView (fastify, opts) {
 
     data = Object.assign({}, defaultCtx, this.locals, data)
     if (typeof page === 'function') {
-      return readCallbackEnd(this, page, data, opts)
+      return page(data)
     }
     let isRaw = false
     if (typeof page === 'object' && page.raw) {
@@ -328,15 +315,15 @@ async function fastifyView (fastify, opts) {
     const toHtml = lru.get(page)
 
     if (toHtml && prod) {
-      return readCallbackEnd(this, toHtml, data, opts)
+      return toHtml(data)
     } else if (isRaw) {
       const compiledPage = readCallbackParser(page, page, opts)
-      return readCallbackEnd(this, compiledPage, data, opts)
+      return compiledPage(data)
     }
 
     const file = await readFile(join(templatesDir, page), 'utf8')
     const render = readCallback(page, data, opts, file)
-    return readCallbackEnd(this, render, data, opts)
+    return render(data)
   }
 
   async function viewEjs (page, data, opts) {
@@ -350,7 +337,7 @@ async function fastifyView (fastify, opts) {
     }
     data = Object.assign({}, defaultCtx, this.locals, data)
     if (typeof page === 'function') {
-      return readCallbackEnd(this, page, data, opts)
+      return page(data)
     }
     let isRaw = false
     if (typeof page === 'object' && page.raw) {
@@ -363,15 +350,15 @@ async function fastifyView (fastify, opts) {
     const toHtml = lru.get(page)
 
     if (toHtml && prod) {
-      return readCallbackEnd(this, toHtml, data, opts)
+      return toHtml(data)
     } else if (isRaw) {
       const compiledPage = readCallbackParser(page, page, opts)
-      return readCallbackEnd(this, compiledPage, data, opts)
+      return compiledPage(data)
     }
 
     const file = await readFile(join(templatesDir, page), 'utf8')
     const render = readCallback(page, data, opts, file)
-    return readCallbackEnd(this, render, data, opts)
+    return render(data)
   }
 
   async function viewArtTemplate (page, data) {
