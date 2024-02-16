@@ -77,7 +77,7 @@ async function fastifyView (fastify, opts) {
 
   const renderer = renders[type] ? renders[type] : renders._default
 
-  function viewDecorator () {
+  function viewDecorator (page) {
     const args = Array.from(arguments)
 
     let done
@@ -85,7 +85,7 @@ async function fastifyView (fastify, opts) {
       done = args.pop()
     }
 
-    let promise = renderer.apply(this, args)
+    let promise = !page ? Promise.reject(new Error('Missing page')) : renderer.apply(this, args)
 
     if (minify) {
       promise = promise.then((result) => minify(result, globalOptions.htmlMinifierOptions))
@@ -105,7 +105,10 @@ async function fastifyView (fastify, opts) {
 
   fastify.decorate(propertyName, viewDecorator)
 
-  fastify.decorateReply(propertyName, async function () {
+  fastify.decorateReply(propertyName, async function (page) {
+    if (!page) {
+      this.send(new Error('Missing page'))
+    }
     try {
       const result = await renderer.apply(this, arguments)
       if (!this.getHeader('content-type')) {
@@ -296,10 +299,6 @@ async function fastifyView (fastify, opts) {
   }
 
   async function view (page, data, opts) {
-    if (!page) {
-      throw new Error('Missing page')
-    }
-
     data = Object.assign({}, defaultCtx, this.locals, data)
     if (typeof page === 'function') {
       return page(data)
@@ -331,10 +330,6 @@ async function fastifyView (fastify, opts) {
       layoutIsValid(opts.layout)
       return withLayout(viewEjs, opts.layout).call(this, page, data)
     }
-
-    if (!page) {
-      throw new Error('Missing page')
-    }
     data = Object.assign({}, defaultCtx, this.locals, data)
     if (typeof page === 'function') {
       return page(data)
@@ -362,9 +357,6 @@ async function fastifyView (fastify, opts) {
   }
 
   async function viewArtTemplate (page, data) {
-    if (!page) {
-      throw new Error('Missing page')
-    }
     data = Object.assign({}, defaultCtx, this.locals, data)
 
     if (typeof page === 'string') {
@@ -402,9 +394,6 @@ async function fastifyView (fastify, opts) {
   }
 
   async function viewNunjucks (page, data) {
-    if (!page) {
-      throw new Error('Missing page')
-    }
     data = Object.assign({}, defaultCtx, this.locals, data)
     let render
     if (typeof page === 'string') {
@@ -434,10 +423,6 @@ async function fastifyView (fastify, opts) {
     if (opts && opts.layout) {
       layoutIsValid(opts.layout)
       return withLayout(viewHandlebars, opts.layout).call(this, page, data)
-    }
-
-    if (!page) {
-      throw new Error('Missing page')
     }
 
     let options
@@ -474,10 +459,6 @@ async function fastifyView (fastify, opts) {
   }
 
   async function viewMustache (page, data, opts) {
-    if (!page) {
-      throw new Error('Missing page')
-    }
-
     const options = Object.assign({}, opts)
     data = Object.assign({}, defaultCtx, this.locals, data)
     if (typeof page === 'string') {
@@ -499,10 +480,6 @@ async function fastifyView (fastify, opts) {
   }
 
   async function viewTwig (page, data, opts) {
-    if (!page) {
-      throw new Error('Missing page')
-    }
-
     data = Object.assign({}, defaultCtx, globalOptions, this.locals, data)
     let render
     if (typeof page === 'string') {
@@ -529,10 +506,6 @@ async function fastifyView (fastify, opts) {
   }
 
   async function viewLiquid (page, data, opts) {
-    if (!page) {
-      throw new Error('Missing page')
-    }
-
     data = Object.assign({}, defaultCtx, this.locals, data)
     let render
     if (typeof page === 'string') {
@@ -555,9 +528,6 @@ async function fastifyView (fastify, opts) {
         layoutIsValid(opts.layout)
         return withLayout(dotRender, opts.layout).call(this, page, data)
       }
-      if (!page) {
-        throw new Error('Missing page')
-      }
       data = Object.assign({}, defaultCtx, this.locals, data)
       let render
       if (typeof page === 'function') {
@@ -575,10 +545,6 @@ async function fastifyView (fastify, opts) {
     if (opts && opts.layout) {
       layoutIsValid(opts.layout)
       return withLayout(viewEta, opts.layout).call(this, page, data)
-    }
-
-    if (!page) {
-      throw new Error('Missing page')
     }
 
     if (globalOptions.templatesSync) {
