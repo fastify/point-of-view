@@ -6,6 +6,7 @@
   "type": "commonjs",
   "types": "types/index.d.ts",
   "scripts": {
+    "benchmark": "node benchmark.js",
     "example": "node examples/example.js",
     "example-with-options": "node examples/example-ejs-with-some-options.js",
     "example-typescript": "npx ts-node types/index.test-d.ts",
@@ -46,7 +47,9 @@
     "@fastify/pre-commit": "^2.0.2",
     "@types/node": "^20.1.0",
     "art-template": "^4.13.2",
+    "autocannon": "^7.15.0",
     "cross-env": "^7.0.2",
+    "delay": "^5.0.0",
     "dot": "^1.1.3",
     "ejs": "^3.1.8",
     "eta": "^3.0.3",
