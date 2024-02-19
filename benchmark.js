@@ -5,8 +5,9 @@ const { spawn } = require('child_process')
 const { promisify } = require('node:util')
 const sget = promisify(require('simple-get').concat)
 const autocannon = require('autocannon')
-const delay = require('delay')
 const { join } = require('node:path')
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const benchmarkDir = join(__dirname, 'benchmark')
 
