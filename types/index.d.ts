@@ -1,4 +1,4 @@
-import { FastifyPluginCallback } from 'fastify';
+import { FastifyPluginAsync } from 'fastify';
 
 declare module "fastify" {
 
@@ -17,7 +17,7 @@ declare module "fastify" {
   }
 }
 
-type FastifyView = FastifyPluginCallback<fastifyView.FastifyViewOptions>
+type FastifyView = FastifyPluginAsync<fastifyView.FastifyViewOptions>
 
 declare namespace fastifyView {
   export interface FastifyViewOptions {
