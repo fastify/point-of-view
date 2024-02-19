@@ -26,6 +26,20 @@ async function fastifyView (fastify, opts) {
   const defaultCtx = opts.defaultContext
   const globalLayoutFileName = opts.layout
 
+  /**
+   * @type {Map<string, Promise>}
+   */
+  const readFileMap = new Map()
+
+  function readFileSemaphore (filePath) {
+    if (readFileMap.has(filePath) === false) {
+      const promise = readFile(filePath, 'utf-8')
+      readFileMap.set(filePath, promise)
+      return promise.finally(() => readFileMap.delete(filePath))
+    }
+    return readFileMap.get(filePath)
+  }
+
   function templatesDirIsValid (_templatesDir) {
     if (Array.isArray(_templatesDir) && type !== 'nunjucks') {
       throw new Error('Only Nunjucks supports the "templates" option as an array')
@@ -210,7 +224,7 @@ async function fastifyView (fastify, opts) {
     if (isRaw) {
       return onTemplatesLoaded(file, file)
     }
-    const fileData = await readFile(join(templatesDir, file), 'utf-8')
+    const fileData = await readFileSemaphore(join(templatesDir, file))
     return onTemplatesLoaded(file, fileData)
   }
 
@@ -227,7 +241,7 @@ async function fastifyView (fastify, opts) {
       }
       const partialsHtml = {}
       await Promise.all(partialKeys.map(async (key) => {
-        partialsHtml[key] = await readFile(join(templatesDir, partials[key]), 'utf-8')
+        partialsHtml[key] = await readFileSemaphore(join(templatesDir, partials[key]))
       }))
       lru.set(cacheKey, partialsHtml)
       return partialsHtml
@@ -321,7 +335,7 @@ async function fastifyView (fastify, opts) {
       return compiledPage(data)
     }
 
-    const file = await readFile(join(templatesDir, page), 'utf8')
+    const file = await readFileSemaphore(join(templatesDir, page))
     const render = readCallback(page, data, opts, file)
     return render(data)
   }
@@ -352,7 +366,7 @@ async function fastifyView (fastify, opts) {
       return compiledPage(data)
     }
 
-    const file = await readFile(join(templatesDir, page), 'utf8')
+    const file = await readFileSemaphore(join(templatesDir, page))
     const render = readCallback(page, data, opts, file)
     return render(data)
   }
