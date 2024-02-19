@@ -1200,3 +1200,54 @@ test('reply.view with ejs engine and function template', t => {
     })
   })
 })
+
+test('reply.view with ejs engine and failed call to render when onError hook defined', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs
+    }
+  })
+
+  fastify.get('/invalid', (req, reply) => {
+    // Note the mistake in the ternary statement -- the second `?` should be a `:`
+    reply.view({
+      raw: '<p><%= true ? "text" ? "text2" %></p>'
+    })
+  })
+
+  fastify.get('/valid', (req, reply) => {
+    reply.view({
+      raw: '<%= true ? "text" : "text2" %>'
+    })
+  })
+
+  // when onError hook is defined, certain errors (such as calls to reply.send inside the `onError` hook) are uncaught
+  fastify.addHook('onError', async (request, reply, err) => {})
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    // request route with invalid template, followed by route with valid template
+    // in order to ensure server does not crash after first request
+    sget({
+      method: 'GET',
+      url: `http://localhost:${fastify.server.address().port}/invalid`
+    }, (err, response) => {
+      t.error(err)
+      t.equal(response.statusCode, 500)
+      sget({
+        method: 'GET',
+        url: `http://localhost:${fastify.server.address().port}/valid`
+      }, (err, response, body) => {
+        t.error(err)
+        t.equal('text', body.toString())
+        t.equal(response.statusCode, 200)
+        fastify.close()
+      })
+    })
+  })
+})
