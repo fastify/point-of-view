@@ -6,7 +6,6 @@ const sget = require('simple-get').concat
 const Fastify = require('fastify')
 const fs = require('node:fs')
 const minifier = require('html-minifier-terser')
-const proxyquire = require('proxyquire')
 const minifierOpts = {
   removeComments: true,
   removeCommentsFromCDATA: true,
@@ -345,15 +344,13 @@ test('reply.view with mustache engine with partials in production mode should us
   const fastify = Fastify()
   const mustache = require('mustache')
   const data = { text: 'text' }
-  const POV = proxyquire('..', {
-    hashlru: function () {
-      return {
-        get: () => {
-          return '<div>Cached Response</div>'
-        },
-        set: () => { }
-      }
-    }
+  const POV = require('..')
+
+  fastify.decorate(POV.fastifyViewCache, {
+    get: () => {
+      return '<div>Cached Response</div>'
+    },
+    set: () => { }
   })
 
   fastify.register(POV, {

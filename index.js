@@ -6,7 +6,23 @@ const { basename, dirname, extname, join, resolve } = require('node:path')
 const HLRU = require('hashlru')
 const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'mustache', 'art-template', 'twig', 'liquid', 'dot', 'eta']
 
+const viewCache = Symbol('@fastify/view/cache')
+
+const fastifyViewCache = fp(
+  async function cachePlugin (fastify, opts) {
+    const lru = HLRU(opts?.maxCache || 100)
+    fastify.decorate(viewCache, lru)
+  },
+  {
+    fastify: '4.x',
+    name: '@fastify/view/cache'
+  }
+)
+
 async function fastifyView (fastify, opts) {
+  if (typeof fastify[viewCache] === 'undefined') {
+    await fastify.register(fastifyViewCache, opts)
+  }
   if (!opts.engine) {
     throw new Error('Missing engine')
   }
@@ -19,7 +35,6 @@ async function fastifyView (fastify, opts) {
   const engine = opts.engine[type]
   const globalOptions = opts.options || {}
   const templatesDir = resolveTemplateDir(opts)
-  const lru = HLRU(opts.maxCache || 100)
   const includeViewExtension = opts.includeViewExtension || false
   const viewExt = opts.viewExt || ''
   const prod = typeof opts.production === 'boolean' ? opts.production : process.env.NODE_ENV === 'production'
@@ -114,7 +129,7 @@ async function fastifyView (fastify, opts) {
   }
 
   viewDecorator.clearCache = function () {
-    lru.clear()
+    fastify[viewCache].clear()
   }
 
   fastify.decorate(propertyName, viewDecorator)
@@ -151,7 +166,7 @@ async function fastifyView (fastify, opts) {
 
   function getPage (page, extension) {
     const pageLRU = `getPage-${page}-${extension}`
-    let result = lru.get(pageLRU)
+    let result = fastify[viewCache].get(pageLRU)
 
     if (typeof result === 'string') {
       return result
@@ -160,7 +175,7 @@ async function fastifyView (fastify, opts) {
     const filename = basename(page, extname(page))
     result = join(dirname(page), filename + getExtension(page, extension))
 
-    lru.set(pageLRU, result)
+    fastify[viewCache].set(pageLRU, result)
 
     return result
   }
@@ -202,7 +217,7 @@ async function fastifyView (fastify, opts) {
     if (type === 'handlebars') {
       data = engine.compile(data, globalOptions.compileOptions)
     }
-    lru.set(file, data)
+    fastify[viewCache].set(file, data)
     return data
   }
 
@@ -217,7 +232,7 @@ async function fastifyView (fastify, opts) {
       isRaw = true
       file = file.raw
     }
-    const data = lru.get(file)
+    const data = fastify[viewCache].get(file)
     if (data && prod) {
       return data
     }
@@ -231,7 +246,7 @@ async function fastifyView (fastify, opts) {
   // Gets partials as collection of strings from LRU cache or filesystem.
   const getPartials = async function (page, { partials, requestedPath }) {
     const cacheKey = getPartialsCacheKey(page, partials, requestedPath)
-    const partialsObj = lru.get(cacheKey)
+    const partialsObj = fastify[viewCache].get(cacheKey)
     if (partialsObj && prod) {
       return partialsObj
     } else {
@@ -243,7 +258,7 @@ async function fastifyView (fastify, opts) {
       await Promise.all(partialKeys.map(async (key) => {
         partialsHtml[key] = await readFileSemaphore(join(templatesDir, partials[key]))
       }))
-      lru.set(cacheKey, partialsHtml)
+      fastify[viewCache].set(cacheKey, partialsHtml)
       return partialsHtml
     }
   }
@@ -276,7 +291,7 @@ async function fastifyView (fastify, opts) {
 
     const compiledPage = engine.compile(html, localOptions)
 
-    lru.set(page, compiledPage)
+    fastify[viewCache].set(page, compiledPage)
     return compiledPage
   }
 
@@ -326,7 +341,7 @@ async function fastifyView (fastify, opts) {
       // append view extension
       page = getPage(page, type)
     }
-    const toHtml = lru.get(page)
+    const toHtml = fastify[viewCache].get(page)
 
     if (toHtml && prod) {
       return toHtml(data)
@@ -357,7 +372,7 @@ async function fastifyView (fastify, opts) {
       // append view extension
       page = getPage(page, type)
     }
-    const toHtml = lru.get(page)
+    const toHtml = fastify[viewCache].get(page)
 
     if (toHtml && prod) {
       return toHtml(data)
@@ -562,8 +577,6 @@ async function fastifyView (fastify, opts) {
       engine.templatesSync = globalOptions.templatesSync
     }
 
-    lru.define = lru.set
-
     engine.configure({
       views: templatesDir,
       cache: prod || globalOptions.templatesSync
@@ -648,3 +661,4 @@ module.exports = fp(fastifyView, {
 })
 module.exports.default = fastifyView
 module.exports.fastifyView = fastifyView
+module.exports.fastifyViewCache = viewCache

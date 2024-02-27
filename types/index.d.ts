@@ -53,6 +53,7 @@ declare namespace fastifyView {
 
   export const fastifyView: FastifyView
   export { fastifyView as default }
+  export const fastifyViewCache: Symbol
 }
 
 declare function fastifyView(...params: Parameters<FastifyView>): ReturnType<FastifyView>
