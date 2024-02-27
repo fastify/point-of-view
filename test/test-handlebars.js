@@ -331,7 +331,7 @@ test('fastify.view with handlebars engine with layout option on render', t => {
 })
 
 test('fastify.view with handlebars engine with invalid layout option on render should throw', t => {
-  t.plan(3)
+  t.plan(5)
 
   const fastify = Fastify()
   const handlebars = require('handlebars')
@@ -345,6 +345,11 @@ test('fastify.view with handlebars engine with invalid layout option on render s
 
   fastify.ready(err => {
     t.error(err)
+    fastify.view('./templates/index-for-layout.hbs', data, { layout: './templates/invalid-layout.hbs' }, (err, compiled) => {
+      t.ok(err instanceof Error)
+      t.equal(err.message, 'unable to access template "./templates/invalid-layout.hbs"')
+    })
+    // repeated for test coverage of layout access check lru
     fastify.view('./templates/index-for-layout.hbs', data, { layout: './templates/invalid-layout.hbs' }, (err, compiled) => {
       t.ok(err instanceof Error)
       t.equal(err.message, 'unable to access template "./templates/invalid-layout.hbs"')
