@@ -3,14 +3,14 @@ const { readFile } = require('node:fs/promises')
 const fp = require('fastify-plugin')
 const { accessSync, existsSync, mkdirSync, readdirSync } = require('node:fs')
 const { basename, dirname, extname, join, resolve } = require('node:path')
-const HLRU = require('hashlru')
+const { LruMap } = require('toad-cache')
 const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'mustache', 'art-template', 'twig', 'liquid', 'dot', 'eta']
 
 const viewCache = Symbol('@fastify/view/cache')
 
 const fastifyViewCache = fp(
   async function cachePlugin (fastify, opts) {
-    const lru = HLRU(opts?.maxCache || 100)
+    const lru = new LruMap(opts.maxCache || 100)
     fastify.decorate(viewCache, lru)
   },
   {
