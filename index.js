@@ -20,7 +20,7 @@ const fastifyViewCache = fp(
 )
 
 async function fastifyView (fastify, opts) {
-  if (typeof fastify[viewCache] === 'undefined') {
+  if (fastify[viewCache] === undefined) {
     await fastify.register(fastifyViewCache, opts)
   }
   if (!opts.engine) {
