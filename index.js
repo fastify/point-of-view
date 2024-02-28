@@ -130,7 +130,7 @@ async function fastifyView (fastify, opts) {
       }
 
       if (minify && !isPathExcludedMinification(this)) {
-        this.send(minify(result, globalOptions.htmlMinifierOptions))
+        this.send(await minify(result, globalOptions.htmlMinifierOptions))
       } else {
         this.send(result)
       }

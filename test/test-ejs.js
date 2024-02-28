@@ -6,7 +6,7 @@ const sget = require('simple-get').concat
 const Fastify = require('fastify')
 const fs = require('node:fs')
 const path = require('node:path')
-const minifier = require('html-minifier')
+const minifier = require('html-minifier-terser')
 const minifierOpts = {
   removeComments: true,
   removeCommentsFromCDATA: true,
@@ -545,7 +545,7 @@ test('reply.view with ejs engine and defaultContext', t => {
   })
 })
 
-test('reply.view with ejs engine and html-minifier', t => {
+test('reply.view with ejs engine and html-minifier-terser', t => {
   t.plan(6)
   const fastify = Fastify()
   const ejs = require('ejs')
@@ -571,17 +571,17 @@ test('reply.view with ejs engine and html-minifier', t => {
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+    }, async (err, response, body) => {
       t.error(err)
       t.equal(response.statusCode, 200)
       t.equal(response.headers['content-length'], '' + body.length)
       t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(minifier.minify(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), minifierOpts), body.toString())
+      t.equal(await minifier.minify(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), minifierOpts), body.toString())
       fastify.close()
     })
   })
 })
-test('reply.view with ejs engine and paths excluded from html-minifier', t => {
+test('reply.view with ejs engine and paths excluded from html-minifier-terser', t => {
   t.plan(6)
   const fastify = Fastify()
   const ejs = require('ejs')
@@ -618,7 +618,7 @@ test('reply.view with ejs engine and paths excluded from html-minifier', t => {
     })
   })
 })
-test('reply.view with ejs engine and html-minifier in production mode', t => {
+test('reply.view with ejs engine and html-minifier-terser in production mode', t => {
   const numTests = 5
   t.plan(numTests * 5 + 1)
   const fastify = Fastify()
@@ -651,7 +651,7 @@ test('reply.view with ejs engine and html-minifier in production mode', t => {
           t.equal(response.statusCode, 200)
           t.equal(response.headers['content-length'], '' + body.length)
           t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-          t.equal(minifier.minify(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), minifierOpts), body.toString())
+          t.equal(await minifier.minify(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), minifierOpts), body.toString())
           if (i === numTests - 1) fastify.close()
           resolve()
         })
