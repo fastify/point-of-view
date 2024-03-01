@@ -5,7 +5,6 @@ const test = t.test
 const sget = require('simple-get').concat
 const Fastify = require('fastify')
 const fs = require('node:fs')
-const proxyquire = require('proxyquire')
 
 require('./helper').pugHtmlMinifierTests(t, true)
 require('./helper').pugHtmlMinifierTests(t, false)
@@ -47,15 +46,13 @@ test('reply.view with pug engine in production mode should use cache', t => {
   t.plan(6)
   const fastify = Fastify()
   const pug = require('pug')
-  const POV = proxyquire('..', {
-    hashlru: function () {
-      return {
-        get: () => {
-          return () => '<div>Cached Response</div>'
-        },
-        set: () => { }
-      }
-    }
+  const POV = require('..')
+
+  fastify.decorate(POV.fastifyViewCache, {
+    get: () => {
+      return () => '<div>Cached Response</div>'
+    },
+    set: () => { }
   })
 
   fastify.register(POV, {

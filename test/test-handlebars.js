@@ -6,7 +6,6 @@ const sget = require('simple-get').concat
 const Fastify = require('fastify')
 const fs = require('node:fs')
 const { join } = require('node:path')
-const proxyquire = require('proxyquire')
 
 require('./helper').handleBarsHtmlMinifierTests(t, true)
 require('./helper').handleBarsHtmlMinifierTests(t, false)
@@ -616,17 +615,14 @@ test('reply.view with handlebars engine with partials in production mode should 
   t.plan(4)
   const fastify = Fastify()
   const handlebars = require('handlebars')
-  const POV = proxyquire('..', {
-    hashlru: function () {
-      return {
-        get: (key) => {
-          t.equal(key, 'handlebars|body:./templates/body.hbs|null-Partials')
-        },
-        set: (key, value) => {
-          t.equal(key, 'handlebars|body:./templates/body.hbs|null-Partials')
-          t.strictSame(value, { body: fs.readFileSync('./templates/body.hbs', 'utf8') })
-        }
-      }
+  const POV = require('..')
+  fastify.decorate(POV.fastifyViewCache, {
+    get: (key) => {
+      t.equal(key, 'handlebars|body:./templates/body.hbs|null-Partials')
+    },
+    set: (key, value) => {
+      t.equal(key, 'handlebars|body:./templates/body.hbs|null-Partials')
+      t.strictSame(value, { body: fs.readFileSync('./templates/body.hbs', 'utf8') })
     }
   })
 
@@ -921,15 +917,12 @@ test('reply.view with handlebars engine should return 500 if template fails in p
   t.plan(4)
   const fastify = Fastify()
   const handlebars = require('handlebars')
-  const POV = proxyquire('..', {
-    hashlru: function () {
-      return {
-        get: () => {
-          return () => { throw Error('Template Error') }
-        },
-        set: () => { }
-      }
-    }
+  const POV = require('..')
+  fastify.decorate(POV.fastifyViewCache, {
+    get: () => {
+      return () => { throw Error('Template Error') }
+    },
+    set: () => { }
   })
 
   fastify.register(POV, {
