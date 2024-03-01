@@ -41,7 +41,7 @@
   "homepage": "https://github.com/fastify/point-of-view#readme",
   "dependencies": {
     "fastify-plugin": "^4.0.0",
-    "hashlru": "^2.3.0"
+    "toad-cache": "^3.7.0"
   },
   "devDependencies": {
     "@fastify/pre-commit": "^2.0.2",
