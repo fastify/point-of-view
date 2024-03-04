@@ -1,4 +1,6 @@
 git checkout -b edge_branch
 
 git add .
-git commit - m "core code to add edge" 
+git commit -m "core code to add edge"
+git push --set-upstream origin edge_branch
+
