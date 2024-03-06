@@ -645,13 +645,23 @@ async function fastifyView (fastify, opts) {
   }
 
   function hasAccessToLayoutFile (fileName, ext) {
+    const layoutKey = `layout-${fileName}-${ext}`
+    let result = fastify[viewCache].get(layoutKey)
+
+    if (typeof result === 'boolean') {
+      return result
+    }
+
     try {
       accessSync(join(templatesDir, getPage(fileName, ext)))
-
-      return true
+      result = true
     } catch (e) {
-      return false
+      result = false
     }
+
+    fastify[viewCache].set(layoutKey, result)
+
+    return result
   }
 }
 
