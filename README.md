@@ -21,6 +21,10 @@ Currently supports the following templates engines:
 - [`doT`](https://github.com/olado/doT)
 - [`eta`](https://eta.js.org)
 
+- [`edge`](https://edgejs.dev)
+
+This branch is a wip adding https://edgejs.dev/
+
 In `production` mode, `@fastify/view` will heavily cache the templates file and functions, while in `development` will reload every time the template file and function.
 
 _Note: For **Fastify v3 support**, please use point-of-view `5.x` (npm i point-of-view@5)._

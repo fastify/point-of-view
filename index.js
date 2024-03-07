@@ -4,7 +4,7 @@ const fp = require('fastify-plugin')
 const { accessSync, existsSync, mkdirSync, readdirSync } = require('node:fs')
 const { basename, dirname, extname, join, resolve } = require('node:path')
 const { LruMap } = require('toad-cache')
-const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'mustache', 'art-template', 'twig', 'liquid', 'dot', 'eta']
+const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'mustache', 'art-template', 'twig', 'liquid', 'dot', 'eta', 'edge']
 
 const viewCache = Symbol('@fastify/view/cache')
 
@@ -62,7 +62,7 @@ async function fastifyView (fastify, opts) {
   }
 
   function layoutIsValid (_layoutFileName) {
-    if (type !== 'dot' && type !== 'handlebars' && type !== 'ejs' && type !== 'eta') {
+    if (type !== 'dot' && type !== 'handlebars' && type !== 'ejs' && type !== 'eta'  && type !== 'edge') {
       throw new Error('Only Dot, Handlebars, EJS, and Eta support the "layout" option')
     }
 
@@ -101,6 +101,9 @@ async function fastifyView (fastify, opts) {
     liquid: viewLiquid,
     dot: withLayout(dotRender, globalLayoutFileName),
     eta: withLayout(viewEta, globalLayoutFileName),
+    edge: withLayout(viewEdge, globalLayoutFileName),
+    // edge:(viewEdge),
+    
     _default: view
   }
 
@@ -613,6 +616,38 @@ async function fastifyView (fastify, opts) {
       return render(page, data, config)
     }
   }
+
+// edge
+async function viewEdge (page, data, opts) {
+  if (opts?.layout) {
+    layoutIsValid(opts.layout)
+    return withLayout(viewEdge, opts.layout).call(this, page, data)
+  }
+  data = Object.assign({}, defaultCtx, this.locals, data)
+  if (typeof page === 'function') {
+    return page(data)
+  }
+  let isRaw = false
+  if (typeof page === 'object' && page.raw) {
+    isRaw = true
+    page = page.raw.toString()
+  } else {
+    // append view extension
+    page = getPage(page, type)
+  }
+  const toHtml = fastify[viewCache].get(page)
+
+  if (toHtml && prod) {
+    return toHtml(data)
+  } else if (isRaw) {
+    const compiledPage = readCallbackParser(page, page, opts)
+    return compiledPage(data)
+  }
+
+  const file = await readFileSemaphore(join(templatesDir, page))
+  const render = readCallback(page, data, opts, file)
+  return render(data)
+}
 
   if (prod && type === 'handlebars' && globalOptions.partials) {
     const partialsObject = await getPartials(type, { partials: globalOptions.partials, requestedPath: getRequestedPath(this) })
