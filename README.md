@@ -6,7 +6,7 @@
 
 Templates rendering plugin support for Fastify.
 
-`@fastify/view` decorates the reply interface with the `view` method for managing view engines, which can be used to render templates responses.
+`@fastify/view` decorates the reply interface with the `view` and `viewAsync` methods for managing view engines, which can be used to render templates responses.
 
 Currently supports the following templates engines:
 
@@ -26,6 +26,10 @@ In `production` mode, `@fastify/view` will heavily cache the templates file and 
 _Note: For **Fastify v3 support**, please use point-of-view `5.x` (npm i point-of-view@5)._
 
 _Note that at least Fastify `v2.0.0` is needed._
+
+## Recent Changes
+
+_Note: `reply.viewAsync` added as a replacement for `reply.view` and `fastify.view`. See [Migrating from view to viewAsync](#migrating-from-view-to-viewAsync)._
 
 _Note: [`ejs-mate`](https://github.com/JacksonTian/ejs-mate) support [has been dropped](https://github.com/fastify/point-of-view/pull/157)._
 
@@ -54,56 +58,66 @@ npm i @fastify/view
 - the template to be rendered
 - the data that should be available to the template during rendering
 
-This example will render the template and provide a variable `text` to be used inside the template:
+This example will render the template using the EJS engine and provide a variable `name` to be used inside the template:
+
+```html
+<!-- index.ejs --->
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <p>Hello, <%= name %>!</p>
+  </body>
+</html>
+```
 
 ```js
-const fastify = require("fastify")();
+// index.js:
+const fastify = require("fastify")()
+const fastifyView = require("@fastify/view")
 
-fastify.register(require("@fastify/view"), {
+fastify.register(fastifyView, {
   engine: {
-    ejs: require("ejs"),
-  },
-});
+    ejs: require("ejs")
+  }
+})
 
+// synchronous handler:
 fastify.get("/", (req, reply) => {
-  reply.view("/templates/index.ejs", { text: "text" });
-});
+  reply.view("index.ejs", { name: "User" });
+})
+
+// asynchronous handler:
+fastify.get("/", async (req, reply) => {
+  return reply.viewAsync("index.ejs", { name: "User" });
+})
 
 fastify.listen({ port: 3000 }, (err) => {
   if (err) throw err;
   console.log(`server listening on ${fastify.server.address().port}`);
-});
-```
-
-If your handler function is asynchronous, make sure to return the result - otherwise this will result in an `FST_ERR_PROMISE_NOT_FULFILLED` error:
-
-```js
-// This is an async function
-fastify.get("/", async (req, reply) => {
-  // We are awaiting a function result
-  const t = await something();
-
-  // Note the return statement
-  return reply.view("/templates/index.ejs", { text: "text" });
-});
+})
 ```
 
 ## Configuration
 
-`fastify.register(<engine>, <options>)` accepts an options object.
-
 ### Options
 
-- `engine`: The template engine object - pass in the return value of `require('<engine>')`. This option is mandatory.
-- `layout`: @fastify/view supports layouts for **EJS**, **Handlebars**, **Eta** and **doT**. This option lets you specify a global layout file to be used when rendering your templates. Settings like `root` or `viewExt` apply as for any other template file. Example: `./templates/layouts/main.hbs`
-- `propertyName`: The property that should be used to decorate `reply` and `fastify` - E.g. `reply.view()` and `fastify.view()` where `"view"` is the property name. Default: `"view"`.
-- `root`: The root path of your templates folder. The template name or path passed to the render function will be resolved relative to this path. Default: `"./"`.
-- `includeViewExtension`: Setting this to `true` will automatically append the default extension for the used template engine **if omitted from the template name** . So instead of `template.hbs`, just `template` can be used. Default: `false`.
-- `viewExt`: Let's you override the default extension for a given template engine. This has precedence over `includeViewExtension` and will lead to the same behavior, just with a custom extension. Default `""`. Example: `"handlebars"`.
-- `defaultContext`: The template variables defined here will be available to all views. Variables provided on render have precedence and will **override** this if they have the same name. Default: `{}`. Example: `{ siteName: "MyAwesomeSite" }`.
-- `maxCache`: In `production` mode, maximum number of templates file and functions caches. Default: `100`. Example: `{ maxCache: 100 }`.
+| Option                 | Description | Default |
+| ---------------------- | ----------- | ------- | 
+| `engine`               | **Required**. The template engine object - pass in the return value of `require('<engine>')`    | | 
+| `production`           | Enables caching of template files and render functions | `NODE_ENV === "production"` |
+| `maxCache`             | In `production` mode, maximum number of cached template files and render functions | `100` |
+| `defaultContext`       | Template variables available to all views. Variables provided on render have precedence and will **override** this if they have the same name. <br><br>Example: `{ siteName: "MyAwesomeSite" }` | `{}` |
+| `propertyName`         | The property that should be used to decorate `reply` and `fastify` <br><br>E.g. `reply.view()` and `fastify.view()` where `"view"` is the property name | `"view"` |
+| `asyncPropertyName`    | The property that should be used to decorate `reply` for async handler <br><br>Defaults to `${propertyName}Async` if `propertyName` is defined | `"viewAsync"` | 
+| `root`                 | The root path of your templates folder. The template name or path passed to the render function will be resolved relative to this path | `"./"` |
+| `charset`              | Default charset used when setting `Content-Type` header | `"utf-8"` |
+| `includeViewExtension` | Automatically append the default extension for the used template engine **if omitted from the template name** . So instead of `template.hbs`, just `template` can be used | `false` |
+| `viewExt`              | Override the default extension for a given template engine. This has precedence over `includeViewExtension` and will lead to the same behavior, just with a custom extension. <br><br>Example: `"handlebars"` | `""` |
+| `layout`               | See [Layouts](#layouts) <br><br>This option lets you specify a global layout file to be used when rendering your templates. Settings like `root` or `viewExt` apply as for any other template file. <br><br>Example: `./templates/layouts/main.hbs`  | | 
+| `options`              | See [Engine-specific settings](#engine-specific-settings) | `{}` |
 
-Example:
+### Example
 
 ```js
 fastify.register(require("@fastify/view"), {
@@ -121,9 +135,78 @@ fastify.register(require("@fastify/view"), {
 });
 ```
 
-## Rendering the template into a variable
+## Layouts
 
-The `fastify` object is decorated the same way as `reply` and allows you to just render a view into a variable instead of sending the result back to the browser:
+@fastify/view supports layouts for **EJS**, **Handlebars**, **Eta** and **doT**. When a layout is specified, the request template is first rendered, then the layout template is rendered with the request-rendered html set on `body`.
+
+### Example
+
+```html
+<!-- layout.ejs: -->
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <!--
+      Ensure body is not escaped:
+
+      EJS: <%- body %>
+      Handlebars: {{{ body }}}
+      ETA/doT: <%~ it.body %>
+    -->
+    <%- body %> 
+    <br/>
+  </body>
+</html>
+```
+
+```html
+<!-- template.ejs: -->
+<p><%= text %></p>
+```
+
+```js
+// index.js:
+fastify.register(fastifyView, {
+  engine: { ejs },
+  layout: "layout.ejs"
+})
+
+fastify.get('/', (req, reply) => {
+  const data = { text: "Hello!"}
+  reply.view('template.ejs', data)
+})
+```
+
+### Providing a layout on render
+**Please note:** Global layouts and providing layouts on render are mutually exclusive. They can not be mixed.
+
+```js
+fastify.get('/', (req, reply) => {
+  const data = { text: "Hello!"}
+  reply.view('template.ejs', data, { layout: 'layout.ejs' })
+})
+```
+
+## Setting request-global variables
+Sometimes, several templates should have access to the same request-specific variables. E.g. when setting the current username.
+
+If you want to provide data, which will be depended on by a request and available in all views, you have to add property `locals` to `reply` object, like in the example below:
+
+```js
+fastify.addHook("preHandler", function (request, reply, done) {
+  reply.locals = {
+    text: getTextFromRequest(request), // it will be available in all views
+  };
+
+  done();
+});
+```
+
+Properties from `reply.locals` will override those from `defaultContext`, but not from `data` parameter provided to `reply.view(template, data)` function.
+
+## Rendering the template into a variable
+The `fastify` object is decorated the same way as `reply` and allows you to just render a view into a variable (without request-global variables) instead of sending the result back to the browser:
 
 ```js
 // Promise based, using async/await
@@ -135,6 +218,9 @@ fastify.view("/templates/index.ejs", { text: "text" }, (err, html) => {
   // Do something with `html`
 });
 ```
+
+If called within a request hook and you need request-global variables, see [Migrating from view to viewAsync](#migrating-from-view-to-viewAsync).
+
 
 ## Registering multiple engines
 
@@ -163,36 +249,6 @@ fastify.get("/desktop", (req, reply) => {
   return reply.desktop("/templates/index.ejs", { text: "text" });
 });
 ```
-
-## Providing a layout on render
-
-@fastify/view supports layouts for **EJS**, **Handlebars**, **Eta** and **doT**.
-These engines also support providing a layout on render.
-
-**Please note:** Global layouts and providing layouts on render are mutually exclusive. They can not be mixed.
-
-```js
-fastify.get('/', (req, reply) => {
-  reply.view('index-for-layout.ejs', data, { layout: 'layout.html' })
-})
-```
-
-## Setting request-global variables
-Sometimes, several templates should have access to the same request-specific variables. E.g. when setting the current username.
-
-If you want to provide data, which will be depended on by a request and available in all views, you have to add property `locals` to `reply` object, like in the example below:
-
-```js
-fastify.addHook("preHandler", function (request, reply, done) {
-  reply.locals = {
-    text: getTextFromRequest(request), // it will be available in all views
-  };
-
-  done();
-});
-```
-
-Properties from `reply.locals` will override those from `defaultContext`, but not from `data` parameter provided to `reply.view(template, data)` function.
 
 ## Minifying HTML on render
 
@@ -729,7 +785,6 @@ fastify.get('/', (req, reply) => {
   })
 })
 ```
-
 <!---
 // This seems a bit random given that there was no mention of typescript before.
 ### Typing
@@ -798,10 +853,84 @@ fastify.view.clearCache();
 
 <a name="note"></a>
 
+### Migrating from `view` to `viewAsync`
+
+The behavior of `reply.view` is to immediately send the HTML response as soon as rendering is completed, or immediately send a 500 response with error if encountered, short-circuiting fastify's error handling hooks, whereas `reply.viewAsync` returns a promise that either resolves to the rendered HTML, or rejects on any errors. `fastify.view` has no mechanism for providing request-global variables, if needed. `reply.viewAsync` can be used in both sync and async handlers.
+
+#### Sync handler
+Previously:
+```js
+fastify.get('/', (req, reply) => {
+  reply.view('index.ejs', { text: 'text' })
+})
+```
+Now:
+```js
+fastify.get('/', (req, reply) => {
+  return reply.viewAsync('index.ejs', { text: 'text' })
+})
+```
+#### Async handler
+Previously:
+```js
+// This is an async function
+fastify.get("/", async (req, reply) => {
+  const data = await something();
+  reply.view("/templates/index.ejs", { data });
+  return
+})
+```
+
+Now:
+```js
+// This is an async function
+fastify.get("/", async (req, reply) => {
+  const data = await something();
+  return reply.viewAsync("/templates/index.ejs", { data });
+})
+```
+#### fastify.view (when called inside a route hook)
+Previously:
+```js
+// Promise based, using async/await
+fastify.get("/", async (req, reply) => {
+  const html = await fastify.view("/templates/index.ejs", { text: "text" });
+  return html
+})
+```
+```js
+// Callback based
+fastify.get("/", (req, reply) => {
+  fastify.view("/templates/index.ejs", { text: "text" }, (err, html) => {
+    if(err) {
+      reply.send(err)
+    }
+    else {
+      reply.type("application/html").send(html)
+    }
+  });
+})
+```
+Now:
+```js
+// Promise based, using async/await
+fastify.get("/", (req, reply) => {
+  const html = await fastify.viewAsync("/templates/index.ejs", { text: "text" });
+  return html
+})
+```
+```js
+fastify.get("/", (req, reply) => {
+  fastify.viewAsync("/templates/index.ejs", { text: "text" })
+    .then((html) => reply.type("application/html").send(html))
+    .catch((err) => reply.send(err))
+  });
+})
+```
+
 ## Note
 
-By default views are served with the mime type 'text/html; charset=utf-8',
-but you can specify a different value using the type function of reply, or by specifying the desired charset in the property 'charset' in the options object given to the plugin.
+By default views are served with the mime type `text/html`, with the charset specified in options. You can specify a different `Content-Type` header using `reply.type`.
 
 ## Acknowledgements
 

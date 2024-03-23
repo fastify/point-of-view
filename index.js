@@ -32,6 +32,7 @@ async function fastifyView (fastify, opts) {
   }
   const charset = opts.charset || 'utf-8'
   const propertyName = opts.propertyName || 'view'
+  const asyncPropertyName = opts.asyncPropertyName || `${propertyName}Async`
   const engine = opts.engine[type]
   const globalOptions = opts.options || {}
   const templatesDir = resolveTemplateDir(opts)
@@ -106,6 +107,28 @@ async function fastifyView (fastify, opts) {
 
   const renderer = renders[type] ? renders[type] : renders._default
 
+  async function asyncRender (page) {
+    if (!page) {
+      throw new Error('Missing page')
+    }
+
+    let result = await renderer.apply(this, arguments)
+
+    if (minify && !isPathExcludedMinification(this)) {
+      result = await minify(result, globalOptions.htmlMinifierOptions)
+    }
+
+    if (!this.getHeader('Content-Type')) {
+      this.header('Content-Type', 'text/html; charset=' + charset)
+    }
+
+    return result
+  }
+
+  const fakeRequest = {
+    getHeader: () => true
+  }
+
   function viewDecorator (page) {
     const args = Array.from(arguments)
 
@@ -114,11 +137,7 @@ async function fastifyView (fastify, opts) {
       done = args.pop()
     }
 
-    let promise = !page ? Promise.reject(new Error('Missing page')) : renderer.apply(this, args)
-
-    if (minify) {
-      promise = promise.then((result) => minify(result, globalOptions.htmlMinifierOptions))
-    }
+    const promise = asyncRender.apply(fakeRequest, args)
 
     if (typeof done === 'function') {
       promise.then(done.bind(null, null), done)
@@ -134,26 +153,18 @@ async function fastifyView (fastify, opts) {
 
   fastify.decorate(propertyName, viewDecorator)
 
-  fastify.decorateReply(propertyName, async function (page) {
-    if (!page) {
-      this.send(new Error('Missing page'))
-    }
+  fastify.decorateReply(propertyName, async function (page, data, opts) {
     try {
-      const result = await renderer.apply(this, arguments)
-      if (!this.getHeader('Content-Type')) {
-        this.header('Content-Type', 'text/html; charset=' + charset)
-      }
-
-      if (minify && !isPathExcludedMinification(this)) {
-        this.send(await minify(result, globalOptions.htmlMinifierOptions))
-      } else {
-        this.send(result)
-      }
+      const html = await asyncRender.call(this, page, data, opts)
+      this.send(html)
     } catch (err) {
       this.send(err)
     }
+
     return this
   })
+
+  fastify.decorateReply(asyncPropertyName, asyncRender)
 
   if (!fastify.hasReplyDecorator('locals')) {
     fastify.decorateReply('locals', null)

@@ -9,6 +9,8 @@ declare module "fastify" {
   interface FastifyReply {
     view<T extends { [key: string]: any; }>(page: string, data: T, opts?: RouteSpecificOptions): FastifyReply;
     view(page: string, data?: object, opts?: RouteSpecificOptions): FastifyReply;
+    viewAsync<T extends { [key: string]: any; }>(page: string, data: T, opts?: RouteSpecificOptions): Promise<string>;
+    viewAsync(page: string, data?: object, opts?: RouteSpecificOptions): Promise<string>;
   }
 
   interface FastifyInstance {
@@ -44,6 +46,7 @@ declare namespace fastifyView {
     root?: string;
     viewExt?: string;
     propertyName?: string;
+    asyncPropertyName?: string;
   }
 
   /**
