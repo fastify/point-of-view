@@ -5,8 +5,6 @@ import fs from 'node:fs'
 const test = t.test
 const sget = get.concat
 
-console.log('running import test')
-
 test('using an imported engine as a promise', t => {
   t.plan(3)
   const fastify = Fastify()
