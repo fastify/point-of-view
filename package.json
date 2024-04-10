@@ -13,7 +13,7 @@
     "lint": "standard",
     "test-with-snapshot": "cross-env TAP_SNAPSHOT=1 tap test/test-ejs-with-snapshot.js",
     "test": "npm run test:unit && npm run test:typescript",
-    "test:unit": "tap",
+    "test:unit": "tap test/*.js test/*.mjs",
     "test:typescript": "tsd"
   },
   "repository": {
