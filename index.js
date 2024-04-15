@@ -118,15 +118,11 @@ async function fastifyView (fastify, opts) {
       result = await minify(result, globalOptions.htmlMinifierOptions)
     }
 
-    if (!this.getHeader('Content-Type')) {
+    if (this.getHeader && !this.getHeader('Content-Type')) {
       this.header('Content-Type', 'text/html; charset=' + charset)
     }
 
     return result
-  }
-
-  const fakeRequest = {
-    getHeader: () => true
   }
 
   function viewDecorator (page) {
@@ -137,7 +133,7 @@ async function fastifyView (fastify, opts) {
       done = args.pop()
     }
 
-    const promise = asyncRender.apply(fakeRequest, args)
+    const promise = asyncRender.apply({}, args)
 
     if (typeof done === 'function') {
       promise.then(done.bind(null, null), done)
