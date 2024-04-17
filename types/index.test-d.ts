@@ -1,6 +1,6 @@
 import fastify from "fastify";
 import fastifyView, { PointOfViewOptions, FastifyViewOptions } from "..";
-import { expectAssignable, expectDeprecated, expectType } from "tsd";
+import { expectAssignable, expectNotAssignable, expectDeprecated, expectType } from "tsd";
 import * as path from "path";
 
 interface Locals {
@@ -41,6 +41,8 @@ app.get("/data", (request, reply) => {
   }
 
   // reply.locals.appVersion = 1 // not a valid type
+  expectNotAssignable<NonNullable<(typeof reply)['locals']>['appVersion']>(1)
+
   reply.locals.appVersion = '4.14.0'
   reply.view("/index", { text: "Sample data" });
 });
@@ -51,12 +53,37 @@ app.get("/dataTyped", (request, reply) => {
   }
 
   // reply.locals.appVersion = 1 // not a valid type
+  expectNotAssignable<NonNullable<(typeof reply)['locals']>['appVersion']>(1)
+
   reply.locals.appVersion = '4.14.0'
   reply.view<{ text: string; }>("/index", { text: "Sample data" });
 });
 
 app.get("/use-layout", (request, reply) => {
   reply.view("/layout-ts-content-with-data", {text: "Using a layout"}, {layout: "/layout-ts"})
+});
+
+app.get("/view-async", async (request, reply) => {
+  expectAssignable<NonNullable<(typeof reply)['locals']>['appVersion']>('4.14.0')
+  expectNotAssignable<NonNullable<(typeof reply)['locals']>['appVersion']>(1)
+
+  type ViewAsyncDataParamType = Parameters<typeof reply.viewAsync>[1]
+  expectAssignable<ViewAsyncDataParamType>({ text: "Sample data" })
+  expectAssignable<ViewAsyncDataParamType>({ notText: "Sample data "})
+
+  const html = await reply.viewAsync("/index", { text: "Sample data" });
+  expectType<string>(html)
+  return html
+});
+
+app.get("/view-async-generic-provided", async (request, reply) => {
+  type ViewAsyncDataParamType = Parameters<typeof reply.viewAsync<{ text: string; }>>[1]
+  expectAssignable<ViewAsyncDataParamType>({ text: "Sample data" })
+  expectNotAssignable<ViewAsyncDataParamType>({ notText: "Sample data "})
+
+  const html = reply.viewAsync<{ text: string; }>("/index", { text: "Sample data" });
+  expectType<Promise<string>>(html)
+  return html
 });
 
 app.listen({port: 3000}, (err, address) => {
