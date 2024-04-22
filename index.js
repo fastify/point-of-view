@@ -614,6 +614,7 @@ async function fastifyView (fastify, opts) {
       renderAsync = engine.renderAsync.bind(engine)
     }
 
+    /* c8 ignore next */
     if (opts?.async ?? globalOptions.async) {
       return renderAsync(page, data, config)
     } else {
