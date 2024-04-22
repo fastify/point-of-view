@@ -18,7 +18,7 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
 
   const data = { text: 'text' }
 
-  fastify.register(require('../index'), {
+  fastify.register(require('../../index'), {
     engine: {
       ejs
     },
@@ -62,7 +62,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
 
   const data = { text: 'Hello from EJS Templates' }
 
-  fastify.register(require('../index'), {
+  fastify.register(require('../../index'), {
     engine: {
       ejs
     },
@@ -106,7 +106,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
 
   const data = { text: 'Hello from EJS Templates' }
 
-  fastify.register(require('../index'), {
+  fastify.register(require('../../index'), {
     engine: {
       ejs
     },
@@ -150,7 +150,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
 
   const data = { text: 'Hello from EJS Templates' }
 
-  fastify.register(require('../index'), {
+  fastify.register(require('../../index'), {
     engine: {
       ejs
     },
@@ -194,7 +194,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
 
   const data = { text: 'Hello from EJS Templates' }
 
-  fastify.register(require('../index'), {
+  fastify.register(require('../../index'), {
     engine: {
       ejs
     },
