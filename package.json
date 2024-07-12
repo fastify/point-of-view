@@ -40,7 +40,7 @@
   },
   "homepage": "https://github.com/fastify/point-of-view#readme",
   "dependencies": {
-    "fastify-plugin": "^4.5.1",
+    "fastify-plugin": "^5.0.0-pre.fv5.1",
     "toad-cache": "^3.7.0"
   },
   "devDependencies": {
@@ -53,13 +53,13 @@
     "ejs": "^3.1.10",
     "eta": "^3.4.0",
     "express": "^4.19.2",
-    "fastify": "^4.26.2",
+    "fastify": "^5.0.0-alpha.3",
     "handlebars": "^4.7.8",
     "html-minifier-terser": "^7.2.0",
     "liquidjs": "^10.11.0",
     "mustache": "^4.2.0",
     "nunjucks": "^3.2.4",
-    "pino": "^8.20.0",
+    "pino": "^9.0.0",
     "pug": "^3.0.2",
     "simple-get": "^4.0.1",
     "split2": "^4.2.0",
