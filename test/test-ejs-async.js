@@ -506,3 +506,71 @@ test('reply.view with promise error', t => {
     })
   })
 })
+
+test('reply.viewAsync with ejs engine and async: true (global option)', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+
+  fastify.register(require('../index'), {
+    engine: { ejs },
+    options: { async: true },
+    templates: 'templates'
+  })
+
+  fastify.get('/', async (req, reply) => {
+    return reply.viewAsync('ejs-async.ejs')
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, async (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.viewAsync with ejs engine, async: true (global option), and html-minifier-terser', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+
+  fastify.register(require('../index'), {
+    engine: { ejs },
+    options: {
+      async: true,
+      useHtmlMinifier: minifier,
+      htmlMinifierOptions: minifierOpts
+    },
+    templates: 'templates'
+  })
+
+  fastify.get('/', (req, reply) => {
+    return reply.viewAsync('ejs-async.ejs')
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, async (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(await minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), minifierOpts), body.toString())
+      fastify.close()
+    })
+  })
+})

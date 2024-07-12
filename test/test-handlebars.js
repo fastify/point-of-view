@@ -1119,3 +1119,41 @@ test('fastify.view with handlebars engine and both layout', t => {
     })
   })
 })
+
+test('reply.viewAsync for handlebars engine without defaultContext but with reply.locals and data-parameter, with async fastify  hooks', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const localsData = { text: 'text from locals' }
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars
+    }
+  })
+
+  fastify.addHook('preHandler', async function (request, reply) {
+    reply.locals = localsData
+  })
+
+  fastify.get('/', async (req, reply) => {
+    return reply.viewAsync('./templates/index.html', data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
+      fastify.close()
+    })
+  })
+})

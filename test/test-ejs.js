@@ -1251,3 +1251,270 @@ test('reply.view with ejs engine and failed call to render when onError hook def
     })
   })
 })
+
+test('reply.viewAsync with ejs engine - sync handler', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs
+    }
+  })
+
+  fastify.get('/', async (req, reply) => {
+    return reply.viewAsync('templates/index.ejs', data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.viewAsync with ejs engine - async handler', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs
+    }
+  })
+
+  fastify.get('/', (req, reply) => {
+    return reply.viewAsync('templates/index.ejs', data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.viewAsync should return 500 if layout is missing on render', t => {
+  t.plan(3)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+  fastify.register(require('../index'), {
+    engine: {
+      ejs
+    },
+    root: path.join(__dirname, '../templates')
+  })
+
+  fastify.get('/', (req, reply) => {
+    return reply.viewAsync('index-for-layout.ejs', data, { layout: 'non-existing-layout.html' })
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 500)
+      fastify.close()
+    })
+  })
+})
+
+test('reply.viewAsync should allow errors to be handled by custom error handler', t => {
+  t.plan(7)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+  fastify.register(require('../index'), {
+    engine: {
+      ejs
+    },
+    root: path.join(__dirname, '../templates')
+  })
+
+  fastify.get('/', (req, reply) => {
+    return reply.viewAsync('index-for-layout.ejs', data, { layout: 'non-existing-layout.html' })
+  })
+
+  fastify.setErrorHandler((err, request, reply) => {
+    t.ok(err instanceof Error)
+    t.same(reply.getHeader('Content-Type'), null)
+    return 'something went wrong'
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.headers['content-type'], 'text/plain; charset=utf-8')
+      t.equal(response.statusCode, 200)
+      t.equal('something went wrong', body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.viewAsync with ejs engine and custom propertyName', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs
+    },
+    propertyName: 'render'
+  })
+
+  fastify.get('/', async (req, reply) => {
+    return reply.renderAsync('templates/index.ejs', data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.viewAsync with ejs engine and custom asyncPropertyName', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs
+    },
+    asyncPropertyName: 'viewAsPromise'
+  })
+
+  fastify.get('/', async (req, reply) => {
+    return reply.viewAsPromise('templates/index.ejs', data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
+test('reply.viewAsync with ejs engine and custom asyncPropertyName and custom propertyName', t => {
+  t.plan(11)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs
+    },
+    asyncPropertyName: 'renderPromise',
+    propertyName: 'oldRenderSend'
+  })
+
+  fastify.get('/asyncPropertyName', async (req, reply) => {
+    return reply.renderPromise('templates/index.ejs', data)
+  })
+
+  fastify.get('/propertyName', (req, reply) => {
+    reply.oldRenderSend('templates/index.ejs', data)
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://localhost:' + fastify.server.address().port + '/asyncPropertyName'
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      sget({
+        method: 'GET',
+        url: 'http://localhost:' + fastify.server.address().port + '/propertyName'
+      }, (err2, response2, body2) => {
+        t.error(err2)
+        t.equal(response2.statusCode, 200)
+        t.equal(response2.headers['content-length'], '' + body.length)
+        t.equal(response2.headers['content-type'], 'text/html; charset=utf-8')
+        t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body2.toString())
+        fastify.close()
+      })
+    })
+  })
+})
+
+test('reply.viewAsync with ejs engine and conflicting propertyName/asyncPropertyName', t => {
+  t.plan(1)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs
+    },
+    propertyName: 'render',
+    asyncPropertyName: 'render'
+  })
+
+  fastify.listen({ port: 0 }, err => {
+    t.ok(err instanceof Error)
+  })
+})
