@@ -1,6 +1,6 @@
 {
   "name": "@fastify/view",
-  "version": "9.1.0",
+  "version": "10.0.0-pre.fv5.1",
   "description": "Template plugin for Fastify",
   "main": "index.js",
   "type": "commonjs",
