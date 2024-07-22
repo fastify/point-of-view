@@ -88,7 +88,7 @@ test('reply.view with dot engine .dot file should log WARN if template not found
   })
   const logger = pino({ level: 'warn' }, splitStream)
   const fastify = Fastify({
-    logger
+    loggerInstance: logger
   })
   const engine = require('dot')
   engine.log = false
