@@ -14,7 +14,7 @@ const fastifyViewCache = fp(
     fastify.decorate(viewCache, lru)
   },
   {
-    fastify: '4.x',
+    fastify: '5.x',
     name: '@fastify/view/cache'
   }
 )
@@ -674,7 +674,7 @@ async function fastifyView (fastify, opts) {
 }
 
 module.exports = fp(fastifyView, {
-  fastify: '4.x',
+  fastify: '5.x',
   name: '@fastify/view'
 })
 module.exports.default = fastifyView
