@@ -1,6 +1,6 @@
 {
   "name": "@fastify/view",
-  "version": "10.0.0-pre.fv5.2",
+  "version": "10.0.0",
   "description": "Template plugin for Fastify",
   "main": "index.js",
   "type": "commonjs",
@@ -40,7 +40,7 @@
   },
   "homepage": "https://github.com/fastify/point-of-view#readme",
   "dependencies": {
-    "fastify-plugin": "^5.0.0-pre.fv5.1",
+    "fastify-plugin": "^5.0.0",
     "toad-cache": "^3.7.0"
   },
   "devDependencies": {
@@ -53,7 +53,7 @@
     "ejs": "^3.1.10",
     "eta": "^3.4.0",
     "express": "^4.19.2",
-    "fastify": "^5.0.0-alpha.3",
+    "fastify": "^5.0.0-alpha.4",
     "handlebars": "^4.7.8",
     "html-minifier-terser": "^7.2.0",
     "liquidjs": "^10.11.0",
