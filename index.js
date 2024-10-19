@@ -292,7 +292,7 @@ async function fastifyView (fastify, opts) {
     }
     if (localOptions) {
       for (const key in globalOptions) {
-        if (!Object.prototype.hasOwnProperty.call(localOptions, key)) localOptions[key] = globalOptions[key]
+        if (!Object.hasOwn(localOptions, key)) localOptions[key] = globalOptions[key]
       }
     } else localOptions = globalOptions
 
