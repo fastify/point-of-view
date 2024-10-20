@@ -412,7 +412,7 @@ async function fastifyView (fastify, opts) {
     function render (filename, data) {
       let render
       if (typeof filename === 'string') {
-        confs.filename = join(templatesDir, filename)
+        confs.filename = filename
         render = engine.compile(confs)
       } else if (typeof filename === 'function') {
         render = filename

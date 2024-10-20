@@ -44,6 +44,43 @@ test('reply.view with art-template engine and custom templates folder', t => {
   })
 })
 
+test('reply.view with art-template engine and explicit root folder', t => {
+  t.plan(6)
+  const fastify = Fastify()
+  const art = require('art-template')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      'art-template': art
+    },
+    root: 'templates'
+  })
+
+  fastify.get('/', (req, reply) => {
+    reply.view('./index.art', data)
+  })
+
+  fastify.listen({ port: 10086 }, err => {
+    t.error(err)
+
+    sget({
+      method: 'GET',
+      url: 'http://127.0.0.1:10086/'
+    }, (err, response, body) => {
+      t.error(err)
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-length'], '' + body.length)
+      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+
+      const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+
+      t.equal(art(templatePath, data), body.toString())
+      fastify.close()
+    })
+  })
+})
+
 test('reply.view for art-template without data-parameter and defaultContext', t => {
   t.plan(6)
   const fastify = Fastify()
