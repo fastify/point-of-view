@@ -103,18 +103,18 @@ fastify.listen({ port: 3000 }, (err) => {
 ### Options
 
 | Option                 | Description | Default |
-| ---------------------- | ----------- | ------- | 
-| `engine`               | **Required**. The template engine object - pass in the return value of `require('<engine>')`    | | 
+| ---------------------- | ----------- | ------- |
+| `engine`               | **Required**. The template engine object - pass in the return value of `require('<engine>')`    | |
 | `production`           | Enables caching of template files and render functions | `NODE_ENV === "production"` |
 | `maxCache`             | In `production` mode, maximum number of cached template files and render functions | `100` |
 | `defaultContext`       | Template variables available to all views. Variables provided on render have precedence and will **override** this if they have the same name. <br><br>Example: `{ siteName: "MyAwesomeSite" }` | `{}` |
 | `propertyName`         | The property that should be used to decorate `reply` and `fastify` <br><br>E.g. `reply.view()` and `fastify.view()` where `"view"` is the property name | `"view"` |
-| `asyncPropertyName`    | The property that should be used to decorate `reply` for async handler <br><br>Defaults to `${propertyName}Async` if `propertyName` is defined | `"viewAsync"` | 
+| `asyncPropertyName`    | The property that should be used to decorate `reply` for async handler <br><br>Defaults to `${propertyName}Async` if `propertyName` is defined | `"viewAsync"` |
 | `root`                 | The root path of your templates folder. The template name or path passed to the render function will be resolved relative to this path | `"./"` |
 | `charset`              | Default charset used when setting `Content-Type` header | `"utf-8"` |
 | `includeViewExtension` | Automatically append the default extension for the used template engine **if omitted from the template name** . So instead of `template.hbs`, just `template` can be used | `false` |
 | `viewExt`              | Override the default extension for a given template engine. This has precedence over `includeViewExtension` and will lead to the same behavior, just with a custom extension. <br><br>Example: `"handlebars"` | `""` |
-| `layout`               | See [Layouts](#layouts) <br><br>This option lets you specify a global layout file to be used when rendering your templates. Settings like `root` or `viewExt` apply as for any other template file. <br><br>Example: `./templates/layouts/main.hbs`  | | 
+| `layout`               | See [Layouts](#layouts) <br><br>This option lets you specify a global layout file to be used when rendering your templates. Settings like `root` or `viewExt` apply as for any other template file. <br><br>Example: `./templates/layouts/main.hbs`  | |
 | `options`              | See [Engine-specific settings](#engine-specific-settings) | `{}` |
 
 ### Example
@@ -154,7 +154,7 @@ fastify.register(require("@fastify/view"), {
       Handlebars: {{{ body }}}
       ETA/doT: <%~ it.body %>
     -->
-    <%- body %> 
+    <%- body %>
     <br/>
   </body>
 </html>
