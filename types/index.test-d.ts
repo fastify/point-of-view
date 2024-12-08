@@ -1,41 +1,41 @@
-import fastify from "fastify";
-import fastifyView, { PointOfViewOptions, FastifyViewOptions } from "..";
-import { expectAssignable, expectNotAssignable, expectDeprecated, expectType } from "tsd";
-import * as path from "path";
+import fastify from 'fastify'
+import fastifyView, { PointOfViewOptions, FastifyViewOptions } from '..'
+import { expectAssignable, expectNotAssignable, expectDeprecated, expectType } from 'tsd'
+import * as path from 'path'
 
 interface Locals {
   appVersion: string,
 }
 
-declare module "fastify" {
+declare module 'fastify' {
   interface FastifyReply {
     locals: Partial<Locals> | undefined
   }
 }
-const app = fastify();
+const app = fastify()
 
 app.register(fastifyView, {
   engine: {
-    ejs: require("ejs"),
+    ejs: require('ejs'),
   },
-  templates: "templates",
+  templates: 'templates',
   includeViewExtension: true,
   defaultContext: {
     dev: true,
   },
   options: {},
-  charset: "utf-8",
+  charset: 'utf-8',
   maxCache: 100,
   production: false,
-  root: path.resolve(__dirname, "../templates"),
-  viewExt: "ejs",
-});
+  root: path.resolve(__dirname, '../templates'),
+  viewExt: 'ejs',
+})
 
-app.get("/", (request, reply) => {
-  reply.view("/index-with-no-data");
-});
+app.get('/', (request, reply) => {
+  reply.view('/index-with-no-data')
+})
 
-app.get("/data", (request, reply) => {
+app.get('/data', (request, reply) => {
   if (!reply.locals) {
     reply.locals = {}
   }
@@ -44,10 +44,10 @@ app.get("/data", (request, reply) => {
   expectNotAssignable<NonNullable<(typeof reply)['locals']>['appVersion']>(1)
 
   reply.locals.appVersion = '4.14.0'
-  reply.view("/index", { text: "Sample data" });
-});
+  reply.view('/index', { text: 'Sample data' })
+})
 
-app.get("/dataTyped", (request, reply) => {
+app.get('/dataTyped', (request, reply) => {
   if (!reply.locals) {
     reply.locals = {}
   }
@@ -56,42 +56,42 @@ app.get("/dataTyped", (request, reply) => {
   expectNotAssignable<NonNullable<(typeof reply)['locals']>['appVersion']>(1)
 
   reply.locals.appVersion = '4.14.0'
-  reply.view<{ text: string; }>("/index", { text: "Sample data" });
-});
+  reply.view<{ text: string; }>('/index', { text: 'Sample data' })
+})
 
-app.get("/use-layout", (request, reply) => {
-  reply.view("/layout-ts-content-with-data", {text: "Using a layout"}, {layout: "/layout-ts"})
-});
+app.get('/use-layout', (request, reply) => {
+  reply.view('/layout-ts-content-with-data', { text: 'Using a layout' }, { layout: '/layout-ts' })
+})
 
-app.get("/view-async", async (request, reply) => {
+app.get('/view-async', async (request, reply) => {
   expectAssignable<NonNullable<(typeof reply)['locals']>['appVersion']>('4.14.0')
   expectNotAssignable<NonNullable<(typeof reply)['locals']>['appVersion']>(1)
 
   type ViewAsyncDataParamType = Parameters<typeof reply.viewAsync>[1]
-  expectAssignable<ViewAsyncDataParamType>({ text: "Sample data" })
-  expectAssignable<ViewAsyncDataParamType>({ notText: "Sample data "})
+  expectAssignable<ViewAsyncDataParamType>({ text: 'Sample data' })
+  expectAssignable<ViewAsyncDataParamType>({ notText: 'Sample data ' })
 
-  const html = await reply.viewAsync("/index", { text: "Sample data" });
+  const html = await reply.viewAsync('/index', { text: 'Sample data' })
   expectType<string>(html)
   return html
-});
+})
 
-app.get("/view-async-generic-provided", async (request, reply) => {
+app.get('/view-async-generic-provided', async (request, reply) => {
   type ViewAsyncDataParamType = Parameters<typeof reply.viewAsync<{ text: string; }>>[1]
-  expectAssignable<ViewAsyncDataParamType>({ text: "Sample data" })
-  expectNotAssignable<ViewAsyncDataParamType>({ notText: "Sample data "})
+  expectAssignable<ViewAsyncDataParamType>({ text: 'Sample data' })
+  expectNotAssignable<ViewAsyncDataParamType>({ notText: 'Sample data ' })
 
-  const html = reply.viewAsync<{ text: string; }>("/index", { text: "Sample data" });
+  const html = reply.viewAsync<{ text: string; }>('/index', { text: 'Sample data' })
   expectType<Promise<string>>(html)
   return html
-});
+})
 
-app.listen({port: 3000}, (err, address) => {
+app.listen({ port: 3000 }, (err, address) => {
   if (err) throw err
   console.log(`server listening on ${address} ...`)
 })
 
-expectType<Promise<string>>(app.view("/index", {}, { layout: "/layout-ts"}))
+expectType<Promise<string>>(app.view('/index', {}, { layout: '/layout-ts' }))
 
 expectAssignable<FastifyViewOptions>({ engine: { twig: require('twig') }, propertyName: 'mobile' })
 
@@ -117,4 +117,4 @@ expectType<Promise<string>>(nunjucksApp.view('/', { text: 'Hello world' }))
 
 expectAssignable<FastifyViewOptions>({ engine: { nunjucks: require('nunjucks') }, templates: 'templates' })
 
-expectAssignable<FastifyViewOptions>({ engine: { nunjucks: require('nunjucks') }, templates: ['templates/nunjucks-layout', 'templates/nunjucks-template']})
+expectAssignable<FastifyViewOptions>({ engine: { nunjucks: require('nunjucks') }, templates: ['templates/nunjucks-layout', 'templates/nunjucks-template'] })
