@@ -1,6 +1,6 @@
-import { FastifyPluginAsync } from 'fastify';
+import { FastifyPluginAsync } from 'fastify'
 
-declare module "fastify" {
+declare module 'fastify' {
 
   interface RouteSpecificOptions {
     layout?: string;
@@ -59,5 +59,5 @@ declare namespace fastifyView {
   export const fastifyViewCache: Symbol
 }
 
-declare function fastifyView(...params: Parameters<FastifyView>): ReturnType<FastifyView>
+declare function fastifyView (...params: Parameters<FastifyView>): ReturnType<FastifyView>
 export = fastifyView
