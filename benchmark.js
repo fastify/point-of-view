@@ -1,7 +1,7 @@
 'use strict'
 
-const { readdirSync } = require('fs')
-const { spawn } = require('child_process')
+const { readdirSync } = require('node:fs')
+const { spawn } = require('node:child_process')
 const { promisify } = require('node:util')
 const sget = promisify(require('simple-get').concat)
 const autocannon = require('autocannon')
