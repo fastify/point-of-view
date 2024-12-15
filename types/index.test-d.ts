@@ -1,7 +1,7 @@
 import fastify from 'fastify'
 import fastifyView, { PointOfViewOptions, FastifyViewOptions } from '..'
 import { expectAssignable, expectNotAssignable, expectDeprecated, expectType } from 'tsd'
-import * as path from 'path'
+import * as path from 'node:path'
 
 interface Locals {
   appVersion: string,

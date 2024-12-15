@@ -1,7 +1,7 @@
 import fastify from 'fastify'
 import fastifyView, { FastifyViewOptions } from '..'
 import { expectAssignable } from 'tsd'
-import * as path from 'path'
+import * as path from 'node:path'
 
 interface Locals {
   appVersion: string,
