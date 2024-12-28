@@ -89,7 +89,7 @@
     "html-minifier-terser": "^7.2.0",
     "liquidjs": "^10.11.0",
     "mustache": "^4.2.0",
-    "neostandard": "^0.11.9",
+    "neostandard": "^0.12.0",
     "nunjucks": "^3.2.4",
     "pino": "^9.0.0",
     "pug": "^3.0.2",
