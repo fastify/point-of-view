@@ -15,7 +15,7 @@ Currently supports the following templates engines:
 - [`pug`](https://pugjs.org/api/getting-started.html)
 - [`handlebars`](https://handlebarsjs.com/)
 - [`mustache`](https://mustache.github.io/)
-- [`art-template`](https://aui.github.io/art-template/)
+- [`art-template`](https://goofychris.github.io/art-template/)
 - [`twig`](https://twig.symfony.com/)
 - [`liquid`](https://github.com/harttle/liquidjs)
 - [`doT`](https://github.com/olado/doT)
