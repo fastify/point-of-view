@@ -20,7 +20,7 @@ test('reply.view with art-template engine and custom templates folder', t => {
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./index.art', data)
   })
 
@@ -57,7 +57,7 @@ test('reply.view with art-template engine and explicit root folder', t => {
     root: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./index.art', data)
   })
 
@@ -93,7 +93,7 @@ test('reply.view for art-template without data-parameter and defaultContext', t 
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./index.art')
   })
 
@@ -131,7 +131,7 @@ test('reply.view for art-template without data-parameter but with defaultContext
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./index.art')
   })
 
@@ -169,7 +169,7 @@ test('reply.view with art-template engine and defaultContext', t => {
     defaultContext: data
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./index.art', {})
   })
 
@@ -205,12 +205,12 @@ test('reply.view for art-template engine without data-parameter and defaultConte
     }
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.art')
   })
 
@@ -247,12 +247,12 @@ test('reply.view for art-template engine without defaultContext but with reply.l
     }
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.art', data)
   })
 
@@ -290,12 +290,12 @@ test('reply.view for art-template engine without data-parameter but with reply.l
     defaultContext: contextData
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.art')
   })
 
@@ -334,12 +334,12 @@ test('reply.view for art-template engine with data-parameter and reply.locals an
     defaultContext: contextData
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.art', data)
   })
 
@@ -377,7 +377,7 @@ test('reply.view with art-template engine and full path templates folder', t => 
     templates: path.join(__dirname, '..', 'templates')
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./index.art', data)
   })
 
@@ -415,7 +415,7 @@ test('reply.view with art-template engine and includeViewExtension is true', t =
     includeViewExtension: true
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index', data)
   })
 
@@ -453,7 +453,7 @@ test('fastify.view with art-template engine and full path templates folder', t =
     templates: path.join(__dirname, '..', 'templates')
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     fastify.view('./index', data, (err, html) => {
       t.error(err)
       reply.send(html)
@@ -514,7 +514,7 @@ test('reply.view with art-template should return 500 if render fails', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index')
   })
 
@@ -548,7 +548,7 @@ test('reply.view with art-template engine and raw template', t => {
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view({ raw: fs.readFileSync('./templates/index.art') }, data)
   })
 
@@ -585,7 +585,7 @@ test('reply.view with art-template engine and function template', t => {
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.header('Content-Type', 'text/html').view(art.compile({ filename: path.join(__dirname, '..', 'templates', 'index.art') }), data)
   })
 
@@ -622,7 +622,7 @@ test('reply.view with art-template engine and unknown template type', t => {
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view({}, data)
   })
 
@@ -632,7 +632,7 @@ test('reply.view with art-template engine and unknown template type', t => {
     sget({
       method: 'GET',
       url: 'http://127.0.0.1:10086/'
-    }, (err, response, body) => {
+    }, (err, response) => {
       t.error(err)
       t.equal(response.statusCode, 500)
       fastify.close()

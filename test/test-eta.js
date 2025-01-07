@@ -14,7 +14,7 @@ let eta = new Eta()
 require('./helper').etaHtmlMinifierTests(t, true)
 require('./helper').etaHtmlMinifierTests(t, false)
 
-t.beforeEach(async t => {
+t.beforeEach(async () => {
   // this is mandatory since some test call eta.configure(customOptions)
   eta = new Eta()
 })
@@ -32,7 +32,7 @@ test('reply.view with eta engine and custom templates folder', t => {
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('index.eta', data)
   })
 
@@ -67,7 +67,7 @@ test('reply.view with eta engine with layout option', t => {
     layout: 'layout-eta.html'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('index-for-layout.eta', data)
   })
 
@@ -101,7 +101,7 @@ test('reply.view with eta engine with layout option on render', t => {
     root: path.join(__dirname, '../templates')
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('index-for-layout.eta', data, { layout: 'layout-eta.html' })
   })
 
@@ -135,7 +135,7 @@ test('reply.view should return 500 if layout is missing on render', t => {
     root: path.join(__dirname, '../templates')
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('index-for-layout.eta', data, { layout: 'non-existing-layout-eta.html' })
   })
 
@@ -145,7 +145,7 @@ test('reply.view should return 500 if layout is missing on render', t => {
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+    }, (err, response) => {
       t.error(err)
       t.equal(response.statusCode, 500)
       fastify.close()
@@ -167,7 +167,7 @@ test('reply.view with eta engine and custom ext', t => {
     viewExt: 'eta'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('index', data)
   })
 
@@ -202,7 +202,7 @@ test('reply.view for eta without data-parameter but defaultContext', t => {
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('index.eta')
   })
 
@@ -237,7 +237,7 @@ test('reply.view for eta without data-parameter but defaultContext', t => {
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('index.eta')
   })
 
@@ -269,7 +269,7 @@ test('reply.view for eta without data-parameter and without defaultContext', t =
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('index-bare.html')
   })
 
@@ -302,12 +302,12 @@ test('reply.view for eta engine without data-parameter and defaultContext but wi
     }
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index-bare.html')
   })
 
@@ -341,12 +341,12 @@ test('reply.view for eta engine without defaultContext but with reply.locals and
     }
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index-bare.html', data)
   })
 
@@ -381,12 +381,12 @@ test('reply.view for eta engine without data-parameter but with reply.locals and
     defaultContext: contextData
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index-bare.html')
   })
 
@@ -422,12 +422,12 @@ test('reply.view for eta engine with data-parameter and reply.locals and default
     defaultContext: contextData
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index-bare.html', data)
   })
 
@@ -461,7 +461,7 @@ test('reply.view with eta engine and full path templates folder', t => {
     templates: path.join(__dirname, '../templates')
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('index.eta', data)
   })
 
@@ -494,7 +494,7 @@ test('reply.view with eta engine', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('templates/index.eta', data)
   })
 
@@ -528,7 +528,7 @@ test('reply.view with eta engine and defaultContext', t => {
     defaultContext: data
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('templates/index.eta', {})
   })
 
@@ -562,7 +562,7 @@ test('reply.view with eta engine and includeViewExtension property as true', t =
     includeViewExtension: true
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('templates/index', data)
   })
 
@@ -602,7 +602,7 @@ test('reply.view with eta engine, template folder specified, include files (eta 
     options
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-linking-other-pages', data) // sample for specifying with type
   })
 
@@ -646,7 +646,7 @@ test('reply.view with eta engine, templates with folder specified, include files
     options
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.type('text/html; charset=utf-8').view('index', data)
   })
 
@@ -688,7 +688,7 @@ test('reply.view with eta engine, templates with folder specified, include files
     options
   })
 
-  fastify.get('/no-data-test', (req, reply) => {
+  fastify.get('/no-data-test', (_req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-with-no-data')
   })
 
@@ -732,7 +732,7 @@ test('reply.view with eta engine, templates with folder specified, include files
     options
   })
 
-  fastify.get('/include-test', (req, reply) => {
+  fastify.get('/include-test', (_req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-with-includes', data)
   })
 
@@ -775,7 +775,7 @@ test('reply.view with eta engine, templates with folder specified, include files
     options
   })
 
-  fastify.get('/include-one-include-missing-test', (req, reply) => {
+  fastify.get('/include-one-include-missing-test', (_req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-with-includes-one-missing', data)
   })
 
@@ -910,7 +910,7 @@ test('fastify.view with eta engine and custom cache', t => {
   eta.loadTemplate(path.join(__dirname, tplPath), eta.readFile(tplPath))
   const tplF = eta.templatesSync.get(path.join(__dirname, tplPath))
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     try {
       const res = reply.view(tplPath, data)
       t.equal(eta.templatesSync, pseudoCache,
@@ -1004,7 +1004,7 @@ test('reply.view with eta engine and raw template', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view({ raw: fs.readFileSync('./templates/index.eta', 'utf8') }, data)
   })
 
@@ -1038,7 +1038,7 @@ test('reply.view with eta engine and function template', t => {
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view(eta.compile(fs.readFileSync('./templates/index.eta', 'utf8')), data)
   })
 
@@ -1072,7 +1072,7 @@ test('reply.view should return 500 if function return sync error', t => {
     root: path.join(__dirname, '../templates')
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view(() => { throw new Error('kaboom') }, data)
   })
 
@@ -1082,7 +1082,7 @@ test('reply.view should return 500 if function return sync error', t => {
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+    }, (err, response) => {
       t.error(err)
       t.equal(response.statusCode, 500)
       fastify.close()
@@ -1103,7 +1103,7 @@ test('reply.view should return 500 if function return async error', t => {
     root: path.join(__dirname, '../templates')
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view(() => Promise.reject(new Error('kaboom')), data)
   })
 
@@ -1113,7 +1113,7 @@ test('reply.view should return 500 if function return async error', t => {
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+    }, (err, response) => {
       t.error(err)
       t.equal(response.statusCode, 500)
       fastify.close()

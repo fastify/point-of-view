@@ -125,7 +125,7 @@ async function fastifyView (fastify, opts) {
     return result
   }
 
-  function viewDecorator (page) {
+  function viewDecorator () {
     const args = Array.from(arguments)
 
     let done
@@ -165,7 +165,7 @@ async function fastifyView (fastify, opts) {
   if (!fastify.hasReplyDecorator('locals')) {
     fastify.decorateReply('locals', null)
 
-    fastify.addHook('onRequest', (req, reply, done) => {
+    fastify.addHook('onRequest', (_req, reply, done) => {
       reply.locals = {}
       done()
     })
@@ -302,7 +302,7 @@ async function fastifyView (fastify, opts) {
     return compiledPage
   }
 
-  function readCallback (page, data, localOptions, html) {
+  function readCallback (page, _data, localOptions, html) {
     globalOptions.filename = join(templatesDir, page)
     return readCallbackParser(page, html, localOptions)
   }
@@ -512,7 +512,7 @@ async function fastifyView (fastify, opts) {
     return html
   }
 
-  async function viewTwig (page, data, opts) {
+  async function viewTwig (page, data) {
     data = Object.assign({}, defaultCtx, globalOptions, this.locals, data)
     let render
     if (typeof page === 'string') {
@@ -663,7 +663,7 @@ async function fastifyView (fastify, opts) {
     try {
       accessSync(join(templatesDir, getPage(fileName, ext)))
       result = true
-    } catch (e) {
+    } catch {
       result = false
     }
 

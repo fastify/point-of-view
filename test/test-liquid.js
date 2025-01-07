@@ -23,7 +23,7 @@ test('reply.view with liquid engine', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.liquid', data)
   })
 
@@ -63,7 +63,7 @@ test('reply.view with liquid engine without data-parameter but defaultContext', 
     defaultContext: data
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.liquid')
   })
 
@@ -101,7 +101,7 @@ test('reply.view with liquid engine without data-parameter but without defaultCo
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.liquid')
   })
 
@@ -141,7 +141,7 @@ test('reply.view with liquid engine with data-parameter and defaultContext', t =
     defaultContext: data
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.liquid', {})
   })
 
@@ -180,12 +180,12 @@ test('reply.view for liquid engine without data-parameter and defaultContext but
     }
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.liquid', {})
   })
 
@@ -225,12 +225,12 @@ test('reply.view for liquid engine without defaultContext but with reply.locals 
     }
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.liquid', data)
   })
 
@@ -271,12 +271,12 @@ test('reply.view for liquid engine without data-parameter but with reply.locals 
     defaultContext
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.liquid')
   })
 
@@ -318,12 +318,12 @@ test('reply.view for liquid engine with data-parameter and reply.locals and defa
     defaultContext
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.liquid', data)
   })
 
@@ -373,7 +373,7 @@ test('reply.view with liquid engine and custom tag', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index-with-custom-tag.liquid', data)
   })
 
@@ -412,7 +412,7 @@ test('reply.view with liquid engine and double quoted variable', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/double-quotes-variable.liquid', data)
   })
 
@@ -497,7 +497,7 @@ test('reply.view with liquid engine and raw template', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view({ raw: fs.readFileSync('./templates/index.liquid', 'utf8') }, data)
   })
 
@@ -536,7 +536,7 @@ test('reply.view with liquid engine and function template', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.header('Content-Type', 'text/html').view(engine.renderFile.bind(engine, './templates/index.liquid'), data)
   })
 
@@ -575,7 +575,7 @@ test('reply.view with liquid engine and unknown template type', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view({ }, data)
   })
 
@@ -585,7 +585,7 @@ test('reply.view with liquid engine and unknown template type', t => {
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+    }, (err, response) => {
       t.error(err)
       t.equal(response.statusCode, 500)
       fastify.close()

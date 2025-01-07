@@ -18,7 +18,7 @@ test('reply.view with ejs engine and async: true (global option)', t => {
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('ejs-async.ejs')
   })
 
@@ -52,7 +52,7 @@ test('reply.view with ejs engine, async: true (global option), and production: t
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('ejs-async.ejs')
   })
 
@@ -60,7 +60,7 @@ test('reply.view with ejs engine, async: true (global option), and production: t
     t.error(err)
 
     for (let i = 0; i < numTests; i++) {
-      await new Promise((resolve, reject) => {
+      await new Promise((resolve) => {
         sget({
           method: 'GET',
           url: 'http://localhost:' + fastify.server.address().port
@@ -94,7 +94,7 @@ test('reply.view with ejs engine, async: true (global option), and html-minifier
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('ejs-async.ejs')
   })
 
@@ -129,7 +129,7 @@ test('reply.view with ejs engine, async: true (global option), and html-minifier
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('ejs-async.ejs')
   })
 
@@ -167,7 +167,7 @@ test('reply.view with ejs engine, async: true (global option), and html-minifier
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('ejs-async.ejs')
   })
 
@@ -175,7 +175,7 @@ test('reply.view with ejs engine, async: true (global option), and html-minifier
     t.error(err)
 
     for (let i = 0; i < numTests; i++) {
-      await new Promise((resolve, reject) => {
+      await new Promise((resolve) => {
         sget({
           method: 'GET',
           url: 'http://localhost:' + fastify.server.address().port
@@ -203,7 +203,7 @@ test('reply.view with ejs engine and async: true (local option)', t => {
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('ejs-async.ejs', {}, { async: true })
   })
 
@@ -236,7 +236,7 @@ test('reply.view with ejs engine, async: true (local option), and production: tr
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('ejs-async.ejs', {}, { async: true })
   })
 
@@ -244,7 +244,7 @@ test('reply.view with ejs engine, async: true (local option), and production: tr
     t.error(err)
 
     for (let i = 0; i < numTests; i++) {
-      await new Promise((resolve, reject) => {
+      await new Promise((resolve) => {
         sget({
           method: 'GET',
           url: 'http://localhost:' + fastify.server.address().port
@@ -277,7 +277,7 @@ test('reply.view with ejs engine, async: true (local override), and html-minifie
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('ejs-async.ejs', {}, { async: true })
   })
 
@@ -313,7 +313,7 @@ test('reply.view with ejs engine, async: false (local override), and html-minifi
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('index.ejs', { text: 'text' }, { async: false })
   })
 
@@ -351,7 +351,7 @@ test('reply.view with ejs engine, async: true (local override), and html-minifie
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('ejs-async.ejs', {}, { async: true })
   })
 
@@ -359,7 +359,7 @@ test('reply.view with ejs engine, async: true (local override), and html-minifie
     t.error(err)
 
     for (let i = 0; i < numTests; i++) {
-      await new Promise((resolve, reject) => {
+      await new Promise((resolve) => {
         sget({
           method: 'GET',
           url: 'http://localhost:' + fastify.server.address().port
@@ -394,7 +394,7 @@ test('reply.view with ejs engine, async: false (local override), and html-minifi
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('index.ejs', { text: 'text' }, { async: false })
   })
 
@@ -402,7 +402,7 @@ test('reply.view with ejs engine, async: false (local override), and html-minifi
     t.error(err)
 
     for (let i = 0; i < numTests; i++) {
-      await new Promise((resolve, reject) => {
+      await new Promise((resolve) => {
         sget({
           method: 'GET',
           url: 'http://localhost:' + fastify.server.address().port
@@ -429,7 +429,7 @@ test('reply.view with ejs engine and async: true and raw template', t => {
     engine: { ejs }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view({ raw: fs.readFileSync('./templates/ejs-async.ejs', 'utf8') }, {}, { async: true })
   })
 
@@ -459,7 +459,7 @@ test('reply.view with ejs engine and async: true and function template', t => {
     engine: { ejs }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view(ejs.compile(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), { async: true }), {})
   })
 
@@ -489,7 +489,7 @@ test('reply.view with promise error', t => {
     engine: { ejs }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view(() => Promise.reject(new Error('error')), {})
   })
 
@@ -499,7 +499,7 @@ test('reply.view with promise error', t => {
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
-    }, async (err, response, body) => {
+    }, async (err, response) => {
       t.error(err)
       t.equal(response.statusCode, 500)
       fastify.close()
@@ -518,7 +518,7 @@ test('reply.viewAsync with ejs engine and async: true (global option)', t => {
     templates: 'templates'
   })
 
-  fastify.get('/', async (req, reply) => {
+  fastify.get('/', async (_req, reply) => {
     return reply.viewAsync('ejs-async.ejs')
   })
 
@@ -554,7 +554,7 @@ test('reply.viewAsync with ejs engine, async: true (global option), and html-min
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     return reply.viewAsync('ejs-async.ejs')
   })
 

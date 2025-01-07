@@ -62,7 +62,7 @@ test('fastify.view.clearCache clears cache', t => {
     production: true
   })
 
-  fastify.get('/view-cache-test', (req, reply) => {
+  fastify.get('/view-cache-test', (_req, reply) => {
     reply.type('text/html; charset=utf-8').view('cache_clear_test')
   })
 
@@ -112,7 +112,7 @@ test('reply.view exist', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     t.ok(reply.view)
     reply.send({ hello: 'world' })
   })
@@ -143,7 +143,7 @@ test('reply.locals exist', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     t.ok(reply.locals)
     reply.send({ hello: 'world' })
   })
@@ -178,7 +178,7 @@ test('reply.view can be returned from async function to indicate response proces
     layout: 'layout.html'
   })
 
-  fastify.get('/', async (req, reply) => {
+  fastify.get('/', async (_req, reply) => {
     return reply.view('index-for-layout.ejs', data)
   })
 
@@ -212,13 +212,13 @@ test('Possibility to access res.locals variable across all views', t => {
     viewExt: 'ejs'
   })
 
-  fastify.addHook('preHandler', async function (req, reply) {
+  fastify.addHook('preHandler', async function (_req, reply) {
     reply.locals = {
       content: 'ok'
     }
   })
 
-  fastify.get('/', async (req, reply) => {
+  fastify.get('/', async (_req, reply) => {
     return reply.view('index-layout-content')
   })
 
@@ -251,7 +251,7 @@ test('Default extension for ejs', t => {
     viewExt: 'html'
   })
 
-  fastify.get('/', async (req, reply) => {
+  fastify.get('/', async (_req, reply) => {
     return reply.view('index-with-includes-without-ext')
   })
 
@@ -338,7 +338,7 @@ test('reply.view should return 500 if page is missing', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view()
   })
 
@@ -348,7 +348,7 @@ test('reply.view should return 500 if page is missing', t => {
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+    }, (err, response) => {
       t.error(err)
       t.equal(response.statusCode, 500)
       fastify.close()
@@ -367,7 +367,7 @@ test('reply.view should return 500 if layout is set globally and provided on ren
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('index-for-layout.ejs', data, { layout: 'layout.html' })
   })
 
@@ -377,7 +377,7 @@ test('reply.view should return 500 if layout is set globally and provided on ren
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+    }, (err, response) => {
       t.error(err)
       t.equal(response.statusCode, 500)
       fastify.close()

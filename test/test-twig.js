@@ -21,7 +21,7 @@ test('reply.view with twig engine', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.twig', data)
   })
 
@@ -57,7 +57,7 @@ test('reply.view with twig engine and simple include', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/template.twig', data)
   })
 
@@ -94,7 +94,7 @@ test('reply.view for twig without data-parameter but defaultContext', t => {
     defaultContext: data
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.twig')
   })
 
@@ -129,7 +129,7 @@ test('reply.view for twig without data-parameter and without defaultContext', t 
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.twig')
   })
 
@@ -166,7 +166,7 @@ test('reply.view with twig engine and defaultContext', t => {
     defaultContext: data
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.twig', {})
   })
 
@@ -202,12 +202,12 @@ test('reply.view for twig engine without data-parameter and defaultContext but w
     }
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.twig')
   })
 
@@ -244,12 +244,12 @@ test('reply.view for twig engine without defaultContext but with reply.locals an
     }
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.twig', data)
   })
 
@@ -287,12 +287,12 @@ test('reply.view for twig engine without data-parameter but with reply.locals an
     defaultContext: contextData
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.twig')
   })
 
@@ -331,12 +331,12 @@ test('reply.view for twig engine with data-parameter and reply.locals and defaul
     defaultContext: contextData
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.twig', data)
   })
 
@@ -372,7 +372,7 @@ test('reply.view with twig engine, will preserve content-type', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.header('Content-Type', 'text/xml')
     reply.view('./templates/index.twig', data)
   })
@@ -432,7 +432,7 @@ test('reply.view with twig engine should return 500 if renderFile fails', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.twig')
   })
 
@@ -465,7 +465,7 @@ test('reply.view with twig engine and raw template', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view({ raw: fs.readFileSync('./templates/index.twig') }, data)
   })
 
@@ -501,7 +501,7 @@ test('reply.view with twig engine and function template', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view(Twig.twig({ data: fs.readFileSync('./templates/index.twig').toString() }), data)
   })
 
@@ -537,7 +537,7 @@ test('reply.view with twig engine and unknown template type', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view({ }, data)
   })
 
@@ -547,7 +547,7 @@ test('reply.view with twig engine and unknown template type', t => {
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+    }, (err, response) => {
       t.error(err)
       t.equal(response.statusCode, 500)
       fastify.close()

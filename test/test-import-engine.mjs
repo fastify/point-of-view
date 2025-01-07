@@ -13,7 +13,7 @@ test('using an imported engine as a promise', t => {
 
   fastify.register(import('../index.js'), { engine: { ejs }, templates: 'templates' })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('index.ejs', data)
   })
 
@@ -23,7 +23,7 @@ test('using an imported engine as a promise', t => {
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
-    }, async (err, response, body) => {
+    }, async (err, _response, body) => {
       t.error(err)
       t.equal((await ejs).render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()

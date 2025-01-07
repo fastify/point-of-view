@@ -20,7 +20,7 @@ async function something () {
   return new Date()
 }
 
-fastify.get('/', async (req, reply) => {
+fastify.get('/', async (_req, reply) => {
   const t = await something()
   return reply.view('/index.njk', { text: t })
 })

@@ -112,12 +112,12 @@ test('reply.view for handlebars engine without data-parameter and defaultContext
     }
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.html')
   })
 
@@ -151,12 +151,12 @@ test('reply.view for handlebars engine without defaultContext but with reply.loc
     }
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.html', data)
   })
 
@@ -191,12 +191,12 @@ test('reply.view for handlebars engine without data-parameter but with reply.loc
     defaultContext: contextData
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.html')
   })
 
@@ -232,12 +232,12 @@ test('reply.view for handlebars engine with data-parameter and reply.locals and 
     defaultContext: contextData
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.html', data)
   })
 
@@ -345,12 +345,12 @@ test('fastify.view with handlebars engine with invalid layout option on render s
 
   fastify.ready(err => {
     t.error(err)
-    fastify.view('./templates/index-for-layout.hbs', data, { layout: './templates/invalid-layout.hbs' }, (err, compiled) => {
+    fastify.view('./templates/index-for-layout.hbs', data, { layout: './templates/invalid-layout.hbs' }, (err) => {
       t.ok(err instanceof Error)
       t.equal(err.message, 'unable to access template "./templates/invalid-layout.hbs"')
     })
     // repeated for test coverage of layout access check lru
-    fastify.view('./templates/index-for-layout.hbs', data, { layout: './templates/invalid-layout.hbs' }, (err, compiled) => {
+    fastify.view('./templates/index-for-layout.hbs', data, { layout: './templates/invalid-layout.hbs' }, (err) => {
       t.ok(err instanceof Error)
       t.equal(err.message, 'unable to access template "./templates/invalid-layout.hbs"')
     })
@@ -369,7 +369,7 @@ test('reply.view with handlebars engine', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.html', data)
   })
 
@@ -403,7 +403,7 @@ test('reply.view with handlebars engine catches render error', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/error.hbs')
   })
 
@@ -431,7 +431,7 @@ test('reply.view with handlebars engine and layout catches render error', t => {
     layout: './templates/layout.hbs'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/error.hbs')
   })
 
@@ -458,7 +458,7 @@ test('reply.view with handlebars engine and defaultContext', t => {
     defaultContext: data
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.html', {})
   })
 
@@ -492,7 +492,7 @@ test('reply.view with handlebars engine and includeViewExtension property as tru
     includeViewExtension: true
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index', data)
   })
 
@@ -561,7 +561,7 @@ test('reply.view with handlebars engine with partials', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index-with-partials.hbs', data)
   })
 
@@ -596,7 +596,7 @@ test('reply.view with handlebars engine with missing partials path', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index-with-partials.hbs', data)
   })
 
@@ -685,7 +685,7 @@ test('reply.view with handlebars engine with compile options', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index-with-partials.hbs', data)
   })
 
@@ -723,7 +723,7 @@ test('reply.view with handlebars engine with useDataVariables', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.locals = data
     reply.view('./templates/index-with-partials.hbs', null)
   })
@@ -763,7 +763,7 @@ test('reply.view with handlebars engine with useDataVariables and global Ctx', t
     defaultContext: data
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index-with-partials.hbs', null)
   })
 
@@ -795,7 +795,7 @@ test('reply.view with handlebars engine with layout option', t => {
     layout: './templates/layout.hbs'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index-for-layout.hbs')
   })
 
@@ -826,7 +826,7 @@ test('reply.view with handlebars engine with layout option on render', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index-for-layout.hbs', {}, { layout: './templates/layout.hbs' })
   })
 
@@ -857,7 +857,7 @@ test('reply.view should return 500 if layout is missing on render', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index-for-layout.hbs', {}, { layout: './templates/missing-layout.hbs' })
   })
 
@@ -866,7 +866,7 @@ test('reply.view should return 500 if layout is missing on render', t => {
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, replyBody) => {
+    }, (err, response) => {
       t.error(err)
       t.equal(response.statusCode, 500)
       fastify.close()
@@ -938,7 +938,7 @@ test('reply.view with handlebars engine should return 500 if template fails in p
     production: true
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index-for-layout.hbs')
   })
 
@@ -971,7 +971,7 @@ test('reply.view with handlebars engine and raw template', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.header('Content-Type', 'text/html').view({ raw: fs.readFileSync('./templates/index.html', 'utf8') }, data)
   })
 
@@ -1004,7 +1004,7 @@ test('reply.view with handlebars engine and function template', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8')), data)
   })
 
@@ -1037,7 +1037,7 @@ test('reply.view with handlebars engine and empty template', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view(null, data)
   })
 
@@ -1047,7 +1047,7 @@ test('reply.view with handlebars engine and empty template', t => {
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+    }, (err, response) => {
       t.error(err)
       t.equal(response.statusCode, 500)
       fastify.close()
@@ -1068,7 +1068,7 @@ test('fastify.view with handlebars engine and callback in production mode and he
     layout: './templates/layout.hbs'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.header('Content-Type', 'text/html').view('./templates/index-for-layout.hbs', null)
   })
 
@@ -1102,7 +1102,7 @@ test('fastify.view with handlebars engine and both layout', t => {
     layout: './templates/layout.hbs'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.header('Content-Type', 'text/html').view('./templates/index.hbs', data, { layout: './templates/layout.hbs' })
   })
 
@@ -1112,7 +1112,7 @@ test('fastify.view with handlebars engine and both layout', t => {
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+    }, (err, response) => {
       t.error(err)
       t.equal(response.statusCode, 500)
       fastify.close()
@@ -1133,11 +1133,11 @@ test('reply.viewAsync for handlebars engine without defaultContext but with repl
     }
   })
 
-  fastify.addHook('preHandler', async function (request, reply) {
+  fastify.addHook('preHandler', async function (_request, reply) {
     reply.locals = localsData
   })
 
-  fastify.get('/', async (req, reply) => {
+  fastify.get('/', async (_req, reply) => {
     return reply.viewAsync('./templates/index.html', data)
   })
 
