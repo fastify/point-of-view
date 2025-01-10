@@ -286,7 +286,7 @@ async function fastifyView (fastify, opts) {
     if ((type === 'ejs') && viewExt && !globalOptions.includer) {
       globalOptions.includer = (originalPath, parsedPath) => ({
         filename: parsedPath || join(templatesDir, originalPath + '.' + viewExt)
-        })
+      })
     }
     if (localOptions) {
       for (const key in globalOptions) {
