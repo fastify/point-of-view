@@ -6,7 +6,7 @@
 
 Templates rendering plugin support for Fastify.
 
-`@fastify/view` decorates the reply interface with the `view` and `viewAsync` methods for managing view engines, which can be used to render templates responses.
+`@fastify/view` decorates the reply interface with the `view` and `viewAsync` methods for managing view engines, which can be used to render templated responses.
 
 Currently supports the following templates engines:
 
@@ -37,7 +37,7 @@ _Note: [`marko`](https://markojs.com/) support has been dropped. Please use [`@m
 
 #### Benchmarks
 
-The benchmark were run with the files in the `benchmark` folder with the `ejs` engine.
+The benchmarks were run with the files in the `benchmark` folder with the `ejs` engine.
 The data has been taken with: `autocannon -c 100 -d 5 -p 10 localhost:3000`
 
 - Express: 8.8k req/sec
@@ -112,7 +112,7 @@ fastify.listen({ port: 3000 }, (err) => {
 | `asyncPropertyName`    | The property that should be used to decorate `reply` for async handler <br><br>Defaults to `${propertyName}Async` if `propertyName` is defined | `"viewAsync"` |
 | `root`                 | The root path of your templates folder. The template name or path passed to the render function will be resolved relative to this path | `"./"` |
 | `charset`              | Default charset used when setting `Content-Type` header | `"utf-8"` |
-| `includeViewExtension` | Automatically append the default extension for the used template engine **if omitted from the template name** . So instead of `template.hbs`, just `template` can be used | `false` |
+| `includeViewExtension` | Automatically append the default extension for the used template engine **if omitted from the template name**. So instead of `template.hbs`, just `template` can be used | `false` |
 | `viewExt`              | Override the default extension for a given template engine. This has precedence over `includeViewExtension` and will lead to the same behavior, just with a custom extension. <br><br>Example: `"handlebars"` | `""` |
 | `layout`               | See [Layouts](#layouts) <br><br>This option lets you specify a global layout file to be used when rendering your templates. Settings like `root` or `viewExt` apply as for any other template file. <br><br>Example: `./templates/layouts/main.hbs`  | |
 | `options`              | See [Engine-specific settings](#engine-specific-settings) | `{}` |
@@ -274,7 +274,7 @@ const minifierOpts = {
   }
 ```
 
-To filter some paths from minification, you can add the option `pathsToExcludeHtmlMinifier` with list of paths
+To exclude paths from minification, you can add the option `pathsToExcludeHtmlMinifier` with a list of paths:
 ```js
 // get a reference to html-minifier-terser
 const minifier = require('html-minifier-terser')
@@ -845,7 +845,7 @@ fastify.register(myViewRendererPlugin, {
 
 ### Forcing a cache-flush
 
-To forcefully clear cache when in production mode, call the `view.clearCache()` function.
+To forcefully clear the cache when in production mode, call the `view.clearCache()` function.
 
 ```js
 fastify.view.clearCache();
@@ -930,9 +930,9 @@ fastify.get("/", (req, reply) => {
 
 ## Note
 
-By default views are served with the mime type `text/html`, with the charset specified in options. You can specify a different `Content-Type` header using `reply.type`.
+By default, views are served with the mime type `text/html`, with the charset specified in options. You can specify a different `Content-Type` header using `reply.type`.
 
-## Acknowledgements
+## Acknowledgments
 
 This project is kindly sponsored by:
 
