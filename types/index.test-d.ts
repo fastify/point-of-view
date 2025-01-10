@@ -31,11 +31,11 @@ app.register(fastifyView, {
   viewExt: 'ejs',
 })
 
-app.get('/', (request, reply) => {
+app.get('/', (_request, reply) => {
   reply.view('/index-with-no-data')
 })
 
-app.get('/data', (request, reply) => {
+app.get('/data', (_request, reply) => {
   if (!reply.locals) {
     reply.locals = {}
   }
@@ -47,7 +47,7 @@ app.get('/data', (request, reply) => {
   reply.view('/index', { text: 'Sample data' })
 })
 
-app.get('/dataTyped', (request, reply) => {
+app.get('/dataTyped', (_request, reply) => {
   if (!reply.locals) {
     reply.locals = {}
   }
@@ -59,11 +59,11 @@ app.get('/dataTyped', (request, reply) => {
   reply.view<{ text: string; }>('/index', { text: 'Sample data' })
 })
 
-app.get('/use-layout', (request, reply) => {
+app.get('/use-layout', (_request, reply) => {
   reply.view('/layout-ts-content-with-data', { text: 'Using a layout' }, { layout: '/layout-ts' })
 })
 
-app.get('/view-async', async (request, reply) => {
+app.get('/view-async', async (_request, reply) => {
   expectAssignable<NonNullable<(typeof reply)['locals']>['appVersion']>('4.14.0')
   expectNotAssignable<NonNullable<(typeof reply)['locals']>['appVersion']>(1)
 
@@ -76,7 +76,7 @@ app.get('/view-async', async (request, reply) => {
   return html
 })
 
-app.get('/view-async-generic-provided', async (request, reply) => {
+app.get('/view-async-generic-provided', async (_request, reply) => {
   type ViewAsyncDataParamType = Parameters<typeof reply.viewAsync<{ text: string; }>>[1]
   expectAssignable<ViewAsyncDataParamType>({ text: 'Sample data' })
   expectNotAssignable<ViewAsyncDataParamType>({ notText: 'Sample data ' })
@@ -109,7 +109,7 @@ nunjucksApp.register(fastifyView, {
   ],
 })
 
-nunjucksApp.get('/', (request, reply) => {
+nunjucksApp.get('/', (_request, reply) => {
   reply.view('index.njk', { text: 'Sample data' })
 })
 

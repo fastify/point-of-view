@@ -27,7 +27,7 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
     options
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-linking-other-pages', data) // sample for specifying with type
   })
 
@@ -71,7 +71,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
     options
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.type('text/html; charset=utf-8').view('index', data)
   })
 
@@ -115,7 +115,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
     options
   })
 
-  fastify.get('/include-test', (req, reply) => {
+  fastify.get('/include-test', (_req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-with-includes', data)
   })
 
@@ -159,7 +159,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
     options
   })
 
-  fastify.get('/include-one-include-missing-test', (req, reply) => {
+  fastify.get('/include-one-include-missing-test', (_req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-with-includes-one-missing', data)
   })
 
@@ -203,7 +203,7 @@ test('reply.view with ejs engine, templates with folder specified, include files
     options
   })
 
-  fastify.get('/include-one-attribute-missing-test', (req, reply) => {
+  fastify.get('/include-one-attribute-missing-test', (_req, reply) => {
     reply.type('text/html; charset=utf-8').view('index-with-includes-and-attribute-missing', data)
   })
 

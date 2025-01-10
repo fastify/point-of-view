@@ -31,7 +31,7 @@ test('reply.view with dot engine .dot file', t => {
     root: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('testdot', data)
   })
 
@@ -69,7 +69,7 @@ test('reply.view with dot engine .dot file should create non-existent destinatio
 
   t.teardown(() => rmdirSync('non-existent'))
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('testdot')
   })
 
@@ -124,7 +124,7 @@ test('reply.view with dot engine .jst file', t => {
     root: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('testjst', data)
   })
 
@@ -162,7 +162,7 @@ test('reply.view with dot engine without data-parameter but defaultContext', t =
     root: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('testdot')
   })
 
@@ -197,7 +197,7 @@ test('reply.view with dot engine without data-parameter but without defaultConte
     root: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('testdot')
   })
 
@@ -235,7 +235,7 @@ test('reply.view with dot engine with data-parameter and defaultContext', t => {
     root: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('testdot', {})
   })
 
@@ -271,12 +271,12 @@ test('reply.view for dot engine without data-parameter and defaultContext but wi
     root: 'templates'
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('testdot', {})
   })
 
@@ -313,12 +313,12 @@ test('reply.view for dot engine without defaultContext but with reply.locals and
     root: 'templates'
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('testdot', data)
   })
 
@@ -356,12 +356,12 @@ test('reply.view for dot engine without data-parameter but with reply.locals and
     root: 'templates'
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('testdot')
   })
 
@@ -399,12 +399,12 @@ test('reply.view for dot engine with data-parameter and reply.locals and default
     root: 'templates'
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('testdot', data)
   })
 
@@ -462,7 +462,7 @@ test('reply.view with dot engine with layout option', t => {
     layout: 'layout'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('testdot', data)
   })
 
@@ -496,7 +496,7 @@ test('reply.view with dot engine with layout option on render', t => {
     root: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('testdot', data, { layout: 'layout' })
   })
 
@@ -530,7 +530,7 @@ test('reply.view with dot engine with layout option on render', t => {
     root: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('testdot', data, { layout: 'layout' })
   })
 
@@ -564,7 +564,7 @@ test('reply.view should return 500 if layout is missing on render', t => {
     root: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('testdot', data, { layout: 'non-existing-layout' })
   })
 
@@ -573,7 +573,7 @@ test('reply.view should return 500 if layout is missing on render', t => {
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+    }, (err, response) => {
       t.error(err)
       t.equal(response.statusCode, 500)
       fastify.close()
@@ -594,7 +594,7 @@ test('reply.view with dot engine and raw template', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view({ raw: readFileSync('./templates/testdot.dot'), imports: { testdef: readFileSync('./templates/testdef.def') } }, data)
   })
 
@@ -628,7 +628,7 @@ test('reply.view with dot engine and function template', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.header('Content-Type', 'text/html').view(engine.process({ path: 'templates', destination: 'out' }).testdot, data)
   })
 

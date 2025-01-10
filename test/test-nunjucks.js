@@ -23,7 +23,7 @@ test('reply.view with nunjucks engine and custom templates folder', t => {
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('index.njk', data)
   })
 
@@ -60,7 +60,7 @@ test('reply.view with nunjucks engine and custom templates array of folders', t 
     ]
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('index.njk', data)
   })
 
@@ -94,7 +94,7 @@ test('reply.view for nunjucks engine without data-parameter but defaultContext',
     defaultContext: data
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.njk')
   })
 
@@ -126,7 +126,7 @@ test('reply.view for nunjucks engine without data-parameter and without defaultC
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.njk')
   })
 
@@ -159,12 +159,12 @@ test('reply.view for nunjucks engine without data-parameter and defaultContext b
     }
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.njk')
   })
 
@@ -198,12 +198,12 @@ test('reply.view for nunjucks engine without defaultContext but with reply.local
     }
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.njk', data)
   })
 
@@ -238,12 +238,12 @@ test('reply.view for nunjucks engine without data-parameter but with reply.local
     defaultContext: contextData
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.njk')
   })
 
@@ -279,12 +279,12 @@ test('reply.view for nunjucks engine with data-parameter and reply.locals and de
     defaultContext: contextData
   })
 
-  fastify.addHook('preHandler', function (request, reply, done) {
+  fastify.addHook('preHandler', function (_request, reply, done) {
     reply.locals = localsData
     done()
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.njk', data)
   })
 
@@ -317,7 +317,7 @@ test('reply.view with nunjucks engine, will preserve content-type', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.header('Content-Type', 'text/xml')
     reply.view('./templates/index.njk', data)
   })
@@ -352,7 +352,7 @@ test('reply.view with nunjucks engine and full path templates folder', t => {
     templates: path.join(__dirname, '../templates')
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./index.njk', data)
   })
 
@@ -387,7 +387,7 @@ test('reply.view with nunjucks engine and includeViewExtension is true', t => {
     includeViewExtension: true
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index', data)
   })
 
@@ -426,7 +426,7 @@ test('reply.view with nunjucks engine using onConfigure callback', t => {
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index-with-global.njk', data)
   })
 
@@ -518,7 +518,7 @@ test('fastify.view with nunjucks engine should return 500 if render fails', t =>
     }
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view('./templates/index.njk')
   })
 
@@ -552,7 +552,7 @@ test('reply.view with nunjucks engine and raw template', t => {
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view({ raw: fs.readFileSync('./templates/index.njk') }, data)
   })
 
@@ -586,7 +586,7 @@ test('reply.view with nunjucks engine and function template', t => {
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view(nunjucks.compile(fs.readFileSync('./templates/index.njk').toString()), data)
   })
 
@@ -620,7 +620,7 @@ test('reply.view with nunjucks engine and unknown template type', t => {
     templates: 'templates'
   })
 
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', (_req, reply) => {
     reply.view({ }, data)
   })
 
@@ -630,7 +630,7 @@ test('reply.view with nunjucks engine and unknown template type', t => {
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+    }, (err, response) => {
       t.error(err)
       t.equal(response.statusCode, 500)
       fastify.close()

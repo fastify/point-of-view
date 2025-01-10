@@ -7,7 +7,7 @@ const app = express()
 
 app.set('view engine', 'ejs')
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.render('../../templates/index.ejs', { text: 'text' })
 })
 

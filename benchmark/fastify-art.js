@@ -2,5 +2,5 @@
 
 require('./setup.js')({
   engine: { 'art-template': require('art-template') },
-  route: (req, reply) => { reply.view('index.art', { text: 'text' }) }
+  route: (_req, reply) => { reply.view('index.art', { text: 'text' }) }
 })

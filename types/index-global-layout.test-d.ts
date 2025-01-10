@@ -32,11 +32,11 @@ app.register(fastifyView, {
   viewExt: 'ejs',
 })
 
-app.get('/', (request, reply) => {
+app.get('/', (_request, reply) => {
   reply.view('/layout-ts-content-no-data')
 })
 
-app.get('/data', (request, reply) => {
+app.get('/data', (_request, reply) => {
   if (!reply.locals) {
     reply.locals = {}
   }
@@ -46,7 +46,7 @@ app.get('/data', (request, reply) => {
   reply.view('/layout-ts-content-with-data', { text: 'Sample data' })
 })
 
-app.get('/dataTyped', (request, reply) => {
+app.get('/dataTyped', (_request, reply) => {
   if (!reply.locals) {
     reply.locals = {}
   }

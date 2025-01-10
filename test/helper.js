@@ -42,7 +42,7 @@ module.exports.dotHtmlMinifierTests = function (t, compileOptions, withMinifierO
       }
     })
 
-    fastify.get('/', (req, reply) => {
+    fastify.get('/', (_req, reply) => {
       reply.view('testdot', data)
     })
 
@@ -79,7 +79,7 @@ module.exports.dotHtmlMinifierTests = function (t, compileOptions, withMinifierO
       }
     })
 
-    fastify.get('/test', (req, reply) => {
+    fastify.get('/test', (_req, reply) => {
       reply.view('testdot', data)
     })
 
@@ -122,7 +122,7 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
       }
     })
 
-    fastify.get('/', (req, reply) => {
+    fastify.get('/', (_req, reply) => {
       reply.view('templates/index.eta', data)
     })
 
@@ -158,7 +158,7 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
       }
     })
 
-    fastify.get('/', (req, reply) => {
+    fastify.get('/', (_req, reply) => {
       reply.view('templates/index.eta', data)
     })
 
@@ -193,7 +193,7 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
       }
     })
 
-    fastify.get('/test', (req, reply) => {
+    fastify.get('/test', (_req, reply) => {
       reply.view('templates/index.eta', data)
     })
 
@@ -264,7 +264,7 @@ module.exports.liquidHtmlMinifierTests = function (t, withMinifierOptions) {
       }
     })
 
-    fastify.get('/', (req, reply) => {
+    fastify.get('/', (_req, reply) => {
       reply.view('./templates/index.liquid', data)
     })
 
@@ -304,7 +304,7 @@ module.exports.liquidHtmlMinifierTests = function (t, withMinifierOptions) {
       }
     })
 
-    fastify.get('/test', (req, reply) => {
+    fastify.get('/test', (_req, reply) => {
       reply.view('./templates/index.liquid', data)
     })
 
@@ -349,7 +349,7 @@ module.exports.nunjucksHtmlMinifierTests = function (t, withMinifierOptions) {
       }
     })
 
-    fastify.get('/', (req, reply) => {
+    fastify.get('/', (_req, reply) => {
       reply.view('./index.njk', data)
     })
 
@@ -386,7 +386,7 @@ module.exports.nunjucksHtmlMinifierTests = function (t, withMinifierOptions) {
       }
     })
 
-    fastify.get('/test', (req, reply) => {
+    fastify.get('/test', (_req, reply) => {
       reply.view('./index.njk', data)
     })
 
@@ -427,7 +427,7 @@ module.exports.pugHtmlMinifierTests = function (t, withMinifierOptions) {
       }
     })
 
-    fastify.get('/', (req, reply) => {
+    fastify.get('/', (_req, reply) => {
       reply.view('./templates/index.pug', data)
     })
 
@@ -462,7 +462,7 @@ module.exports.pugHtmlMinifierTests = function (t, withMinifierOptions) {
       }
     })
 
-    fastify.get('/test', (req, reply) => {
+    fastify.get('/test', (_req, reply) => {
       reply.view('./templates/index.pug', data)
     })
 
@@ -502,7 +502,7 @@ module.exports.twigHtmlMinifierTests = function (t, withMinifierOptions) {
       }
     })
 
-    fastify.get('/', (req, reply) => {
+    fastify.get('/', (_req, reply) => {
       reply.view('./templates/index.twig', data)
     })
 
@@ -540,7 +540,7 @@ module.exports.twigHtmlMinifierTests = function (t, withMinifierOptions) {
       }
     })
 
-    fastify.get('/test', (req, reply) => {
+    fastify.get('/test', (_req, reply) => {
       reply.view('./templates/index.twig', data)
     })
 

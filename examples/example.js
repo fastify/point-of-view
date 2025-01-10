@@ -8,7 +8,7 @@ fastify.register(require('..'), {
   }
 })
 
-fastify.get('/', (req, reply) => {
+fastify.get('/', (_req, reply) => {
   reply.view('/templates/index.ejs', { text: 'text' })
 })
 

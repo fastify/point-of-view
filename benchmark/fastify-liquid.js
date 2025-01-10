@@ -5,5 +5,5 @@ const liquid = new Liquid()
 
 require('./setup.js')({
   engine: { liquid },
-  route: (req, reply) => { reply.view('index.liquid', { text: 'text' }) }
+  route: (_req, reply) => { reply.view('index.liquid', { text: 'text' }) }
 })
