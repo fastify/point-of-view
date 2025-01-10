@@ -476,8 +476,7 @@ async function fastifyView (fastify, opts) {
     const template = await getTemplate(page)
 
     if (prod) {
-      const html = template(data, options)
-      return html
+      return template(data, options)
     } else {
       const partialsObject = await getPartials(type, { partials: globalOptions.partials || {}, requestedPath })
 
