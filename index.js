@@ -284,11 +284,9 @@ async function fastifyView (fastify, opts) {
 
   function readCallbackParser (page, html, localOptions) {
     if ((type === 'ejs') && viewExt && !globalOptions.includer) {
-      globalOptions.includer = (originalPath, parsedPath) => {
-        return {
+      globalOptions.includer = (originalPath, parsedPath) => ({
           filename: parsedPath || join(templatesDir, originalPath + '.' + viewExt)
-        }
-      }
+        })
     }
     if (localOptions) {
       for (const key in globalOptions) {
