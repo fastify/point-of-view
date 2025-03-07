@@ -1,12 +1,12 @@
 'use strict'
 
-const {test} = require('node:test')
+const { test } = require('node:test')
 const sget = require('simple-get').concat
 const Fastify = require('fastify')
 const fs = require('node:fs')
 
-require('./helper').pugHtmlMinifierTests(t, true)
-require('./helper').pugHtmlMinifierTests(t, false)
+require('./helper').pugHtmlMinifierTests(true)
+require('./helper').pugHtmlMinifierTests(false)
 
 test('reply.view with pug engine', t => {
   t.plan(6)

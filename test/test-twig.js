@@ -1,12 +1,12 @@
 'use strict'
 
-const {test} = require('node:test')
+const { test } = require('node:test')
 const sget = require('simple-get').concat
 const fs = require('node:fs')
 const Fastify = require('fastify')
 
-require('./helper').twigHtmlMinifierTests(t, true)
-require('./helper').twigHtmlMinifierTests(t, false)
+require('./helper').twigHtmlMinifierTests(true)
+require('./helper').twigHtmlMinifierTests(false)
 
 test('reply.view with twig engine', t => {
   t.plan(7)

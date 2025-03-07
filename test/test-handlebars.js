@@ -1,13 +1,13 @@
 'use strict'
 
-const {test} = require('node:test')
+const { test } = require('node:test')
 const sget = require('simple-get').concat
 const Fastify = require('fastify')
 const fs = require('node:fs')
 const { join } = require('node:path')
 
-require('./helper').handleBarsHtmlMinifierTests(t, true)
-require('./helper').handleBarsHtmlMinifierTests(t, false)
+require('./helper').handleBarsHtmlMinifierTests(true)
+require('./helper').handleBarsHtmlMinifierTests(false)
 
 test('fastify.view with handlebars engine', t => {
   t.plan(2)

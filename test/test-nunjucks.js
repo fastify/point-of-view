@@ -1,13 +1,13 @@
 'use strict'
 
-const {test} = require('node:test')
+const { test } = require('node:test')
 const sget = require('simple-get').concat
 const fs = require('node:fs')
 const Fastify = require('fastify')
 const path = require('node:path')
 
-require('./helper').nunjucksHtmlMinifierTests(t, true)
-require('./helper').nunjucksHtmlMinifierTests(t, false)
+require('./helper').nunjucksHtmlMinifierTests(true)
+require('./helper').nunjucksHtmlMinifierTests(false)
 
 test('reply.view with nunjucks engine and custom templates folder', t => {
   t.plan(6)

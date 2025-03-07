@@ -1,12 +1,12 @@
 'use strict'
 
-const {test} = require('node:test')
+const { test } = require('node:test')
 const sget = require('simple-get').concat
 const fs = require('node:fs')
 const Fastify = require('fastify')
 
-require('./helper').liquidHtmlMinifierTests(t, true)
-require('./helper').liquidHtmlMinifierTests(t, false)
+require('./helper').liquidHtmlMinifierTests(true)
+require('./helper').liquidHtmlMinifierTests(false)
 
 test('reply.view with liquid engine', t => {
   t.plan(7)

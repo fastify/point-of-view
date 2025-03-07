@@ -1,6 +1,6 @@
 'use strict'
 
-const {test} = require('node:test')
+const { test, beforeEach } = require('node:test')
 const sget = require('simple-get').concat
 const Fastify = require('fastify')
 const fs = require('node:fs')
@@ -10,10 +10,10 @@ const pointOfView = require('../index')
 const { Eta } = require('eta')
 let eta = new Eta()
 
-require('./helper').etaHtmlMinifierTests(t, true)
-require('./helper').etaHtmlMinifierTests(t, false)
+require('./helper').etaHtmlMinifierTests(true)
+require('./helper').etaHtmlMinifierTests(false)
 
-t.beforeEach(async () => {
+beforeEach(async () => {
   // this is mandatory since some test call eta.configure(customOptions)
   eta = new Eta()
 })
