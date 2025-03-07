@@ -1,7 +1,6 @@
 'use strict'
 
 const { test } = require('node:test')
-const sget = require('simple-get').concat
 const Fastify = require('fastify')
 const { existsSync, rmdirSync, readFileSync } = require('node:fs')
 const { join } = require('node:path')
@@ -16,8 +15,8 @@ const compileOptions = {
 require('./helper').dotHtmlMinifierTests(compileOptions, true)
 require('./helper').dotHtmlMinifierTests(compileOptions, false)
 
-test('reply.view with dot engine .dot file', t => {
-  t.plan(6)
+test('reply.view with dot engine .dot file', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const data = { text: 'text' }
   const engine = require('dot')
@@ -34,25 +33,22 @@ test('reply.view with dot engine .dot file', t => {
     reply.view('testdot', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(body.toString(), engine.process({ path: 'templates', destination: 'out' }).testdot(data))
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.deepStrictEqual(result.status, 200)
+  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.deepStrictEqual(responseContent, engine.process({ path: 'templates', destination: 'out' }).testdot(data))
+
+  await fastify.close()
 })
 
-test('reply.view with dot engine .dot file should create non-existent destination', t => {
-  t.plan(2)
+test('reply.view with dot engine .dot file should create non-existent destination', async t => {
+  t.plan(1)
   const fastify = Fastify()
   const engine = require('dot')
   engine.log = false
@@ -66,21 +62,21 @@ test('reply.view with dot engine .dot file should create non-existent destinatio
     }
   })
 
-  t.teardown(() => rmdirSync('non-existent'))
+  t.after(() => rmdirSync('non-existent'))
 
   fastify.get('/', (_req, reply) => {
     reply.view('testdot')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
-    t.assert.ok(existsSync('non-existent'))
-    fastify.close()
-  })
+  await fastify.listen({ port: 0 })
+
+  t.assert.ok(existsSync('non-existent'))
+
+  await fastify.close()
 })
 
-test('reply.view with dot engine .dot file should log WARN if template not found', t => {
-  t.plan(2)
+test('reply.view with dot engine .dot file should log WARN if template not found', async t => {
+  t.plan(1)
   const splitStream = split(JSON.parse)
   splitStream.on('data', (line) => {
     t.assert.deepStrictEqual(line.msg, `WARN: no template found in ${join(__dirname, '..')}`)
@@ -92,7 +88,7 @@ test('reply.view with dot engine .dot file should log WARN if template not found
   const engine = require('dot')
   engine.log = false
 
-  t.teardown(() => rmdirSync('empty'))
+  t.after(() => rmdirSync('empty'))
 
   fastify.register(require('../index'), {
     engine: {
@@ -103,14 +99,12 @@ test('reply.view with dot engine .dot file should log WARN if template not found
     }
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.deepStrictEqual(err, err)
-    fastify.close()
-  })
+  await fastify.listen({ port: 0 })
+  await fastify.close()
 })
 
-test('reply.view with dot engine .jst file', t => {
-  t.plan(6)
+test('reply.view with dot engine .jst file', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const data = { text: 'text' }
   const engine = require('dot')
@@ -127,26 +121,23 @@ test('reply.view with dot engine .jst file', t => {
     reply.view('testjst', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.process(compileOptions)
-      t.assert.deepStrictEqual(body.toString(), require('../out/testjst')(data))
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.deepStrictEqual(result.status, 200)
+  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  engine.process(compileOptions)
+  t.assert.deepStrictEqual(responseContent, require('../out/testjst')(data))
+
+  await fastify.close()
 })
 
-test('reply.view with dot engine without data-parameter but defaultContext', t => {
-  t.plan(6)
+test('reply.view with dot engine without data-parameter but defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const data = { text: 'text' }
 
@@ -165,25 +156,22 @@ test('reply.view with dot engine without data-parameter but defaultContext', t =
     reply.view('testdot')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(body.toString(), engine.process(compileOptions).testdot(data))
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.deepStrictEqual(result.status, 200)
+  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.deepStrictEqual(responseContent, engine.process(compileOptions).testdot(data))
+
+  await fastify.close()
 })
 
-test('reply.view with dot engine without data-parameter but without defaultContext', t => {
-  t.plan(6)
+test('reply.view with dot engine without data-parameter but without defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const engine = require('dot')
@@ -200,26 +188,23 @@ test('reply.view with dot engine without data-parameter but without defaultConte
     reply.view('testdot')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.process(compileOptions)
-      t.assert.deepStrictEqual(body.toString(), engine.process(compileOptions).testdot())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.deepStrictEqual(result.status, 200)
+  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  engine.process(compileOptions)
+  t.assert.deepStrictEqual(responseContent, engine.process(compileOptions).testdot())
+
+  await fastify.close()
 })
 
-test('reply.view with dot engine with data-parameter and defaultContext', t => {
-  t.plan(6)
+test('reply.view with dot engine with data-parameter and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const data = { text: 'text' }
 
@@ -238,25 +223,22 @@ test('reply.view with dot engine with data-parameter and defaultContext', t => {
     reply.view('testdot', {})
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(body.toString(), engine.process(compileOptions).testdot(data))
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.deepStrictEqual(result.status, 200)
+  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.deepStrictEqual(responseContent, engine.process(compileOptions).testdot(data))
+
+  await fastify.close()
 })
 
-test('reply.view for dot engine without data-parameter and defaultContext but with reply.locals', t => {
-  t.plan(6)
+test('reply.view for dot engine without data-parameter and defaultContext but with reply.locals', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const localsData = { text: 'text from locals' }
 
@@ -279,25 +261,22 @@ test('reply.view for dot engine without data-parameter and defaultContext but wi
     reply.view('testdot', {})
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(body.toString(), engine.process(compileOptions).testdot(localsData))
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.deepStrictEqual(result.status, 200)
+  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.deepStrictEqual(responseContent, engine.process(compileOptions).testdot(localsData))
+
+  await fastify.close()
 })
 
-test('reply.view for dot engine without defaultContext but with reply.locals and data-parameter', t => {
-  t.plan(6)
+test('reply.view for dot engine without defaultContext but with reply.locals and data-parameter', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const localsData = { text: 'text from locals' }
   const data = { text: 'text' }
@@ -321,25 +300,22 @@ test('reply.view for dot engine without defaultContext but with reply.locals and
     reply.view('testdot', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(body.toString(), engine.process(compileOptions).testdot(data))
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.deepStrictEqual(result.status, 200)
+  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.deepStrictEqual(responseContent, engine.process(compileOptions).testdot(data))
+
+  await fastify.close()
 })
 
-test('reply.view for dot engine without data-parameter but with reply.locals and defaultContext', t => {
-  t.plan(6)
+test('reply.view for dot engine without data-parameter but with reply.locals and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const localsData = { text: 'text from locals' }
   const defaultContext = { text: 'text' }
@@ -364,25 +340,22 @@ test('reply.view for dot engine without data-parameter but with reply.locals and
     reply.view('testdot')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(body.toString(), engine.process(compileOptions).testdot(localsData))
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.deepStrictEqual(result.status, 200)
+  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.deepStrictEqual(responseContent, engine.process(compileOptions).testdot(localsData))
+
+  await fastify.close()
 })
 
-test('reply.view for dot engine with data-parameter and reply.locals and defaultContext', t => {
-  t.plan(6)
+test('reply.view for dot engine with data-parameter and reply.locals and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const localsData = { text: 'text from locals' }
   const defaultContext = { text: 'text from context' }
@@ -407,24 +380,21 @@ test('reply.view for dot engine with data-parameter and reply.locals and default
     reply.view('testdot', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(body.toString(), engine.process(compileOptions).testdot(data))
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.deepStrictEqual(result.status, 200)
+  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.deepStrictEqual(responseContent, engine.process(compileOptions).testdot(data))
+
+  await fastify.close()
 })
 
-test('fastify.view with dot engine, should throw page missing', t => {
+test('fastify.view with dot engine, should throw page missing', (t, end) => {
   t.plan(3)
   const fastify = Fastify()
   const engine = require('dot')
@@ -443,12 +413,13 @@ test('fastify.view with dot engine, should throw page missing', t => {
       t.assert.ok(err instanceof Error)
       t.assert.deepStrictEqual(err.message, 'Missing page')
       fastify.close()
+      end()
     })
   })
 })
 
-test('reply.view with dot engine with layout option', t => {
-  t.plan(6)
+test('reply.view with dot engine with layout option', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const engine = require('dot')
   const data = { text: 'text' }
@@ -465,25 +436,22 @@ test('reply.view with dot engine with layout option', t => {
     reply.view('testdot', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual('header: textfoo text1 <p>foo</p>footer', body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.deepStrictEqual(result.status, 200)
+  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.deepStrictEqual('header: textfoo text1 <p>foo</p>footer', responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with dot engine with layout option on render', t => {
-  t.plan(6)
+test('reply.view with dot engine with layout option on render', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const engine = require('dot')
   const data = { text: 'text' }
@@ -499,25 +467,22 @@ test('reply.view with dot engine with layout option on render', t => {
     reply.view('testdot', data, { layout: 'layout' })
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual('header: textfoo text1 <p>foo</p>footer', body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.deepStrictEqual(result.status, 200)
+  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.deepStrictEqual('header: textfoo text1 <p>foo</p>footer', responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with dot engine with layout option on render', t => {
-  t.plan(6)
+test('reply.view with dot engine with layout option on render', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const engine = require('dot')
   const data = { text: 'text' }
@@ -533,25 +498,22 @@ test('reply.view with dot engine with layout option on render', t => {
     reply.view('testdot', data, { layout: 'layout' })
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual('header: textfoo text1 <p>foo</p>footer', body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.deepStrictEqual(result.status, 200)
+  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.deepStrictEqual('header: textfoo text1 <p>foo</p>footer', responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view should return 500 if layout is missing on render', t => {
-  t.plan(3)
+test('reply.view should return 500 if layout is missing on render', async t => {
+  t.plan(1)
   const fastify = Fastify()
   const engine = require('dot')
   const data = { text: 'text' }
@@ -567,21 +529,17 @@ test('reply.view should return 500 if layout is missing on render', t => {
     reply.view('testdot', data, { layout: 'non-existing-layout' })
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response) => {
-      t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 500)
-      fastify.close()
-    })
-  })
+  await fastify.listen({ port: 0 })
+
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  t.assert.deepStrictEqual(result.status, 500)
+
+  await fastify.close()
 })
 
-test('reply.view with dot engine and raw template', t => {
-  t.plan(6)
+test('reply.view with dot engine and raw template', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const data = { text: 'text' }
   const engine = require('dot')
@@ -597,25 +555,22 @@ test('reply.view with dot engine and raw template', t => {
     reply.view({ raw: readFileSync('./templates/testdot.dot'), imports: { testdef: readFileSync('./templates/testdef.def') } }, data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(body.toString(), engine.process({ path: 'templates', destination: 'out' }).testdot(data))
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.deepStrictEqual(result.status, 200)
+  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.deepStrictEqual(responseContent, engine.process({ path: 'templates', destination: 'out' }).testdot(data))
+
+  await fastify.close()
 })
 
-test('reply.view with dot engine and function template', t => {
-  t.plan(6)
+test('reply.view with dot engine and function template', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const data = { text: 'text' }
   const engine = require('dot')
@@ -631,19 +586,16 @@ test('reply.view with dot engine and function template', t => {
     reply.header('Content-Type', 'text/html').view(engine.process({ path: 'templates', destination: 'out' }).testdot, data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html')
-      t.assert.deepStrictEqual(body.toString(), engine.process({ path: 'templates', destination: 'out' }).testdot(data))
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.deepStrictEqual(result.status, 200)
+  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html')
+  t.assert.deepStrictEqual(responseContent, engine.process({ path: 'templates', destination: 'out' }).testdot(data))
+
+  await fastify.close()
 })
