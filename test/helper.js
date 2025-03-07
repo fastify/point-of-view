@@ -11,7 +11,6 @@ const { Liquid } = require('liquidjs')
 const nunjucks = require('nunjucks')
 const pug = require('pug')
 const Twig = require('twig')
-const sget = require('simple-get').concat
 
 const data = { text: 'text' }
 const minifierOpts = {
@@ -229,8 +228,7 @@ module.exports.handleBarsHtmlMinifierTests = function (withMinifierOptions) {
   })
 }
 
-module.exports.liquidHtmlMinifierTests = function (t, withMinifierOptions) {
-  const test = t.test
+module.exports.liquidHtmlMinifierTests = function (withMinifierOptions) {
   const options = withMinifierOptions ? minifierOpts : {}
 
   test('reply.view with liquid engine and html-minifier-terser', async t => {
@@ -268,7 +266,7 @@ module.exports.liquidHtmlMinifierTests = function (t, withMinifierOptions) {
 
     await fastify.close()
   })
-  test('reply.view with liquid engine and paths excluded from html-minifier-terser', t => {
+  test('reply.view with liquid engine and paths excluded from html-minifier-terser', async t => {
     t.plan(7)
     const fastify = Fastify()
     const engine = new Liquid()
@@ -288,34 +286,29 @@ module.exports.liquidHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('./templates/index.liquid', data)
     })
 
-    fastify.listen({ port: 0 }, err => {
-      t.assert.ifError(err)
+    await fastify.listen({ port: 0 })
 
-      sget({
-        method: 'GET',
-        url: 'http://localhost:' + fastify.server.address().port + '/test'
-      }, (err, response, body) => {
-        t.assert.ifError(err)
-        t.assert.deepStrictEqual(response.statusCode, 200)
-        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
-        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-        engine.renderFile('./templates/index.liquid', data)
-          .then((html) => {
-            t.assert.ifError(err)
-            t.assert.deepStrictEqual(html, body.toString())
-          })
-        fastify.close()
-      })
-    })
+    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/test')
+
+    const responseContent = await result.text()
+
+    t.assert.deepStrictEqual(result.status, 200)
+    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+    const html = await engine.renderFile('./templates/index.liquid', data)
+
+    t.assert.deepStrictEqual(await minifier.minify(html, options), responseContent)
+
+    await fastify.close()
   })
 }
 
-module.exports.nunjucksHtmlMinifierTests = function (t, withMinifierOptions) {
-  const test = t.test
+module.exports.nunjucksHtmlMinifierTests = function (withMinifierOptions) {
   const options = withMinifierOptions ? minifierOpts : {}
 
-  test('reply.view with nunjucks engine, full path templates folder, and html-minifier-terser', t => {
-    t.plan(6)
+  test('reply.view with nunjucks engine, full path templates folder, and html-minifier-terser', async t => {
+    t.plan(4)
     const fastify = Fastify()
 
     fastify.register(POV, {
@@ -333,25 +326,22 @@ module.exports.nunjucksHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('./index.njk', data)
     })
 
-    fastify.listen({ port: 0 }, err => {
-      t.assert.ifError(err)
+    await fastify.listen({ port: 0 })
 
-      sget({
-        method: 'GET',
-        url: 'http://localhost:' + fastify.server.address().port
-      }, async (err, response, body) => {
-        t.assert.ifError(err)
-        t.assert.deepStrictEqual(response.statusCode, 200)
-        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
-        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-        // Global Nunjucks templates dir changed here.
-        t.assert.deepStrictEqual(await minifier.minify(nunjucks.render('./index.njk', data), options), body.toString())
-        fastify.close()
-      })
-    })
+    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+    const responseContent = await result.text()
+
+    t.assert.deepStrictEqual(result.status, 200)
+    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+    t.assert.deepStrictEqual(await minifier.minify(nunjucks.render('./index.njk', data), options), responseContent)
+
+    await fastify.close()
   })
-  test('reply.view with nunjucks engine, full path templates folder, and paths excluded from html-minifier-terser', t => {
-    t.plan(6)
+  test('reply.view with nunjucks engine, full path templates folder, and paths excluded from html-minifier-terser', async t => {
+    t.plan(4)
     const fastify = Fastify()
 
     fastify.register(POV, {
@@ -370,22 +360,19 @@ module.exports.nunjucksHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('./index.njk', data)
     })
 
-    fastify.listen({ port: 0 }, err => {
-      t.assert.ifError(err)
+    await fastify.listen({ port: 0 })
 
-      sget({
-        method: 'GET',
-        url: 'http://localhost:' + fastify.server.address().port + '/test'
-      }, (err, response, body) => {
-        t.assert.ifError(err)
-        t.assert.deepStrictEqual(response.statusCode, 200)
-        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
-        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-        // Global Nunjucks templates dir changed here.
-        t.assert.deepStrictEqual(nunjucks.render('./index.njk', data), body.toString())
-        fastify.close()
-      })
-    })
+    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/test')
+
+    const responseContent = await result.text()
+
+    t.assert.deepStrictEqual(result.status, 200)
+    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+    t.assert.deepStrictEqual(nunjucks.render('./index.njk', data), responseContent)
+
+    await fastify.close()
   })
 }
 
@@ -393,8 +380,8 @@ module.exports.pugHtmlMinifierTests = function (t, withMinifierOptions) {
   const test = t.test
   const options = withMinifierOptions ? minifierOpts : {}
 
-  test('reply.view with pug engine and html-minifier-terser', t => {
-    t.plan(6)
+  test('reply.view with pug engine and html-minifier-terser', async t => {
+    t.plan(4)
     const fastify = Fastify()
 
     fastify.register(POV, {
@@ -411,24 +398,22 @@ module.exports.pugHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('./templates/index.pug', data)
     })
 
-    fastify.listen({ port: 0 }, err => {
-      t.assert.ifError(err)
+    await fastify.listen({ port: 0 })
 
-      sget({
-        method: 'GET',
-        url: 'http://localhost:' + fastify.server.address().port
-      }, async (err, response, body) => {
-        t.assert.ifError(err)
-        t.assert.deepStrictEqual(response.statusCode, 200)
-        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
-        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.assert.deepStrictEqual(await minifier.minify(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), options), body.toString())
-        fastify.close()
-      })
-    })
+    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+    const responseContent = await result.text()
+
+    t.assert.deepStrictEqual(result.status, 200)
+    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+    t.assert.deepStrictEqual(await minifier.minify(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), options), responseContent)
+
+    await fastify.close()
   })
-  test('reply.view with pug engine and paths excluded from html-minifier-terser', t => {
-    t.plan(6)
+  test('reply.view with pug engine and paths excluded from html-minifier-terser', async t => {
+    t.plan(4)
     const fastify = Fastify()
 
     fastify.register(POV, {
@@ -446,21 +431,19 @@ module.exports.pugHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('./templates/index.pug', data)
     })
 
-    fastify.listen({ port: 0 }, err => {
-      t.assert.ifError(err)
+    await fastify.listen({ port: 0 })
 
-      sget({
-        method: 'GET',
-        url: 'http://localhost:' + fastify.server.address().port + '/test'
-      }, (err, response, body) => {
-        t.assert.ifError(err)
-        t.assert.deepStrictEqual(response.statusCode, 200)
-        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
-        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.assert.deepStrictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
-        fastify.close()
-      })
-    })
+    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/test')
+
+    const responseContent = await result.text()
+
+    t.assert.deepStrictEqual(result.status, 200)
+    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+    t.assert.deepStrictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), responseContent)
+
+    await fastify.close()
   })
 }
 
@@ -468,8 +451,8 @@ module.exports.twigHtmlMinifierTests = function (t, withMinifierOptions) {
   const test = t.test
   const options = withMinifierOptions ? minifierOpts : {}
 
-  test('reply.view with twig engine and html-minifier-terser', t => {
-    t.plan(7)
+  test('reply.view with twig engine and html-minifier-terser', async t => {
+    t.plan(5)
     const fastify = Fastify()
 
     fastify.register(POV, {
@@ -486,27 +469,28 @@ module.exports.twigHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('./templates/index.twig', data)
     })
 
-    fastify.listen({ port: 0 }, err => {
-      t.assert.ifError(err)
+    await fastify.listen({ port: 0 })
 
-      sget({
-        method: 'GET',
-        url: 'http://localhost:' + fastify.server.address().port
-      }, (err, response, body) => {
+    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+    const responseContent = await result.text()
+
+    t.assert.deepStrictEqual(result.status, 200)
+    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+    await new Promise((resolve) => {
+      Twig.renderFile('./templates/index.twig', data, async (err, html) => {
         t.assert.ifError(err)
-        t.assert.deepStrictEqual(response.statusCode, 200)
-        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
-        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-        Twig.renderFile('./templates/index.twig', data, async (err, html) => {
-          t.assert.ifError(err)
-          t.assert.deepStrictEqual(await minifier.minify(html, options), body.toString())
-        })
-        fastify.close()
+        t.assert.deepStrictEqual(await minifier.minify(html, options), responseContent)
+        resolve()
       })
     })
+
+    await fastify.close()
   })
-  test('reply.view with twig engine and paths excluded from html-minifier-terser', t => {
-    t.plan(7)
+  test('reply.view with twig engine and paths excluded from html-minifier-terser', async t => {
+    t.plan(5)
     const fastify = Fastify()
 
     fastify.register(POV, {
@@ -524,23 +508,24 @@ module.exports.twigHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('./templates/index.twig', data)
     })
 
-    fastify.listen({ port: 0 }, err => {
-      t.assert.ifError(err)
+    await fastify.listen({ port: 0 })
 
-      sget({
-        method: 'GET',
-        url: 'http://localhost:' + fastify.server.address().port + '/test'
-      }, (err, response, body) => {
+    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/test')
+
+    const responseContent = await result.text()
+
+    t.assert.deepStrictEqual(result.status, 200)
+    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+    await new Promise((resolve) => {
+      Twig.renderFile('./templates/index.twig', data, async (err, html) => {
         t.assert.ifError(err)
-        t.assert.deepStrictEqual(response.statusCode, 200)
-        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
-        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-        Twig.renderFile('./templates/index.twig', data, (err, html) => {
-          t.assert.ifError(err)
-          t.assert.deepStrictEqual(html, body.toString())
-        })
-        fastify.close()
+        t.assert.deepStrictEqual(html, responseContent)
+        resolve()
       })
     })
+
+    await fastify.close()
   })
 }
