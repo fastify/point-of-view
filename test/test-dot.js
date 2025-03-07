@@ -1,7 +1,6 @@
 'use strict'
 
-const t = require('tap')
-const test = t.test
+const { test } = require('node:test')
 const sget = require('simple-get').concat
 const Fastify = require('fastify')
 const { existsSync, rmdirSync, readFileSync } = require('node:fs')
@@ -14,8 +13,8 @@ const compileOptions = {
   log: false
 }
 
-require('./helper').dotHtmlMinifierTests(t, compileOptions, true)
-require('./helper').dotHtmlMinifierTests(t, compileOptions, false)
+require('./helper').dotHtmlMinifierTests(compileOptions, true)
+require('./helper').dotHtmlMinifierTests(compileOptions, false)
 
 test('reply.view with dot engine .dot file', t => {
   t.plan(6)

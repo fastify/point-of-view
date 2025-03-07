@@ -1,8 +1,7 @@
 'use strict'
 
 const os = require('node:os')
-const t = require('tap')
-const test = t.test
+const {test} = require('node:test')
 const sget = require('simple-get').concat
 const path = require('node:path')
 const fs = require('node:fs')

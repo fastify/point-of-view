@@ -1,5 +1,6 @@
 'use strict'
 
+const { test } = require('node:test')
 const POV = require('..')
 const Fastify = require('fastify')
 const minifier = require('html-minifier-terser')
@@ -22,12 +23,11 @@ const minifierOpts = {
   removeEmptyAttributes: true
 }
 
-module.exports.dotHtmlMinifierTests = function (t, compileOptions, withMinifierOptions) {
-  const test = t.test
+module.exports.dotHtmlMinifierTests = function (compileOptions, withMinifierOptions) {
   const options = withMinifierOptions ? minifierOpts : {}
 
-  test('reply.view with dot engine and html-minifier-terser', t => {
-    t.plan(6)
+  test('reply.view with dot engine and html-minifier-terser', async t => {
+    t.plan(4)
     const fastify = Fastify()
     dot.log = false
 
@@ -46,24 +46,21 @@ module.exports.dotHtmlMinifierTests = function (t, compileOptions, withMinifierO
       reply.view('testdot', data)
     })
 
-    fastify.listen({ port: 0 }, err => {
-      t.assert.ifError(err)
+    await fastify.listen({ port: 0 })
 
-      sget({
-        method: 'GET',
-        url: 'http://localhost:' + fastify.server.address().port
-      }, async (err, response, body) => {
-        t.assert.ifError(err)
-        t.assert.deepStrictEqual(response.statusCode, 200)
-        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
-        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.assert.deepStrictEqual(await minifier.minify(dot.process(compileOptions).testdot(data), options), body.toString())
-        fastify.close()
-      })
-    })
+    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+    const responseContent = await result.text()
+
+    t.assert.deepStrictEqual(result.status, 200)
+    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.deepStrictEqual(await minifier.minify(dot.process(compileOptions).testdot(data), options), responseContent)
+
+    await fastify.close()
   })
-  test('reply.view with dot engine and paths excluded from html-minifier-terser', t => {
-    t.plan(6)
+  test('reply.view with dot engine and paths excluded from html-minifier-terser', async t => {
+    t.plan(4)
     const fastify = Fastify()
     dot.log = false
 
@@ -83,33 +80,29 @@ module.exports.dotHtmlMinifierTests = function (t, compileOptions, withMinifierO
       reply.view('testdot', data)
     })
 
-    fastify.listen({ port: 0 }, err => {
-      t.assert.ifError(err)
+    await fastify.listen({ port: 0 })
 
-      sget({
-        method: 'GET',
-        url: 'http://localhost:' + fastify.server.address().port + '/test'
-      }, (err, response, body) => {
-        t.assert.ifError(err)
-        t.assert.deepStrictEqual(response.statusCode, 200)
-        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
-        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.assert.deepStrictEqual(dot.process(compileOptions).testdot(data), body.toString())
-        fastify.close()
-      })
-    })
+    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/test')
+
+    const responseContent = await result.text()
+
+    t.assert.deepStrictEqual(result.status, 200)
+    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.deepStrictEqual(dot.process(compileOptions).testdot(data), responseContent)
+
+    await fastify.close()
   })
 }
 
-module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
+module.exports.etaHtmlMinifierTests = function (withMinifierOptions) {
   const { Eta } = require('eta')
   const eta = new Eta()
 
-  const test = t.test
   const options = withMinifierOptions ? minifierOpts : {}
 
-  test('reply.view with eta engine and html-minifier-terser', t => {
-    t.plan(6)
+  test('reply.view with eta engine and html-minifier-terser', async t => {
+    t.plan(4)
     const fastify = Fastify()
 
     fastify.register(POV, {
@@ -126,25 +119,22 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('templates/index.eta', data)
     })
 
-    fastify.listen({ port: 0 }, err => {
-      t.assert.ifError(err)
+    await fastify.listen({ port: 0 })
 
-      sget({
-        method: 'GET',
-        url: 'http://localhost:' + fastify.server.address().port
-      }, async (err, response, body) => {
-        t.assert.ifError(err)
-        t.assert.deepStrictEqual(response.statusCode, 200)
-        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
-        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.assert.deepStrictEqual(await minifier.minify(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), body.toString())
-        fastify.close()
-      })
-    })
+    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+    const responseContent = await result.text()
+
+    t.assert.deepStrictEqual(result.status, 200)
+    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.deepStrictEqual(await minifier.minify(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), responseContent)
+
+    await fastify.close()
   })
 
-  test('reply.view with eta engine and async and html-minifier-terser', t => {
-    t.plan(6)
+  test('reply.view with eta engine and async and html-minifier-terser', async t => {
+    t.plan(4)
     const fastify = Fastify()
 
     fastify.register(POV, {
@@ -162,24 +152,21 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('templates/index.eta', data)
     })
 
-    fastify.listen({ port: 0 }, err => {
-      t.assert.ifError(err)
+    await fastify.listen({ port: 0 })
 
-      sget({
-        method: 'GET',
-        url: 'http://localhost:' + fastify.server.address().port
-      }, async (err, response, body) => {
-        t.assert.ifError(err)
-        t.assert.deepStrictEqual(response.statusCode, 200)
-        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
-        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.assert.deepStrictEqual(await minifier.minify(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), body.toString())
-        fastify.close()
-      })
-    })
+    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+    const responseContent = await result.text()
+
+    t.assert.deepStrictEqual(result.status, 200)
+    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.deepStrictEqual(await minifier.minify(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), responseContent)
+
+    await fastify.close()
   })
-  test('reply.view with eta engine and paths excluded from html-minifier-terser', t => {
-    t.plan(6)
+  test('reply.view with eta engine and paths excluded from html-minifier-terser', async t => {
+    t.plan(4)
     const fastify = Fastify()
 
     fastify.register(POV, {
@@ -197,29 +184,25 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('templates/index.eta', data)
     })
 
-    fastify.listen({ port: 0 }, err => {
-      t.assert.ifError(err)
+    await fastify.listen({ port: 0 })
 
-      sget({
-        method: 'GET',
-        url: 'http://localhost:' + fastify.server.address().port + '/test'
-      }, (err, response, body) => {
-        t.assert.ifError(err)
-        t.assert.deepStrictEqual(response.statusCode, 200)
-        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
-        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
-        fastify.close()
-      })
-    })
+    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/test')
+
+    const responseContent = await result.text()
+
+    t.assert.deepStrictEqual(result.status, 200)
+    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), responseContent)
+
+    await fastify.close()
   })
 }
 
-module.exports.handleBarsHtmlMinifierTests = function (t, withMinifierOptions) {
-  const test = t.test
+module.exports.handleBarsHtmlMinifierTests = function (withMinifierOptions) {
   const options = withMinifierOptions ? minifierOpts : {}
 
-  test('fastify.view with handlebars engine and html-minifier-terser', t => {
+  test('fastify.view with handlebars engine and html-minifier-terser', (t, end) => {
     t.plan(2)
     const fastify = Fastify()
 
@@ -240,6 +223,7 @@ module.exports.handleBarsHtmlMinifierTests = function (t, withMinifierOptions) {
       fastify.view('./templates/index.html', data).then(async compiled => {
         t.assert.deepStrictEqual(await minifier.minify(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), options), compiled)
         fastify.close()
+        end()
       })
     })
   })
@@ -249,8 +233,8 @@ module.exports.liquidHtmlMinifierTests = function (t, withMinifierOptions) {
   const test = t.test
   const options = withMinifierOptions ? minifierOpts : {}
 
-  test('reply.view with liquid engine and html-minifier-terser', t => {
-    t.plan(7)
+  test('reply.view with liquid engine and html-minifier-terser', async t => {
+    t.plan(4)
     const fastify = Fastify()
     const engine = new Liquid()
 
@@ -268,25 +252,21 @@ module.exports.liquidHtmlMinifierTests = function (t, withMinifierOptions) {
       reply.view('./templates/index.liquid', data)
     })
 
-    fastify.listen({ port: 0 }, err => {
-      t.assert.ifError(err)
+    await fastify.listen({ port: 0 })
 
-      sget({
-        method: 'GET',
-        url: 'http://localhost:' + fastify.server.address().port
-      }, (err, response, body) => {
-        t.assert.ifError(err)
-        t.assert.deepStrictEqual(response.statusCode, 200)
-        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
-        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-        engine.renderFile('./templates/index.liquid', data)
-          .then(async (html) => {
-            t.assert.ifError(err)
-            t.assert.deepStrictEqual(await minifier.minify(html, options), body.toString())
-          })
-        fastify.close()
-      })
-    })
+    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+    const responseContent = await result.text()
+
+    t.assert.deepStrictEqual(result.status, 200)
+    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+    const html = await engine.renderFile('./templates/index.liquid', data)
+
+    t.assert.deepStrictEqual(await minifier.minify(html, options), responseContent)
+
+    await fastify.close()
   })
   test('reply.view with liquid engine and paths excluded from html-minifier-terser', t => {
     t.plan(7)

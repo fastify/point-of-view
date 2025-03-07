@@ -1,7 +1,6 @@
 'use strict'
 
-const t = require('tap')
-const test = t.test
+const {test} = require('node:test')
 const sget = require('simple-get').concat
 const Fastify = require('fastify')
 const fs = require('node:fs')
