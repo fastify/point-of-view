@@ -23,10 +23,10 @@ test('fastify.view with handlebars engine', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('./templates/index.html', data).then(compiled => {
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
       fastify.close()
     })
   })
@@ -46,10 +46,10 @@ test('fastify.view for handlebars without data-parameter but defaultContext', t 
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('./templates/index.html').then(compiled => {
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
       fastify.close()
     })
   })
@@ -67,10 +67,10 @@ test('fastify.view for handlebars without data-parameter and without defaultCont
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('./templates/index.html').then(compiled => {
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(), compiled)
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(), compiled)
       fastify.close()
     })
   })
@@ -91,10 +91,10 @@ test('fastify.view with handlebars engine and defaultContext', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('./templates/index.html', {}).then(compiled => {
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
       fastify.close()
     })
   })
@@ -122,17 +122,17 @@ test('reply.view for handlebars engine without data-parameter and defaultContext
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(localsData), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(localsData), body.toString())
       fastify.close()
     })
   })
@@ -161,17 +161,17 @@ test('reply.view for handlebars engine without defaultContext but with reply.loc
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
       fastify.close()
     })
   })
@@ -201,17 +201,17 @@ test('reply.view for handlebars engine without data-parameter but with reply.loc
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(localsData), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(localsData), body.toString())
       fastify.close()
     })
   })
@@ -242,17 +242,17 @@ test('reply.view for handlebars engine with data-parameter and reply.locals and 
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
       fastify.close()
     })
   })
@@ -271,11 +271,11 @@ test('fastify.view with handlebars engine and callback', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('./templates/index.html', data, (err, compiled) => {
-      t.error(err)
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
       fastify.close()
     })
   })
@@ -296,11 +296,11 @@ test('fastify.view with handlebars engine with layout option', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('./templates/index-for-layout.hbs', data, (err, compiled) => {
-      t.error(err)
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), compiled)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), compiled)
       fastify.close()
     })
   })
@@ -320,11 +320,11 @@ test('fastify.view with handlebars engine with layout option on render', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('./templates/index-for-layout.hbs', data, { layout: './templates/layout.hbs' }, (err, compiled) => {
-      t.error(err)
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), compiled)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), compiled)
       fastify.close()
     })
   })
@@ -344,15 +344,15 @@ test('fastify.view with handlebars engine with invalid layout option on render s
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
     fastify.view('./templates/index-for-layout.hbs', data, { layout: './templates/invalid-layout.hbs' }, (err) => {
-      t.ok(err instanceof Error)
-      t.equal(err.message, 'unable to access template "./templates/invalid-layout.hbs"')
+      t.assert.ok(err instanceof Error)
+      t.assert.deepStrictEqual(err.message, 'unable to access template "./templates/invalid-layout.hbs"')
     })
     // repeated for test coverage of layout access check lru
     fastify.view('./templates/index-for-layout.hbs', data, { layout: './templates/invalid-layout.hbs' }, (err) => {
-      t.ok(err instanceof Error)
-      t.equal(err.message, 'unable to access template "./templates/invalid-layout.hbs"')
+      t.assert.ok(err instanceof Error)
+      t.assert.deepStrictEqual(err.message, 'unable to access template "./templates/invalid-layout.hbs"')
     })
   })
 })
@@ -374,17 +374,17 @@ test('reply.view with handlebars engine', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
       fastify.close()
     })
   })
@@ -411,9 +411,9 @@ test('reply.view with handlebars engine catches render error', t => {
     method: 'GET',
     url: '/'
   }, (err, res) => {
-    t.error(err)
-    t.equal(JSON.parse(res.body).message, 'kaboom')
-    t.equal(res.statusCode, 500)
+    t.assert.ifError(err)
+    t.assert.deepStrictEqual(JSON.parse(res.body).message, 'kaboom')
+    t.assert.deepStrictEqual(res.statusCode, 500)
   })
 })
 
@@ -439,9 +439,9 @@ test('reply.view with handlebars engine and layout catches render error', t => {
     method: 'GET',
     url: '/'
   }, (err, res) => {
-    t.error(err)
-    t.equal(JSON.parse(res.body).message, 'kaboom')
-    t.equal(res.statusCode, 500)
+    t.assert.ifError(err)
+    t.assert.deepStrictEqual(JSON.parse(res.body).message, 'kaboom')
+    t.assert.deepStrictEqual(res.statusCode, 500)
   })
 })
 
@@ -463,17 +463,17 @@ test('reply.view with handlebars engine and defaultContext', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
       fastify.close()
     })
   })
@@ -497,17 +497,17 @@ test('reply.view with handlebars engine and includeViewExtension property as tru
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), body.toString())
       fastify.close()
     })
   })
@@ -527,18 +527,18 @@ test('fastify.view with handlebars engine and callback in production mode', t =>
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('./templates/index.html', data, (err, compiled) => {
-      t.error(err)
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
 
       fastify.ready(err => {
-        t.error(err)
+        t.assert.ifError(err)
 
         fastify.view('./templates/index.html', data, (err, compiled) => {
-          t.error(err)
-          t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+          t.assert.ifError(err)
+          t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
           fastify.close()
         })
       })
@@ -566,16 +566,16 @@ test('reply.view with handlebars engine with partials', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + replyBody.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'))(data), replyBody.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + replyBody.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'))(data), replyBody.toString())
       fastify.close()
     })
   })
@@ -601,15 +601,15 @@ test('reply.view with handlebars engine with missing partials path', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      t.equal(response.headers['content-length'], String(replyBody.length))
-      t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
+      t.assert.deepStrictEqual(response.headers['content-length'], String(replyBody.length))
+      t.assert.deepStrictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
 
       fastify.close()
     })
@@ -623,10 +623,10 @@ test('reply.view with handlebars engine with partials in production mode should 
   const POV = require('..')
   fastify.decorate(POV.fastifyViewCache, {
     get: (key) => {
-      t.equal(key, 'handlebars|body:./templates/body.hbs|null-Partials')
+      t.assert.deepStrictEqual(key, 'handlebars|body:./templates/body.hbs|null-Partials')
     },
     set: (key, value) => {
-      t.equal(key, 'handlebars|body:./templates/body.hbs|null-Partials')
+      t.assert.deepStrictEqual(key, 'handlebars|body:./templates/body.hbs|null-Partials')
       t.strictSame(value, { body: fs.readFileSync('./templates/body.hbs', 'utf8') })
     }
   })
@@ -642,7 +642,7 @@ test('reply.view with handlebars engine with partials in production mode should 
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
     fastify.close()
   })
 })
@@ -663,8 +663,8 @@ test('fastify.view with handlebars engine with missing partials path in producti
   })
 
   fastify.ready(err => {
-    t.ok(err instanceof Error)
-    t.equal(err.message, `ENOENT: no such file or directory, open '${join(__dirname, '../non-existent')}'`)
+    t.assert.ok(err instanceof Error)
+    t.assert.deepStrictEqual(err.message, `ENOENT: no such file or directory, open '${join(__dirname, '../non-existent')}'`)
   })
 })
 
@@ -690,16 +690,16 @@ test('reply.view with handlebars engine with compile options', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + replyBody.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'), compileOptions)(data), replyBody.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + replyBody.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'), compileOptions)(data), replyBody.toString())
       fastify.close()
     })
   })
@@ -729,16 +729,16 @@ test('reply.view with handlebars engine with useDataVariables', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + replyBody.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'), compileOptions)(null, { data }), replyBody.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + replyBody.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'), compileOptions)(null, { data }), replyBody.toString())
       fastify.close()
     })
   })
@@ -768,16 +768,16 @@ test('reply.view with handlebars engine with useDataVariables and global Ctx', t
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + replyBody.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'), compileOptions)(null, { data }), replyBody.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + replyBody.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'), compileOptions)(null, { data }), replyBody.toString())
       fastify.close()
     })
   })
@@ -800,16 +800,16 @@ test('reply.view with handlebars engine with layout option', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + replyBody.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))({}), replyBody.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + replyBody.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))({}), replyBody.toString())
       fastify.close()
     })
   })
@@ -831,16 +831,16 @@ test('reply.view with handlebars engine with layout option on render', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + replyBody.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))({}), replyBody.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + replyBody.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))({}), replyBody.toString())
       fastify.close()
     })
   })
@@ -862,13 +862,13 @@ test('reply.view should return 500 if layout is missing on render', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
       fastify.close()
     })
   })
@@ -886,11 +886,11 @@ test('fastify.view with handlebars engine, missing template file', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('./missing.html', {}, err => {
-      t.ok(err instanceof Error)
-      t.equal(err.message, `ENOENT: no such file or directory, open '${join(__dirname, '../missing.html')}'`)
+      t.assert.ok(err instanceof Error)
+      t.assert.deepStrictEqual(err.message, `ENOENT: no such file or directory, open '${join(__dirname, '../missing.html')}'`)
       fastify.close()
     })
   })
@@ -908,11 +908,11 @@ test('fastify.view with handlebars engine should throw page missing', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view(null, {}, err => {
-      t.ok(err instanceof Error)
-      t.equal(err.message, 'Missing page')
+      t.assert.ok(err instanceof Error)
+      t.assert.deepStrictEqual(err.message, 'Missing page')
       fastify.close()
     })
   })
@@ -943,16 +943,16 @@ test('reply.view with handlebars engine should return 500 if template fails in p
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       const { message } = JSON.parse(body.toString())
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      t.equal('Template Error', message)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
+      t.assert.deepStrictEqual('Template Error', message)
 
       fastify.close()
     })
@@ -976,17 +976,17 @@ test('reply.view with handlebars engine and raw template', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html')
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
       fastify.close()
     })
   })
@@ -1009,17 +1009,17 @@ test('reply.view with handlebars engine and function template', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
       fastify.close()
     })
   })
@@ -1042,14 +1042,14 @@ test('reply.view with handlebars engine and empty template', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
       fastify.close()
     })
   })
@@ -1073,17 +1073,17 @@ test('fastify.view with handlebars engine and callback in production mode and he
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html')
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(), body.toString())
       fastify.close()
     })
   })
@@ -1107,14 +1107,14 @@ test('fastify.view with handlebars engine and both layout', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
       fastify.close()
     })
   })
@@ -1142,17 +1142,17 @@ test('reply.viewAsync for handlebars engine without defaultContext but with repl
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
       fastify.close()
     })
   })

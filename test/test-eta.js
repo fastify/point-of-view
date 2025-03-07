@@ -37,17 +37,17 @@ test('reply.view with eta engine and custom templates folder', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -72,17 +72,17 @@ test('reply.view with eta engine with layout option', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -106,17 +106,17 @@ test('reply.view with eta engine with layout option on render', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -140,14 +140,14 @@ test('reply.view should return 500 if layout is missing on render', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
       fastify.close()
     })
   })
@@ -172,17 +172,17 @@ test('reply.view with eta engine and custom ext', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -207,17 +207,17 @@ test('reply.view for eta without data-parameter but defaultContext', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -242,17 +242,17 @@ test('reply.view for eta without data-parameter but defaultContext', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -274,17 +274,17 @@ test('reply.view for eta without data-parameter and without defaultContext', t =
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8')), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8')), body.toString())
       fastify.close()
     })
   })
@@ -312,17 +312,17 @@ test('reply.view for eta engine without data-parameter and defaultContext but wi
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), localsData), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), localsData), body.toString())
       fastify.close()
     })
   })
@@ -351,17 +351,17 @@ test('reply.view for eta engine without defaultContext but with reply.locals and
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -391,17 +391,17 @@ test('reply.view for eta engine without data-parameter but with reply.locals and
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), localsData), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), localsData), body.toString())
       fastify.close()
     })
   })
@@ -432,17 +432,17 @@ test('reply.view for eta engine with data-parameter and reply.locals and default
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -466,17 +466,17 @@ test('reply.view with eta engine and full path templates folder', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -499,17 +499,17 @@ test('reply.view with eta engine', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -533,17 +533,17 @@ test('reply.view with eta engine and defaultContext', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -567,17 +567,17 @@ test('reply.view with eta engine and includeViewExtension property as true', t =
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -607,20 +607,20 @@ test('reply.view with eta engine, template folder specified, include files (eta 
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(response.headers['content-length'], '' + body.length)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
 
       const content = eta.render('/index-linking-other-pages.eta', data, options)
-      t.equal(content.length, body.length)
-      t.equal(content, body.toString())
+      t.assert.deepStrictEqual(content.length, body.length)
+      t.assert.deepStrictEqual(content, body.toString())
 
       fastify.close()
     })
@@ -651,19 +651,19 @@ test('reply.view with eta engine, templates with folder specified, include files
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(response.headers['content-length'], '' + body.length)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
 
       const content = eta.render('/index.eta', data, options)
-      t.equal(content.length, body.length)
+      t.assert.deepStrictEqual(content.length, body.length)
 
       fastify.close()
     })
@@ -693,19 +693,19 @@ test('reply.view with eta engine, templates with folder specified, include files
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port + '/no-data-test'
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(response.headers['content-length'], '' + body.length)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
 
       const content = eta.render('/index-with-no-data.eta', null, options)
-      t.equal(content.length, body.length)
+      t.assert.deepStrictEqual(content.length, body.length)
 
       fastify.close()
     })
@@ -737,19 +737,19 @@ test('reply.view with eta engine, templates with folder specified, include files
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port + '/include-test'
     }, async (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(response.headers['content-length'], '' + body.length)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
 
       const content = await eta.renderAsync('/index-with-includes.eta', data, options)
-      t.equal(content.length, body.length)
+      t.assert.deepStrictEqual(content.length, body.length)
 
       fastify.close()
     })
@@ -780,23 +780,23 @@ test('reply.view with eta engine, templates with folder specified, include files
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port + '/include-one-include-missing-test'
     }, async (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
-      t.equal(response.headers['content-length'], '' + body.length)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
       try {
         content = await eta.renderAsync('/index-with-includes-one-missing.eta', data, options)
       } catch (e) {
         t.type(e, Error) // expected Error here ...
-        t.equal(content, null)
+        t.assert.deepStrictEqual(content, null)
       }
 
       fastify.close()
@@ -818,18 +818,18 @@ test('fastify.view with eta engine and callback in production mode', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('templates/index.eta', data, (err, compiled) => {
-      t.error(err)
-      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), compiled)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), compiled)
 
       fastify.ready(err => {
-        t.error(err)
+        t.assert.ifError(err)
 
         fastify.view('templates/index.eta', data, (err, compiled) => {
-          t.error(err)
-          t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), compiled)
+          t.assert.ifError(err)
+          t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), compiled)
           fastify.close()
         })
       })
@@ -913,27 +913,27 @@ test('fastify.view with eta engine and custom cache', t => {
   fastify.get('/', (_req, reply) => {
     try {
       const res = reply.view(tplPath, data)
-      t.equal(eta.templatesSync, pseudoCache,
+      t.assert.deepStrictEqual(eta.templatesSync, pseudoCache,
         'Cache instance should be equal to the pre-defined one')
       t.not(eta.templatesSync.get(tplAbsPath), undefined,
         'Template should be pre-cached')
       return res
     } catch (e) {
-      t.error(e)
+      t.assert.ifError(e)
     }
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200, 'Response should be 200')
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200, 'Response should be 200')
 
       const str = eta.render(tplF, data)
-      t.equal(str, body.toString(), 'Route should return the same result as cached template function')
+      t.assert.deepStrictEqual(str, body.toString(), 'Route should return the same result as cached template function')
 
       fastify.close()
     })
@@ -951,11 +951,11 @@ test('fastify.view with eta engine, should throw page missing', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view(null, {}, err => {
-      t.ok(err instanceof Error)
-      t.equal(err.message, 'Missing page')
+      t.assert.ok(err instanceof Error)
+      t.assert.deepStrictEqual(err.message, 'Missing page')
       fastify.close()
     })
   })
@@ -978,14 +978,14 @@ test('fastify.view with eta engine and async in production mode', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('templates/index.eta', data).then((compiled) => {
-      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), compiled)
+      t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), compiled)
       fastify.view('templates/index.eta', null)
         .then(() => { t.fail('should not be here') })
         .catch((err) => {
-          t.ok(err instanceof Error)
+          t.assert.ok(err instanceof Error)
           fastify.close()
         })
     })
@@ -1009,17 +1009,17 @@ test('reply.view with eta engine and raw template', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -1043,17 +1043,17 @@ test('reply.view with eta engine and function template', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -1077,14 +1077,14 @@ test('reply.view should return 500 if function return sync error', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
       fastify.close()
     })
   })
@@ -1108,14 +1108,14 @@ test('reply.view should return 500 if function return async error', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
       fastify.close()
     })
   })

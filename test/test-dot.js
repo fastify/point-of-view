@@ -36,17 +36,17 @@ test('reply.view with dot engine .dot file', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(body.toString(), engine.process({ path: 'templates', destination: 'out' }).testdot(data))
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(body.toString(), engine.process({ path: 'templates', destination: 'out' }).testdot(data))
       fastify.close()
     })
   })
@@ -74,8 +74,8 @@ test('reply.view with dot engine .dot file should create non-existent destinatio
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
-    t.ok(existsSync('non-existent'))
+    t.assert.ifError(err)
+    t.assert.ok(existsSync('non-existent'))
     fastify.close()
   })
 })
@@ -84,7 +84,7 @@ test('reply.view with dot engine .dot file should log WARN if template not found
   t.plan(2)
   const splitStream = split(JSON.parse)
   splitStream.on('data', (line) => {
-    t.equal(line.msg, `WARN: no template found in ${join(__dirname, '..')}`)
+    t.assert.deepStrictEqual(line.msg, `WARN: no template found in ${join(__dirname, '..')}`)
   })
   const logger = pino({ level: 'warn' }, splitStream)
   const fastify = Fastify({
@@ -105,7 +105,7 @@ test('reply.view with dot engine .dot file should log WARN if template not found
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.equal(err, err)
+    t.assert.deepStrictEqual(err, err)
     fastify.close()
   })
 })
@@ -129,18 +129,18 @@ test('reply.view with dot engine .jst file', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.process(compileOptions)
-      t.equal(body.toString(), require('../out/testjst')(data))
+      t.assert.deepStrictEqual(body.toString(), require('../out/testjst')(data))
       fastify.close()
     })
   })
@@ -167,17 +167,17 @@ test('reply.view with dot engine without data-parameter but defaultContext', t =
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(body.toString(), engine.process(compileOptions).testdot(data))
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(body.toString(), engine.process(compileOptions).testdot(data))
       fastify.close()
     })
   })
@@ -202,18 +202,18 @@ test('reply.view with dot engine without data-parameter but without defaultConte
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.process(compileOptions)
-      t.equal(body.toString(), engine.process(compileOptions).testdot())
+      t.assert.deepStrictEqual(body.toString(), engine.process(compileOptions).testdot())
       fastify.close()
     })
   })
@@ -240,17 +240,17 @@ test('reply.view with dot engine with data-parameter and defaultContext', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(body.toString(), engine.process(compileOptions).testdot(data))
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(body.toString(), engine.process(compileOptions).testdot(data))
       fastify.close()
     })
   })
@@ -281,17 +281,17 @@ test('reply.view for dot engine without data-parameter and defaultContext but wi
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(body.toString(), engine.process(compileOptions).testdot(localsData))
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(body.toString(), engine.process(compileOptions).testdot(localsData))
       fastify.close()
     })
   })
@@ -323,17 +323,17 @@ test('reply.view for dot engine without defaultContext but with reply.locals and
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(body.toString(), engine.process(compileOptions).testdot(data))
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(body.toString(), engine.process(compileOptions).testdot(data))
       fastify.close()
     })
   })
@@ -366,17 +366,17 @@ test('reply.view for dot engine without data-parameter but with reply.locals and
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(body.toString(), engine.process(compileOptions).testdot(localsData))
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(body.toString(), engine.process(compileOptions).testdot(localsData))
       fastify.close()
     })
   })
@@ -409,17 +409,17 @@ test('reply.view for dot engine with data-parameter and reply.locals and default
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(body.toString(), engine.process(compileOptions).testdot(data))
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(body.toString(), engine.process(compileOptions).testdot(data))
       fastify.close()
     })
   })
@@ -438,11 +438,11 @@ test('fastify.view with dot engine, should throw page missing', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view(null, {}, err => {
-      t.ok(err instanceof Error)
-      t.equal(err.message, 'Missing page')
+      t.assert.ok(err instanceof Error)
+      t.assert.deepStrictEqual(err.message, 'Missing page')
       fastify.close()
     })
   })
@@ -467,17 +467,17 @@ test('reply.view with dot engine with layout option', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal('header: textfoo text1 <p>foo</p>footer', body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual('header: textfoo text1 <p>foo</p>footer', body.toString())
       fastify.close()
     })
   })
@@ -501,17 +501,17 @@ test('reply.view with dot engine with layout option on render', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal('header: textfoo text1 <p>foo</p>footer', body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual('header: textfoo text1 <p>foo</p>footer', body.toString())
       fastify.close()
     })
   })
@@ -535,17 +535,17 @@ test('reply.view with dot engine with layout option on render', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal('header: textfoo text1 <p>foo</p>footer', body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual('header: textfoo text1 <p>foo</p>footer', body.toString())
       fastify.close()
     })
   })
@@ -569,13 +569,13 @@ test('reply.view should return 500 if layout is missing on render', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
       fastify.close()
     })
   })
@@ -599,17 +599,17 @@ test('reply.view with dot engine and raw template', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(body.toString(), engine.process({ path: 'templates', destination: 'out' }).testdot(data))
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(body.toString(), engine.process({ path: 'templates', destination: 'out' }).testdot(data))
       fastify.close()
     })
   })
@@ -633,17 +633,17 @@ test('reply.view with dot engine and function template', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html')
-      t.equal(body.toString(), engine.process({ path: 'templates', destination: 'out' }).testdot(data))
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html')
+      t.assert.deepStrictEqual(body.toString(), engine.process({ path: 'templates', destination: 'out' }).testdot(data))
       fastify.close()
     })
   })

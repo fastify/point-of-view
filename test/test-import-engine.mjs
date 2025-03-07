@@ -1,7 +1,7 @@
-import t from 'tap'
-import get from 'simple-get'
 import Fastify from 'fastify'
 import fs from 'node:fs'
+import get from 'simple-get'
+import t from 'tap'
 const test = t.test
 const sget = get.concat
 
@@ -18,14 +18,14 @@ test('using an imported engine as a promise', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, async (err, _response, body) => {
-      t.error(err)
-      t.equal((await ejs).render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual((await ejs).render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })

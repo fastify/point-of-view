@@ -32,17 +32,17 @@ test('reply.view with mustache engine', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -66,17 +66,17 @@ test('reply.view for mustache without data-parameter but defaultContext', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -99,17 +99,17 @@ test('reply.view for mustache without data-parameter and without defaultContext'
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(mustache.render(fs.readFileSync('./templates/index-bare.html', 'utf8')), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(mustache.render(fs.readFileSync('./templates/index-bare.html', 'utf8')), body.toString())
       fastify.close()
     })
   })
@@ -133,17 +133,17 @@ test('reply.view with mustache engine and defaultContext', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -171,17 +171,17 @@ test('reply.view for mustache engine without data-parameter and defaultContext b
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), localsData), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), localsData), body.toString())
       fastify.close()
     })
   })
@@ -210,17 +210,17 @@ test('reply.view for mustache engine without defaultContext but with reply.local
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -250,17 +250,17 @@ test('reply.view for mustache engine without data-parameter but with reply.local
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), localsData), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), localsData), body.toString())
       fastify.close()
     })
   })
@@ -291,17 +291,17 @@ test('reply.view for mustache engine with data-parameter and reply.locals and de
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -324,16 +324,16 @@ test('reply.view with mustache engine with partials', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + replyBody.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), replyBody.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + replyBody.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), replyBody.toString())
       fastify.close()
     })
   })
@@ -365,16 +365,16 @@ test('reply.view with mustache engine with partials in production mode should us
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], String(replyBody.length))
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal('<div>Cached Response</div>', replyBody.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], String(replyBody.length))
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual('<div>Cached Response</div>', replyBody.toString())
       fastify.close()
     })
   })
@@ -402,15 +402,15 @@ test('reply.view with mustache engine with partials in production mode should ca
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: `http://localhost:${fastify.server.address().port}/one`
     }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], String(replyBody.length))
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], String(replyBody.length))
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
 
       t.match(replyBody.toString(), /Partial 1 - b4d932b9-4baa-4c99-8d14-d45411b9361e/g)
     })
@@ -419,10 +419,10 @@ test('reply.view with mustache engine with partials in production mode should ca
       method: 'GET',
       url: `http://localhost:${fastify.server.address().port}/two`
     }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], String(replyBody.length))
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], String(replyBody.length))
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
 
       t.match(replyBody.toString(), /Partial 2 - fdab0fe2-6dab-4429-ae9f-dfcb791d1d3d/g)
       fastify.close()
@@ -451,16 +451,16 @@ test('reply.view with mustache engine with partials and html-minifier-terser', t
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, async (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + replyBody.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(await minifier.minify(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), minifierOpts), replyBody.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + replyBody.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(await minifier.minify(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), minifierOpts), replyBody.toString())
       fastify.close()
     })
   })
@@ -488,16 +488,16 @@ test('reply.view with mustache engine with partials and paths excluded from html
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port + '/test'
     }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + replyBody.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), replyBody.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + replyBody.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), replyBody.toString())
       fastify.close()
     })
   })
@@ -522,17 +522,17 @@ test('reply.view with mustache engine, template folder specified', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -557,16 +557,16 @@ test('reply.view with mustache engine, template folder specified with partials',
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + replyBody.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), replyBody.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + replyBody.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), replyBody.toString())
       fastify.close()
     })
   })
@@ -589,16 +589,16 @@ test('reply.view with mustache engine, missing template file', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
-      t.equal(response.headers['content-length'], '' + body.length)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
       fastify.close()
     })
   })
@@ -621,15 +621,15 @@ test('reply.view with mustache engine, with partials missing template file', t =
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
-      t.equal(response.headers['content-length'], '' + body.length)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
       fastify.close()
     })
   })
@@ -652,15 +652,15 @@ test('reply.view with mustache engine, with partials missing partials file', t =
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
-      t.equal(response.headers['content-length'], '' + body.length)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
       fastify.close()
     })
   })
@@ -683,15 +683,15 @@ test('reply.view with mustache engine, with partials and multiple missing partia
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
-      t.equal(response.headers['content-length'], '' + body.length)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
       fastify.close()
     })
   })
@@ -709,11 +709,11 @@ test('fastify.view with mustache engine, should throw page missing', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view(null, {}, err => {
-      t.ok(err instanceof Error)
-      t.equal(err.message, 'Missing page')
+      t.assert.ok(err instanceof Error)
+      t.assert.deepStrictEqual(err.message, 'Missing page')
       fastify.close()
     })
   })
@@ -736,17 +736,17 @@ test('reply.view for mustache and raw template', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -770,17 +770,17 @@ test('reply.view for mustache and function template', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html')
-      t.equal(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html')
+      t.assert.deepStrictEqual(mustache.render(fs.readFileSync('./templates/index.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })

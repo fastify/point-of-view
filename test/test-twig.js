@@ -26,19 +26,19 @@ test('reply.view with twig engine', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', data, (err, html) => {
-        t.error(err)
-        t.equal(html, body.toString())
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -62,19 +62,19 @@ test('reply.view with twig engine and simple include', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/template.twig', data, (err, html) => {
-        t.error(err)
-        t.equal(html, body.toString())
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -99,19 +99,19 @@ test('reply.view for twig without data-parameter but defaultContext', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', data, (err, html) => {
-        t.error(err)
-        t.equal(html, body.toString())
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -134,19 +134,19 @@ test('reply.view for twig without data-parameter and without defaultContext', t 
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', (err, html) => {
-        t.error(err)
-        t.equal(html, body.toString())
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -171,19 +171,19 @@ test('reply.view with twig engine and defaultContext', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', data, (err, html) => {
-        t.error(err)
-        t.equal(html, body.toString())
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -212,19 +212,19 @@ test('reply.view for twig engine without data-parameter and defaultContext but w
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', localsData, (err, html) => {
-        t.error(err)
-        t.equal(html, body.toString())
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -254,19 +254,19 @@ test('reply.view for twig engine without defaultContext but with reply.locals an
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', data, (err, html) => {
-        t.error(err)
-        t.equal(html, body.toString())
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -297,19 +297,19 @@ test('reply.view for twig engine without data-parameter but with reply.locals an
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', localsData, (err, html) => {
-        t.error(err)
-        t.equal(html, body.toString())
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -341,19 +341,19 @@ test('reply.view for twig engine with data-parameter and reply.locals and defaul
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', data, (err, html) => {
-        t.error(err)
-        t.equal(html, body.toString())
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -378,19 +378,19 @@ test('reply.view with twig engine, will preserve content-type', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/xml')
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/xml')
       Twig.renderFile('./templates/index.twig', data, (err, html) => {
-        t.error(err)
-        t.equal(html, body.toString())
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -409,11 +409,11 @@ test('fastify.view with twig engine, should throw page missing', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view(null, {}, err => {
-      t.ok(err instanceof Error)
-      t.equal(err.message, 'Missing page')
+      t.assert.ok(err instanceof Error)
+      t.assert.deepStrictEqual(err.message, 'Missing page')
       fastify.close()
     })
   })
@@ -437,16 +437,16 @@ test('reply.view with twig engine should return 500 if renderFile fails', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       const { message } = JSON.parse(body.toString())
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      t.equal('RenderFile Error', message)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
+      t.assert.deepStrictEqual('RenderFile Error', message)
 
       fastify.close()
     })
@@ -470,19 +470,19 @@ test('reply.view with twig engine and raw template', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', data, (err, html) => {
-        t.error(err)
-        t.equal(html, body.toString())
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -506,19 +506,19 @@ test('reply.view with twig engine and function template', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', data, (err, html) => {
-        t.error(err)
-        t.equal(html, body.toString())
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -542,14 +542,14 @@ test('reply.view with twig engine and unknown template type', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
       fastify.close()
     })
   })

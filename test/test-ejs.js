@@ -34,17 +34,17 @@ test('reply.view with ejs engine and custom templates folder', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -69,17 +69,17 @@ test('reply.view with ejs engine with layout option', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -103,17 +103,17 @@ test('reply.view with ejs engine with layout option on render', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -136,13 +136,13 @@ test('reply.view should return 500 if layout is missing on render', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
       fastify.close()
     })
   })
@@ -167,17 +167,17 @@ test('reply.view with ejs engine and custom ext', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -202,17 +202,17 @@ test('reply.view for ejs without data-parameter but defaultContext', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -237,17 +237,17 @@ test('reply.view for ejs without data-parameter but defaultContext', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -270,17 +270,17 @@ test('reply.view for ejs without data-parameter and without defaultContext', t =
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index-bare.html', 'utf8')), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index-bare.html', 'utf8')), body.toString())
       fastify.close()
     })
   })
@@ -308,17 +308,17 @@ test('reply.view for ejs engine without data-parameter and defaultContext but wi
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index-bare.html', 'utf8'), localsData), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index-bare.html', 'utf8'), localsData), body.toString())
       fastify.close()
     })
   })
@@ -347,17 +347,17 @@ test('reply.view for ejs engine without defaultContext but with reply.locals and
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index-bare.html', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index-bare.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -387,17 +387,17 @@ test('reply.view for ejs engine without data-parameter but with reply.locals and
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index-bare.html', 'utf8'), localsData), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index-bare.html', 'utf8'), localsData), body.toString())
       fastify.close()
     })
   })
@@ -428,17 +428,17 @@ test('reply.view for ejs engine with data-parameter and reply.locals and default
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index-bare.html', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index-bare.html', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -462,17 +462,17 @@ test('reply.view with ejs engine and full path templates folder', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -495,17 +495,17 @@ test('reply.view with ejs engine', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -529,17 +529,17 @@ test('reply.view with ejs engine and defaultContext', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -566,17 +566,17 @@ test('reply.view with ejs engine and html-minifier-terser', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, async (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(await minifier.minify(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), minifierOpts), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(await minifier.minify(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), minifierOpts), body.toString())
       fastify.close()
     })
   })
@@ -603,17 +603,17 @@ test('reply.view with ejs engine and paths excluded from html-minifier-terser', 
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port + '/test'
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -639,7 +639,7 @@ test('reply.view with ejs engine and html-minifier-terser in production mode', t
   })
 
   fastify.listen({ port: 0 }, async err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     for (let i = 0; i < numTests; i++) {
       await new Promise((resolve) => {
@@ -647,11 +647,11 @@ test('reply.view with ejs engine and html-minifier-terser in production mode', t
           method: 'GET',
           url: 'http://localhost:' + fastify.server.address().port
         }, async (err, response, body) => {
-          t.error(err)
-          t.equal(response.statusCode, 200)
-          t.equal(response.headers['content-length'], '' + body.length)
-          t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-          t.equal(await minifier.minify(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), minifierOpts), body.toString())
+          t.assert.ifError(err)
+          t.assert.deepStrictEqual(response.statusCode, 200)
+          t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+          t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+          t.assert.deepStrictEqual(await minifier.minify(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), minifierOpts), body.toString())
           if (i === numTests - 1) fastify.close()
           resolve()
         })
@@ -678,17 +678,17 @@ test('reply.view with ejs engine and includeViewExtension property as true', t =
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -720,17 +720,17 @@ test('*** reply.view with ejs engine with layout option, includeViewExtension pr
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), {
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), {
         ...data,
         header,
         footer
@@ -765,17 +765,17 @@ test('*** reply.view with ejs engine with layout option on render, includeViewEx
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), {
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), {
         ...data,
         header,
         footer
@@ -812,22 +812,22 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(response.headers['content-length'], '' + body.length)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
       ejs.renderFile(templatesFolder + '/index-linking-other-pages.ejs', data, options, function (err, str) {
         content = str
-        t.error(err)
-        t.equal(content.length, body.length)
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(content.length, body.length)
       })
 
       fastify.close()
@@ -861,22 +861,22 @@ test('reply.view with ejs engine, templates with folder specified, include files
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(response.headers['content-length'], '' + body.length)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
       ejs.renderFile(templatesFolder + '/index.ejs', data, options, function (err, str) {
         content = str
-        t.error(err)
-        t.equal(content.length, body.length)
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(content.length, body.length)
       })
 
       fastify.close()
@@ -909,22 +909,22 @@ test('reply.view with ejs engine, templates with folder specified, include files
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port + '/no-data-test'
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(response.headers['content-length'], '' + body.length)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
       ejs.renderFile(templatesFolder + '/index-with-no-data.ejs', null, options, function (err, str) {
         content = str
-        t.error(err)
-        t.equal(content.length, body.length)
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(content.length, body.length)
       })
 
       fastify.close()
@@ -959,22 +959,22 @@ test('reply.view with ejs engine, templates with folder specified, include files
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port + '/include-test'
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(response.headers['content-length'], '' + body.length)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
       ejs.renderFile(templatesFolder + '/index-with-includes.ejs', data, options, function (err, str) {
         content = str
-        t.error(err)
-        t.equal(content.length, body.length)
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(content.length, body.length)
       })
 
       fastify.close()
@@ -1008,22 +1008,22 @@ test('reply.view with ejs engine, templates with folder specified, include files
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port + '/include-one-include-missing-test'
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
-      t.equal(response.headers['content-length'], '' + body.length)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
       ejs.renderFile(templatesFolder + '/index-with-includes-one-missing.ejs', data, options, function (err, str) {
         content = str
         t.type(err, Error) // expected Error here ...
-        t.equal(content, undefined)
+        t.assert.deepStrictEqual(content, undefined)
       })
 
       fastify.close()
@@ -1057,22 +1057,22 @@ test('reply.view with ejs engine, templates with folder specified, include files
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port + '/include-one-attribute-missing-test'
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
-      t.equal(response.headers['content-length'], '' + body.length)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
       ejs.renderFile(templatesFolder + '/index-with-includes-and-attribute-missing.ejs', data, options, function (err, str) {
         content = str
         t.type(err, Error) // expected Error here ...
-        t.equal(content, undefined)
+        t.assert.deepStrictEqual(content, undefined)
       })
 
       fastify.close()
@@ -1092,11 +1092,11 @@ test('fastify.view with ejs engine, missing template file', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('./missing.html', {}, err => {
-      t.ok(err instanceof Error)
-      t.equal(err.message, `ENOENT: no such file or directory, open '${path.join(__dirname, '../missing.html')}'`)
+      t.assert.ok(err instanceof Error)
+      t.assert.deepStrictEqual(err.message, `ENOENT: no such file or directory, open '${path.join(__dirname, '../missing.html')}'`)
       fastify.close()
     })
   })
@@ -1116,18 +1116,18 @@ test('fastify.view with ejs engine and callback in production mode', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('templates/index.ejs', data, (err, compiled) => {
-      t.error(err)
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), compiled)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), compiled)
 
       fastify.ready(err => {
-        t.error(err)
+        t.assert.ifError(err)
 
         fastify.view('templates/index.ejs', data, (err, compiled) => {
-          t.error(err)
-          t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), compiled)
+          t.assert.ifError(err)
+          t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), compiled)
           fastify.close()
         })
       })
@@ -1152,17 +1152,17 @@ test('reply.view with ejs engine and raw template', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -1185,17 +1185,17 @@ test('reply.view with ejs engine and function template', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -1229,7 +1229,7 @@ test('reply.view with ejs engine and failed call to render when onError hook def
   fastify.addHook('onError', async () => {})
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     // request route with invalid template, followed by route with valid template
     // in order to ensure server does not crash after first request
@@ -1237,15 +1237,15 @@ test('reply.view with ejs engine and failed call to render when onError hook def
       method: 'GET',
       url: `http://localhost:${fastify.server.address().port}/invalid`
     }, (err, response) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
       sget({
         method: 'GET',
         url: `http://localhost:${fastify.server.address().port}/valid`
       }, (err, response, body) => {
-        t.error(err)
-        t.equal('text', body.toString())
-        t.equal(response.statusCode, 200)
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual('text', body.toString())
+        t.assert.deepStrictEqual(response.statusCode, 200)
         fastify.close()
       })
     })
@@ -1269,17 +1269,17 @@ test('reply.viewAsync with ejs engine - sync handler', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -1302,17 +1302,17 @@ test('reply.viewAsync with ejs engine - async handler', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -1335,13 +1335,13 @@ test('reply.viewAsync should return 500 if layout is missing on render', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 500)
       fastify.close()
     })
   })
@@ -1364,21 +1364,21 @@ test('reply.viewAsync should allow errors to be handled by custom error handler'
   })
 
   fastify.setErrorHandler((err, _request, reply) => {
-    t.ok(err instanceof Error)
+    t.assert.ok(err instanceof Error)
     t.same(reply.getHeader('Content-Type'), null)
     return 'something went wrong'
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.headers['content-type'], 'text/plain; charset=utf-8')
-      t.equal(response.statusCode, 200)
-      t.equal('something went wrong', body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/plain; charset=utf-8')
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual('something went wrong', body.toString())
       fastify.close()
     })
   })
@@ -1402,17 +1402,17 @@ test('reply.viewAsync with ejs engine and custom propertyName', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -1436,17 +1436,17 @@ test('reply.viewAsync with ejs engine and custom asyncPropertyName', t => {
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })
@@ -1475,26 +1475,26 @@ test('reply.viewAsync with ejs engine and custom asyncPropertyName and custom pr
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     sget({
       method: 'GET',
       url: 'http://localhost:' + fastify.server.address().port + '/asyncPropertyName'
     }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.ifError(err)
+      t.assert.deepStrictEqual(response.statusCode, 200)
+      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port + '/propertyName'
       }, (err2, response2, body2) => {
-        t.error(err2)
-        t.equal(response2.statusCode, 200)
-        t.equal(response2.headers['content-length'], '' + body.length)
-        t.equal(response2.headers['content-type'], 'text/html; charset=utf-8')
-        t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body2.toString())
+        t.assert.ifError(err2)
+        t.assert.deepStrictEqual(response2.statusCode, 200)
+        t.assert.deepStrictEqual(response2.headers['content-length'], '' + body.length)
+        t.assert.deepStrictEqual(response2.headers['content-type'], 'text/html; charset=utf-8')
+        t.assert.deepStrictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body2.toString())
         fastify.close()
       })
     })
@@ -1515,6 +1515,6 @@ test('reply.viewAsync with ejs engine and conflicting propertyName/asyncProperty
   })
 
   fastify.listen({ port: 0 }, err => {
-    t.ok(err instanceof Error)
+    t.assert.ok(err instanceof Error)
   })
 })

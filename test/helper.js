@@ -47,17 +47,17 @@ module.exports.dotHtmlMinifierTests = function (t, compileOptions, withMinifierO
     })
 
     fastify.listen({ port: 0 }, err => {
-      t.error(err)
+      t.assert.ifError(err)
 
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port
       }, async (err, response, body) => {
-        t.error(err)
-        t.equal(response.statusCode, 200)
-        t.equal(response.headers['content-length'], String(body.length))
-        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.equal(await minifier.minify(dot.process(compileOptions).testdot(data), options), body.toString())
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(response.statusCode, 200)
+        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
+        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.assert.deepStrictEqual(await minifier.minify(dot.process(compileOptions).testdot(data), options), body.toString())
         fastify.close()
       })
     })
@@ -84,17 +84,17 @@ module.exports.dotHtmlMinifierTests = function (t, compileOptions, withMinifierO
     })
 
     fastify.listen({ port: 0 }, err => {
-      t.error(err)
+      t.assert.ifError(err)
 
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port + '/test'
       }, (err, response, body) => {
-        t.error(err)
-        t.equal(response.statusCode, 200)
-        t.equal(response.headers['content-length'], String(body.length))
-        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.equal(dot.process(compileOptions).testdot(data), body.toString())
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(response.statusCode, 200)
+        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
+        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.assert.deepStrictEqual(dot.process(compileOptions).testdot(data), body.toString())
         fastify.close()
       })
     })
@@ -127,17 +127,17 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
     })
 
     fastify.listen({ port: 0 }, err => {
-      t.error(err)
+      t.assert.ifError(err)
 
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port
       }, async (err, response, body) => {
-        t.error(err)
-        t.equal(response.statusCode, 200)
-        t.equal(response.headers['content-length'], String(body.length))
-        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.equal(await minifier.minify(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), body.toString())
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(response.statusCode, 200)
+        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
+        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.assert.deepStrictEqual(await minifier.minify(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), body.toString())
         fastify.close()
       })
     })
@@ -163,17 +163,17 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
     })
 
     fastify.listen({ port: 0 }, err => {
-      t.error(err)
+      t.assert.ifError(err)
 
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port
       }, async (err, response, body) => {
-        t.error(err)
-        t.equal(response.statusCode, 200)
-        t.equal(response.headers['content-length'], String(body.length))
-        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.equal(await minifier.minify(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), body.toString())
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(response.statusCode, 200)
+        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
+        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.assert.deepStrictEqual(await minifier.minify(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), body.toString())
         fastify.close()
       })
     })
@@ -198,17 +198,17 @@ module.exports.etaHtmlMinifierTests = function (t, withMinifierOptions) {
     })
 
     fastify.listen({ port: 0 }, err => {
-      t.error(err)
+      t.assert.ifError(err)
 
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port + '/test'
       }, (err, response, body) => {
-        t.error(err)
-        t.equal(response.statusCode, 200)
-        t.equal(response.headers['content-length'], String(body.length))
-        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.equal(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(response.statusCode, 200)
+        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
+        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
         fastify.close()
       })
     })
@@ -235,10 +235,10 @@ module.exports.handleBarsHtmlMinifierTests = function (t, withMinifierOptions) {
     })
 
     fastify.ready(err => {
-      t.error(err)
+      t.assert.ifError(err)
 
       fastify.view('./templates/index.html', data).then(async compiled => {
-        t.equal(await minifier.minify(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), options), compiled)
+        t.assert.deepStrictEqual(await minifier.minify(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), options), compiled)
         fastify.close()
       })
     })
@@ -269,20 +269,20 @@ module.exports.liquidHtmlMinifierTests = function (t, withMinifierOptions) {
     })
 
     fastify.listen({ port: 0 }, err => {
-      t.error(err)
+      t.assert.ifError(err)
 
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port
       }, (err, response, body) => {
-        t.error(err)
-        t.equal(response.statusCode, 200)
-        t.equal(response.headers['content-length'], String(body.length))
-        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(response.statusCode, 200)
+        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
+        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
         engine.renderFile('./templates/index.liquid', data)
           .then(async (html) => {
-            t.error(err)
-            t.equal(await minifier.minify(html, options), body.toString())
+            t.assert.ifError(err)
+            t.assert.deepStrictEqual(await minifier.minify(html, options), body.toString())
           })
         fastify.close()
       })
@@ -309,20 +309,20 @@ module.exports.liquidHtmlMinifierTests = function (t, withMinifierOptions) {
     })
 
     fastify.listen({ port: 0 }, err => {
-      t.error(err)
+      t.assert.ifError(err)
 
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port + '/test'
       }, (err, response, body) => {
-        t.error(err)
-        t.equal(response.statusCode, 200)
-        t.equal(response.headers['content-length'], String(body.length))
-        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(response.statusCode, 200)
+        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
+        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
         engine.renderFile('./templates/index.liquid', data)
           .then((html) => {
-            t.error(err)
-            t.equal(html, body.toString())
+            t.assert.ifError(err)
+            t.assert.deepStrictEqual(html, body.toString())
           })
         fastify.close()
       })
@@ -354,18 +354,18 @@ module.exports.nunjucksHtmlMinifierTests = function (t, withMinifierOptions) {
     })
 
     fastify.listen({ port: 0 }, err => {
-      t.error(err)
+      t.assert.ifError(err)
 
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port
       }, async (err, response, body) => {
-        t.error(err)
-        t.equal(response.statusCode, 200)
-        t.equal(response.headers['content-length'], String(body.length))
-        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(response.statusCode, 200)
+        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
+        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
         // Global Nunjucks templates dir changed here.
-        t.equal(await minifier.minify(nunjucks.render('./index.njk', data), options), body.toString())
+        t.assert.deepStrictEqual(await minifier.minify(nunjucks.render('./index.njk', data), options), body.toString())
         fastify.close()
       })
     })
@@ -391,18 +391,18 @@ module.exports.nunjucksHtmlMinifierTests = function (t, withMinifierOptions) {
     })
 
     fastify.listen({ port: 0 }, err => {
-      t.error(err)
+      t.assert.ifError(err)
 
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port + '/test'
       }, (err, response, body) => {
-        t.error(err)
-        t.equal(response.statusCode, 200)
-        t.equal(response.headers['content-length'], String(body.length))
-        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(response.statusCode, 200)
+        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
+        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
         // Global Nunjucks templates dir changed here.
-        t.equal(nunjucks.render('./index.njk', data), body.toString())
+        t.assert.deepStrictEqual(nunjucks.render('./index.njk', data), body.toString())
         fastify.close()
       })
     })
@@ -432,17 +432,17 @@ module.exports.pugHtmlMinifierTests = function (t, withMinifierOptions) {
     })
 
     fastify.listen({ port: 0 }, err => {
-      t.error(err)
+      t.assert.ifError(err)
 
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port
       }, async (err, response, body) => {
-        t.error(err)
-        t.equal(response.statusCode, 200)
-        t.equal(response.headers['content-length'], String(body.length))
-        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.equal(await minifier.minify(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), options), body.toString())
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(response.statusCode, 200)
+        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
+        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.assert.deepStrictEqual(await minifier.minify(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), options), body.toString())
         fastify.close()
       })
     })
@@ -467,17 +467,17 @@ module.exports.pugHtmlMinifierTests = function (t, withMinifierOptions) {
     })
 
     fastify.listen({ port: 0 }, err => {
-      t.error(err)
+      t.assert.ifError(err)
 
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port + '/test'
       }, (err, response, body) => {
-        t.error(err)
-        t.equal(response.statusCode, 200)
-        t.equal(response.headers['content-length'], String(body.length))
-        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(response.statusCode, 200)
+        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
+        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.assert.deepStrictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
         fastify.close()
       })
     })
@@ -507,19 +507,19 @@ module.exports.twigHtmlMinifierTests = function (t, withMinifierOptions) {
     })
 
     fastify.listen({ port: 0 }, err => {
-      t.error(err)
+      t.assert.ifError(err)
 
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port
       }, (err, response, body) => {
-        t.error(err)
-        t.equal(response.statusCode, 200)
-        t.equal(response.headers['content-length'], String(body.length))
-        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(response.statusCode, 200)
+        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
+        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
         Twig.renderFile('./templates/index.twig', data, async (err, html) => {
-          t.error(err)
-          t.equal(await minifier.minify(html, options), body.toString())
+          t.assert.ifError(err)
+          t.assert.deepStrictEqual(await minifier.minify(html, options), body.toString())
         })
         fastify.close()
       })
@@ -545,19 +545,19 @@ module.exports.twigHtmlMinifierTests = function (t, withMinifierOptions) {
     })
 
     fastify.listen({ port: 0 }, err => {
-      t.error(err)
+      t.assert.ifError(err)
 
       sget({
         method: 'GET',
         url: 'http://localhost:' + fastify.server.address().port + '/test'
       }, (err, response, body) => {
-        t.error(err)
-        t.equal(response.statusCode, 200)
-        t.equal(response.headers['content-length'], String(body.length))
-        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+        t.assert.ifError(err)
+        t.assert.deepStrictEqual(response.statusCode, 200)
+        t.assert.deepStrictEqual(response.headers['content-length'], String(body.length))
+        t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
         Twig.renderFile('./templates/index.twig', data, (err, html) => {
-          t.error(err)
-          t.equal(html, body.toString())
+          t.assert.ifError(err)
+          t.assert.deepStrictEqual(html, body.toString())
         })
         fastify.close()
       })
