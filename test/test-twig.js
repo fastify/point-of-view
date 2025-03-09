@@ -1,15 +1,14 @@
 'use strict'
 
 const { test } = require('node:test')
-const sget = require('simple-get').concat
 const fs = require('node:fs')
 const Fastify = require('fastify')
 
 require('./helper').twigHtmlMinifierTests(true)
 require('./helper').twigHtmlMinifierTests(false)
 
-test('reply.view with twig engine', t => {
-  t.plan(7)
+test('reply.view with twig engine', async t => {
+  t.plan(5)
   const fastify = Fastify()
   const Twig = require('twig')
   const data = { title: 'fastify', text: 'text' }
@@ -24,28 +23,28 @@ test('reply.view with twig engine', t => {
     reply.view('./templates/index.twig', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  await new Promise(resolve => {
+    Twig.renderFile('./templates/index.twig', data, (err, html) => {
       t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      Twig.renderFile('./templates/index.twig', data, (err, html) => {
-        t.assert.ifError(err)
-        t.assert.strictEqual(html, body.toString())
-      })
-      fastify.close()
+      t.assert.strictEqual(html, responseContent)
+      resolve()
     })
   })
+
+  await fastify.close()
 })
 
-test('reply.view with twig engine and simple include', t => {
-  t.plan(7)
+test('reply.view with twig engine and simple include', async t => {
+  t.plan(5)
   const fastify = Fastify()
   const Twig = require('twig')
   const data = { title: 'fastify', text: 'text' }
@@ -60,28 +59,28 @@ test('reply.view with twig engine and simple include', t => {
     reply.view('./templates/template.twig', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  await new Promise(resolve => {
+    Twig.renderFile('./templates/template.twig', data, (err, html) => {
       t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      Twig.renderFile('./templates/template.twig', data, (err, html) => {
-        t.assert.ifError(err)
-        t.assert.strictEqual(html, body.toString())
-      })
-      fastify.close()
+      t.assert.strictEqual(html, responseContent)
+      resolve()
     })
   })
+
+  await fastify.close()
 })
 
-test('reply.view for twig without data-parameter but defaultContext', t => {
-  t.plan(7)
+test('reply.view for twig without data-parameter but defaultContext', async t => {
+  t.plan(5)
   const fastify = Fastify()
   const Twig = require('twig')
   const data = { title: 'fastify', text: 'text' }
@@ -97,28 +96,28 @@ test('reply.view for twig without data-parameter but defaultContext', t => {
     reply.view('./templates/index.twig')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  await new Promise(resolve => {
+    Twig.renderFile('./templates/index.twig', data, (err, html) => {
       t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      Twig.renderFile('./templates/index.twig', data, (err, html) => {
-        t.assert.ifError(err)
-        t.assert.strictEqual(html, body.toString())
-      })
-      fastify.close()
+      t.assert.strictEqual(html, responseContent)
+      resolve()
     })
   })
+
+  await fastify.close()
 })
 
-test('reply.view for twig without data-parameter and without defaultContext', t => {
-  t.plan(7)
+test('reply.view for twig without data-parameter and without defaultContext', async t => {
+  t.plan(5)
   const fastify = Fastify()
   const Twig = require('twig')
 
@@ -132,28 +131,28 @@ test('reply.view for twig without data-parameter and without defaultContext', t 
     reply.view('./templates/index.twig')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  await new Promise(resolve => {
+    Twig.renderFile('./templates/index.twig', (err, html) => {
       t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      Twig.renderFile('./templates/index.twig', (err, html) => {
-        t.assert.ifError(err)
-        t.assert.strictEqual(html, body.toString())
-      })
-      fastify.close()
+      t.assert.strictEqual(html, responseContent)
+      resolve()
     })
   })
+
+  await fastify.close()
 })
 
-test('reply.view with twig engine and defaultContext', t => {
-  t.plan(7)
+test('reply.view with twig engine and defaultContext', async t => {
+  t.plan(5)
   const fastify = Fastify()
   const Twig = require('twig')
   const data = { title: 'fastify', text: 'text' }
@@ -169,28 +168,28 @@ test('reply.view with twig engine and defaultContext', t => {
     reply.view('./templates/index.twig', {})
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  await new Promise(resolve => {
+    Twig.renderFile('./templates/index.twig', data, (err, html) => {
       t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      Twig.renderFile('./templates/index.twig', data, (err, html) => {
-        t.assert.ifError(err)
-        t.assert.strictEqual(html, body.toString())
-      })
-      fastify.close()
+      t.assert.strictEqual(html, responseContent)
+      resolve()
     })
   })
+
+  await fastify.close()
 })
 
-test('reply.view for twig engine without data-parameter and defaultContext but with reply.locals', t => {
-  t.plan(7)
+test('reply.view for twig engine without data-parameter and defaultContext but with reply.locals', async t => {
+  t.plan(5)
   const fastify = Fastify()
   const Twig = require('twig')
   const localsData = { text: 'text from locals' }
@@ -210,28 +209,28 @@ test('reply.view for twig engine without data-parameter and defaultContext but w
     reply.view('./templates/index.twig')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  await new Promise(resolve => {
+    Twig.renderFile('./templates/index.twig', localsData, (err, html) => {
       t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      Twig.renderFile('./templates/index.twig', localsData, (err, html) => {
-        t.assert.ifError(err)
-        t.assert.strictEqual(html, body.toString())
-      })
-      fastify.close()
+      t.assert.strictEqual(html, responseContent)
+      resolve()
     })
   })
+
+  await fastify.close()
 })
 
-test('reply.view for twig engine without defaultContext but with reply.locals and data-parameter', t => {
-  t.plan(7)
+test('reply.view for twig engine without defaultContext but with reply.locals and data-parameter', async t => {
+  t.plan(5)
   const fastify = Fastify()
   const Twig = require('twig')
   const localsData = { text: 'text from locals' }
@@ -252,28 +251,28 @@ test('reply.view for twig engine without defaultContext but with reply.locals an
     reply.view('./templates/index.twig', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  await new Promise(resolve => {
+    Twig.renderFile('./templates/index.twig', data, (err, html) => {
       t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      Twig.renderFile('./templates/index.twig', data, (err, html) => {
-        t.assert.ifError(err)
-        t.assert.strictEqual(html, body.toString())
-      })
-      fastify.close()
+      t.assert.strictEqual(html, responseContent)
+      resolve()
     })
   })
+
+  await fastify.close()
 })
 
-test('reply.view for twig engine without data-parameter but with reply.locals and defaultContext', t => {
-  t.plan(7)
+test('reply.view for twig engine without data-parameter but with reply.locals and defaultContext', async t => {
+  t.plan(5)
   const fastify = Fastify()
   const Twig = require('twig')
   const localsData = { text: 'text from locals' }
@@ -295,28 +294,28 @@ test('reply.view for twig engine without data-parameter but with reply.locals an
     reply.view('./templates/index.twig')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  await new Promise(resolve => {
+    Twig.renderFile('./templates/index.twig', localsData, (err, html) => {
       t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      Twig.renderFile('./templates/index.twig', localsData, (err, html) => {
-        t.assert.ifError(err)
-        t.assert.strictEqual(html, body.toString())
-      })
-      fastify.close()
+      t.assert.strictEqual(html, responseContent)
+      resolve()
     })
   })
+
+  await fastify.close()
 })
 
-test('reply.view for twig engine with data-parameter and reply.locals and defaultContext', t => {
-  t.plan(7)
+test('reply.view for twig engine with data-parameter and reply.locals and defaultContext', async t => {
+  t.plan(5)
   const fastify = Fastify()
   const Twig = require('twig')
   const localsData = { text: 'text from locals' }
@@ -339,28 +338,28 @@ test('reply.view for twig engine with data-parameter and reply.locals and defaul
     reply.view('./templates/index.twig', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  await new Promise(resolve => {
+    Twig.renderFile('./templates/index.twig', data, (err, html) => {
       t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      Twig.renderFile('./templates/index.twig', data, (err, html) => {
-        t.assert.ifError(err)
-        t.assert.strictEqual(html, body.toString())
-      })
-      fastify.close()
+      t.assert.strictEqual(html, responseContent)
+      resolve()
     })
   })
+
+  await fastify.close()
 })
 
-test('reply.view with twig engine, will preserve content-type', t => {
-  t.plan(7)
+test('reply.view with twig engine, will preserve content-type', async t => {
+  t.plan(5)
   const fastify = Fastify()
   const Twig = require('twig')
   const data = { title: 'fastify', text: 'text' }
@@ -376,27 +375,27 @@ test('reply.view with twig engine, will preserve content-type', t => {
     reply.view('./templates/index.twig', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/xml')
+  await new Promise(resolve => {
+    Twig.renderFile('./templates/index.twig', data, (err, html) => {
       t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/xml')
-      Twig.renderFile('./templates/index.twig', data, (err, html) => {
-        t.assert.ifError(err)
-        t.assert.strictEqual(html, body.toString())
-      })
-      fastify.close()
+      t.assert.strictEqual(html, responseContent)
+      resolve()
     })
   })
+
+  await fastify.close()
 })
 
-test('fastify.view with twig engine, should throw page missing', t => {
+test('fastify.view with twig engine, should throw page missing', (t, end) => {
   t.plan(3)
   const fastify = Fastify()
   const Twig = require('twig')
@@ -414,12 +413,13 @@ test('fastify.view with twig engine, should throw page missing', t => {
       t.assert.ok(err instanceof Error)
       t.assert.strictEqual(err.message, 'Missing page')
       fastify.close()
+      end()
     })
   })
 })
 
-test('reply.view with twig engine should return 500 if renderFile fails', t => {
-  t.plan(4)
+test('reply.view with twig engine should return 500 if renderFile fails', async t => {
+  t.plan(2)
   const fastify = Fastify()
   const Twig = {
     renderFile: (_, __, callback) => { callback(Error('RenderFile Error')) }
@@ -435,25 +435,20 @@ test('reply.view with twig engine should return 500 if renderFile fails', t => {
     reply.view('./templates/index.twig')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      const { message } = JSON.parse(body.toString())
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 500)
-      t.assert.strictEqual('RenderFile Error', message)
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
 
-      fastify.close()
-    })
-  })
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 500)
+  t.assert.strictEqual(JSON.parse(responseContent).message, 'RenderFile Error')
+
+  await fastify.close()
 })
 
-test('reply.view with twig engine and raw template', t => {
-  t.plan(7)
+test('reply.view with twig engine and raw template', async t => {
+  t.plan(5)
   const fastify = Fastify()
   const Twig = require('twig')
   const data = { title: 'fastify', text: 'text' }
@@ -468,28 +463,28 @@ test('reply.view with twig engine and raw template', t => {
     reply.view({ raw: fs.readFileSync('./templates/index.twig') }, data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  await new Promise(resolve => {
+    Twig.renderFile('./templates/index.twig', data, (err, html) => {
       t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      Twig.renderFile('./templates/index.twig', data, (err, html) => {
-        t.assert.ifError(err)
-        t.assert.strictEqual(html, body.toString())
-      })
-      fastify.close()
+      t.assert.strictEqual(html, responseContent)
+      resolve()
     })
   })
+
+  await fastify.close()
 })
 
-test('reply.view with twig engine and function template', t => {
-  t.plan(7)
+test('reply.view with twig engine and function template', async t => {
+  t.plan(5)
   const fastify = Fastify()
   const Twig = require('twig')
   const data = { title: 'fastify', text: 'text' }
@@ -504,28 +499,28 @@ test('reply.view with twig engine and function template', t => {
     reply.view(Twig.twig({ data: fs.readFileSync('./templates/index.twig').toString() }), data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  await new Promise(resolve => {
+    Twig.renderFile('./templates/index.twig', data, (err, html) => {
       t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      Twig.renderFile('./templates/index.twig', data, (err, html) => {
-        t.assert.ifError(err)
-        t.assert.strictEqual(html, body.toString())
-      })
-      fastify.close()
+      t.assert.strictEqual(html, responseContent)
+      resolve()
     })
   })
+
+  await fastify.close()
 })
 
-test('reply.view with twig engine and unknown template type', t => {
-  t.plan(3)
+test('reply.view with twig engine and unknown template type', async t => {
+  t.plan(1)
   const fastify = Fastify()
   const Twig = require('twig')
   const data = { title: 'fastify', text: 'text' }
@@ -540,16 +535,11 @@ test('reply.view with twig engine and unknown template type', t => {
     reply.view({ }, data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 500)
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  t.assert.strictEqual(result.status, 500)
+
+  await fastify.close()
 })

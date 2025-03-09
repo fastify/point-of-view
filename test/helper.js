@@ -447,8 +447,7 @@ module.exports.pugHtmlMinifierTests = function (t, withMinifierOptions) {
   })
 }
 
-module.exports.twigHtmlMinifierTests = function (t, withMinifierOptions) {
-  const test = t.test
+module.exports.twigHtmlMinifierTests = function (withMinifierOptions) {
   const options = withMinifierOptions ? minifierOpts : {}
 
   test('reply.view with twig engine and html-minifier-terser', async t => {
