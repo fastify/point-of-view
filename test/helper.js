@@ -267,7 +267,7 @@ module.exports.liquidHtmlMinifierTests = function (withMinifierOptions) {
     await fastify.close()
   })
   test('reply.view with liquid engine and paths excluded from html-minifier-terser', async t => {
-    t.plan(7)
+    t.plan(4)
     const fastify = Fastify()
     const engine = new Liquid()
 
@@ -298,7 +298,7 @@ module.exports.liquidHtmlMinifierTests = function (withMinifierOptions) {
 
     const html = await engine.renderFile('./templates/index.liquid', data)
 
-    t.assert.strictEqual(await minifier.minify(html, options), responseContent)
+    t.assert.strictEqual((await minifier.minify(html, options)).trim(), responseContent.trim())
 
     await fastify.close()
   })

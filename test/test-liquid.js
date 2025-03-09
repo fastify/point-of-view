@@ -8,8 +8,8 @@ const Fastify = require('fastify')
 require('./helper').liquidHtmlMinifierTests(true)
 require('./helper').liquidHtmlMinifierTests(false)
 
-test('reply.view with liquid engine', t => {
-  t.plan(7)
+test('reply.view with liquid engine', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const { Liquid } = require('liquidjs')
   const data = { text: 'text' }
@@ -26,29 +26,23 @@ test('reply.view with liquid engine', t => {
     reply.view('./templates/index.liquid', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index.liquid', data)
-        .then((html) => {
-          t.assert.ifError(err)
-          t.assert.strictEqual(html, body.toString())
-        })
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const html = await engine.renderFile('./templates/index.liquid', data)
+  t.assert.strictEqual(html, responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with liquid engine without data-parameter but defaultContext', t => {
-  t.plan(7)
+test('reply.view with liquid engine without data-parameter but defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const { Liquid } = require('liquidjs')
   const data = { text: 'text' }
@@ -66,29 +60,23 @@ test('reply.view with liquid engine without data-parameter but defaultContext', 
     reply.view('./templates/index.liquid')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index.liquid', data)
-        .then((html) => {
-          t.assert.ifError(err)
-          t.assert.strictEqual(html, body.toString())
-        })
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const html = await engine.renderFile('./templates/index.liquid', data)
+  t.assert.strictEqual(html, responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with liquid engine without data-parameter but without defaultContext', t => {
-  t.plan(7)
+test('reply.view with liquid engine without data-parameter but without defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const { Liquid } = require('liquidjs')
 
@@ -104,29 +92,23 @@ test('reply.view with liquid engine without data-parameter but without defaultCo
     reply.view('./templates/index.liquid')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index.liquid')
-        .then((html) => {
-          t.assert.ifError(err)
-          t.assert.strictEqual(html, body.toString())
-        })
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const html = await engine.renderFile('./templates/index.liquid')
+  t.assert.strictEqual(html, responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with liquid engine with data-parameter and defaultContext', t => {
-  t.plan(7)
+test('reply.view with liquid engine with data-parameter and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const { Liquid } = require('liquidjs')
   const data = { text: 'text' }
@@ -144,29 +126,23 @@ test('reply.view with liquid engine with data-parameter and defaultContext', t =
     reply.view('./templates/index.liquid', {})
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index.liquid', data)
-        .then((html) => {
-          t.assert.ifError(err)
-          t.assert.strictEqual(html, body.toString())
-        })
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const html = await engine.renderFile('./templates/index.liquid', data)
+  t.assert.strictEqual(html, responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for liquid engine without data-parameter and defaultContext but with reply.locals', t => {
-  t.plan(7)
+test('reply.view for liquid engine without data-parameter and defaultContext but with reply.locals', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const { Liquid } = require('liquidjs')
   const localsData = { text: 'text from locals' }
@@ -188,29 +164,23 @@ test('reply.view for liquid engine without data-parameter and defaultContext but
     reply.view('./templates/index.liquid', {})
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index.liquid', localsData)
-        .then((html) => {
-          t.assert.ifError(err)
-          t.assert.strictEqual(html, body.toString())
-        })
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const html = await engine.renderFile('./templates/index.liquid', localsData)
+  t.assert.strictEqual(html, responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for liquid engine without defaultContext but with reply.locals and data-parameter', t => {
-  t.plan(7)
+test('reply.view for liquid engine without defaultContext but with reply.locals and data-parameter', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const { Liquid } = require('liquidjs')
   const localsData = { text: 'text from locals' }
@@ -233,29 +203,23 @@ test('reply.view for liquid engine without defaultContext but with reply.locals 
     reply.view('./templates/index.liquid', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index.liquid', data)
-        .then((html) => {
-          t.assert.ifError(err)
-          t.assert.strictEqual(html, body.toString())
-        })
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const html = await engine.renderFile('./templates/index.liquid', data)
+  t.assert.strictEqual(html, responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for liquid engine without data-parameter but with reply.locals and defaultContext', t => {
-  t.plan(7)
+test('reply.view for liquid engine without data-parameter but with reply.locals and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const { Liquid } = require('liquidjs')
   const localsData = { text: 'text from locals' }
@@ -279,29 +243,23 @@ test('reply.view for liquid engine without data-parameter but with reply.locals 
     reply.view('./templates/index.liquid')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index.liquid', localsData)
-        .then((html) => {
-          t.assert.ifError(err)
-          t.assert.strictEqual(html, body.toString())
-        })
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const html = await engine.renderFile('./templates/index.liquid', localsData)
+  t.assert.strictEqual(html, responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for liquid engine with data-parameter and reply.locals and defaultContext', t => {
-  t.plan(7)
+test('reply.view for liquid engine with data-parameter and reply.locals and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const { Liquid } = require('liquidjs')
   const localsData = { text: 'text from locals' }
@@ -326,29 +284,23 @@ test('reply.view for liquid engine with data-parameter and reply.locals and defa
     reply.view('./templates/index.liquid', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index.liquid', data)
-        .then((html) => {
-          t.assert.ifError(err)
-          t.assert.strictEqual(html, body.toString())
-        })
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const html = await engine.renderFile('./templates/index.liquid', data)
+  t.assert.strictEqual(html, responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with liquid engine and custom tag', t => {
-  t.plan(7)
+test('reply.view with liquid engine and custom tag', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const { Liquid } = require('liquidjs')
   const data = { text: 'text' }
@@ -376,29 +328,23 @@ test('reply.view with liquid engine and custom tag', t => {
     reply.view('./templates/index-with-custom-tag.liquid', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index-with-custom-tag.liquid', data)
-        .then((html) => {
-          t.assert.ifError(err)
-          t.assert.strictEqual(html, body.toString())
-        })
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const html = await engine.renderFile('./templates/index-with-custom-tag.liquid', data)
+  t.assert.strictEqual(html, responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with liquid engine and double quoted variable', t => {
-  t.plan(7)
+test('reply.view with liquid engine and double quoted variable', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const { Liquid } = require('liquidjs')
   const data = { text: 'foo' }
@@ -415,28 +361,22 @@ test('reply.view with liquid engine and double quoted variable', t => {
     reply.view('./templates/double-quotes-variable.liquid', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/double-quotes-variable.liquid', data)
-        .then((html) => {
-          t.assert.ifError(err)
-          t.assert.strictEqual(html, body.toString())
-        })
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const html = await engine.renderFile('./templates/double-quotes-variable.liquid', data)
+  t.assert.strictEqual(html, responseContent)
+
+  await fastify.close()
 })
 
-test('fastify.view with liquid engine, should throw page missing', t => {
+test('fastify.view with liquid engine, should throw page missing', (t, end) => {
   t.plan(3)
   const fastify = Fastify()
   const { Liquid } = require('liquidjs')
@@ -455,11 +395,12 @@ test('fastify.view with liquid engine, should throw page missing', t => {
       t.assert.ok(err instanceof Error)
       t.assert.strictEqual(err.message, 'Missing page')
       fastify.close()
+      end()
     })
   })
 })
 
-test('fastify.view with liquid engine template that does not exist errors correctly', t => {
+test('fastify.view with liquid engine template that does not exist errors correctly', (t, end) => {
   t.plan(3)
   const fastify = Fastify()
   const { Liquid } = require('liquidjs')
@@ -476,14 +417,15 @@ test('fastify.view with liquid engine template that does not exist errors correc
 
     fastify.view('./I-Dont-Exist', {}, err => {
       t.assert.ok(err instanceof Error)
-      t.match(err.message, 'ENOENT')
+      t.assert.match(err.message, /ENOENT/)
       fastify.close()
+      end()
     })
   })
 })
 
-test('reply.view with liquid engine and raw template', t => {
-  t.plan(7)
+test('reply.view with liquid engine and raw template', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const { Liquid } = require('liquidjs')
   const data = { text: 'text' }
@@ -500,29 +442,23 @@ test('reply.view with liquid engine and raw template', t => {
     reply.view({ raw: fs.readFileSync('./templates/index.liquid', 'utf8') }, data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      engine.renderFile('./templates/index.liquid', data)
-        .then((html) => {
-          t.assert.ifError(err)
-          t.assert.strictEqual(html, body.toString())
-        })
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const html = await engine.renderFile('./templates/index.liquid', data)
+  t.assert.strictEqual(html, responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with liquid engine and function template', t => {
-  t.plan(7)
+test('reply.view with liquid engine and function template', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const { Liquid } = require('liquidjs')
   const data = { text: 'text' }
@@ -539,29 +475,23 @@ test('reply.view with liquid engine and function template', t => {
     reply.header('Content-Type', 'text/html').view(engine.renderFile.bind(engine, './templates/index.liquid'), data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html')
-      engine.renderFile('./templates/index.liquid', data)
-        .then((html) => {
-          t.assert.ifError(err)
-          t.assert.strictEqual(html, body.toString())
-        })
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html')
+
+  const html = await engine.renderFile('./templates/index.liquid', data)
+  t.assert.strictEqual(html, responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with liquid engine and unknown template type', t => {
-  t.plan(3)
+test('reply.view with liquid engine and unknown template type', async t => {
+  t.plan(1)
   const fastify = Fastify()
   const { Liquid } = require('liquidjs')
   const data = { text: 'text' }
@@ -578,16 +508,11 @@ test('reply.view with liquid engine and unknown template type', t => {
     reply.view({ }, data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 500)
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  t.assert.strictEqual(result.status, 500)
+
+  await fastify.close()
 })
