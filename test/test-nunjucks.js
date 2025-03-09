@@ -9,8 +9,8 @@ const path = require('node:path')
 require('./helper').nunjucksHtmlMinifierTests(true)
 require('./helper').nunjucksHtmlMinifierTests(false)
 
-test('reply.view with nunjucks engine and custom templates folder', t => {
-  t.plan(6)
+test('reply.view with nunjucks engine and custom templates folder', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const nunjucks = require('nunjucks')
   const data = { text: 'text' }
@@ -26,25 +26,22 @@ test('reply.view with nunjucks engine and custom templates folder', t => {
     reply.view('index.njk', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(nunjucks.render('index.njk', data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(nunjucks.render('index.njk', data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with nunjucks engine and custom templates array of folders', t => {
-  t.plan(6)
+test('reply.view with nunjucks engine and custom templates array of folders', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const nunjucks = require('nunjucks')
   const data = { text: 'text' }
@@ -63,25 +60,22 @@ test('reply.view with nunjucks engine and custom templates array of folders', t 
     reply.view('index.njk', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(nunjucks.render('index.njk', data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(nunjucks.render('index.njk', data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for nunjucks engine without data-parameter but defaultContext', t => {
-  t.plan(6)
+test('reply.view for nunjucks engine without data-parameter but defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const nunjucks = require('nunjucks')
   const data = { text: 'text' }
@@ -97,25 +91,22 @@ test('reply.view for nunjucks engine without data-parameter but defaultContext',
     reply.view('./templates/index.njk')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(nunjucks.render('./templates/index.njk', data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(nunjucks.render('./templates/index.njk', data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for nunjucks engine without data-parameter and without defaultContext', t => {
-  t.plan(6)
+test('reply.view for nunjucks engine without data-parameter and without defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const nunjucks = require('nunjucks')
 
@@ -129,25 +120,22 @@ test('reply.view for nunjucks engine without data-parameter and without defaultC
     reply.view('./templates/index.njk')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(nunjucks.render('./templates/index.njk'), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(nunjucks.render('./templates/index.njk'), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for nunjucks engine without data-parameter and defaultContext but with reply.locals', t => {
-  t.plan(6)
+test('reply.view for nunjucks engine without data-parameter and defaultContext but with reply.locals', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const nunjucks = require('nunjucks')
   const localsData = { text: 'text from locals' }
@@ -167,25 +155,22 @@ test('reply.view for nunjucks engine without data-parameter and defaultContext b
     reply.view('./templates/index.njk')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(nunjucks.render('./templates/index.njk', localsData), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(nunjucks.render('./templates/index.njk', localsData), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for nunjucks engine without defaultContext but with reply.locals and data-parameter', t => {
-  t.plan(6)
+test('reply.view for nunjucks engine without defaultContext but with reply.locals and data-parameter', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const nunjucks = require('nunjucks')
   const localsData = { text: 'text from locals' }
@@ -206,25 +191,22 @@ test('reply.view for nunjucks engine without defaultContext but with reply.local
     reply.view('./templates/index.njk', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(nunjucks.render('./templates/index.njk', data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(nunjucks.render('./templates/index.njk', data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for nunjucks engine without data-parameter but with reply.locals and defaultContext', t => {
-  t.plan(6)
+test('reply.view for nunjucks engine without data-parameter but with reply.locals and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const nunjucks = require('nunjucks')
   const localsData = { text: 'text from locals' }
@@ -246,25 +228,22 @@ test('reply.view for nunjucks engine without data-parameter but with reply.local
     reply.view('./templates/index.njk')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(nunjucks.render('./templates/index.njk', localsData), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(nunjucks.render('./templates/index.njk', localsData), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for nunjucks engine with data-parameter and reply.locals and defaultContext', t => {
-  t.plan(6)
+test('reply.view for nunjucks engine with data-parameter and reply.locals and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const nunjucks = require('nunjucks')
   const localsData = { text: 'text from locals' }
@@ -287,25 +266,22 @@ test('reply.view for nunjucks engine with data-parameter and reply.locals and de
     reply.view('./templates/index.njk', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(nunjucks.render('./templates/index.njk', data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(nunjucks.render('./templates/index.njk', data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with nunjucks engine, will preserve content-type', t => {
-  t.plan(6)
+test('reply.view with nunjucks engine, will preserve content-type', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const nunjucks = require('nunjucks')
   const data = { text: 'text' }
@@ -321,25 +297,22 @@ test('reply.view with nunjucks engine, will preserve content-type', t => {
     reply.view('./templates/index.njk', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/xml')
-      t.assert.strictEqual(nunjucks.render('./templates/index.njk', data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/xml')
+  t.assert.strictEqual(nunjucks.render('./templates/index.njk', data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with nunjucks engine and full path templates folder', t => {
-  t.plan(6)
+test('reply.view with nunjucks engine and full path templates folder', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const nunjucks = require('nunjucks')
   const data = { text: 'text' }
@@ -355,26 +328,23 @@ test('reply.view with nunjucks engine and full path templates folder', t => {
     reply.view('./index.njk', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      // Global Nunjucks templates dir changed here.
-      t.assert.strictEqual(nunjucks.render('./index.njk', data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  // Global Nunjucks templates dir changed here.
+  t.assert.strictEqual(nunjucks.render('./index.njk', data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with nunjucks engine and includeViewExtension is true', t => {
-  t.plan(6)
+test('reply.view with nunjucks engine and includeViewExtension is true', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const nunjucks = require('nunjucks')
   const data = { text: 'text' }
@@ -390,26 +360,23 @@ test('reply.view with nunjucks engine and includeViewExtension is true', t => {
     reply.view('./templates/index', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      // Global Nunjucks templates dir is  `./` here.
-      t.assert.strictEqual(nunjucks.render('./templates/index.njk', data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  // Global Nunjucks templates dir is  `./` here.
+  t.assert.strictEqual(nunjucks.render('./templates/index.njk', data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with nunjucks engine using onConfigure callback', t => {
-  t.plan(7)
+test('reply.view with nunjucks engine using onConfigure callback', async t => {
+  t.plan(5)
   const fastify = Fastify()
   const nunjucks = require('nunjucks')
   const data = { text: 'text' }
@@ -429,26 +396,23 @@ test('reply.view with nunjucks engine using onConfigure callback', t => {
     reply.view('./templates/index-with-global.njk', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      // Global Nunjucks templates dir is  `./` here.
-      t.assert.strictEqual(nunjucks.render('./templates/index-with-global.njk', data), body.toString())
-      t.match(body.toString(), /.*<p>my global var value<\/p>/)
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  // Global Nunjucks templates dir is  `./` here.
+  t.assert.strictEqual(nunjucks.render('./templates/index-with-global.njk', data), responseContent)
+  t.assert.match(responseContent, /.*<p>my global var value<\/p>/)
+
+  await fastify.close()
 })
 
-test('fastify.view with nunjucks engine', t => {
+test('fastify.view with nunjucks engine', (t, end) => {
   t.plan(6)
   const fastify = Fastify()
   const nunjucks = require('nunjucks')
@@ -474,13 +438,14 @@ test('fastify.view with nunjucks engine', t => {
           t.assert.ifError(err)
           t.assert.strictEqual(nunjucks.render('./templates/index.njk', data), compiled)
           fastify.close()
+          end()
         })
       })
     })
   })
 })
 
-test('fastify.view with nunjucks should throw page missing', t => {
+test('fastify.view with nunjucks should throw page missing', (t, end) => {
   t.plan(3)
   const fastify = Fastify()
   const nunjucks = require('nunjucks')
@@ -498,12 +463,13 @@ test('fastify.view with nunjucks should throw page missing', t => {
       t.assert.ok(err instanceof Error)
       t.assert.strictEqual(err.message, 'Missing page')
       fastify.close()
+      end()
     })
   })
 })
 
-test('fastify.view with nunjucks engine should return 500 if render fails', t => {
-  t.plan(4)
+test('fastify.view with nunjucks engine should return 500 if render fails', async t => {
+  t.plan(2)
   const fastify = Fastify()
   const nunjucks = {
     configure: () => ({
@@ -521,25 +487,20 @@ test('fastify.view with nunjucks engine should return 500 if render fails', t =>
     reply.view('./templates/index.njk')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      const { message } = JSON.parse(body.toString())
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 500)
-      t.assert.strictEqual('Render Error', message)
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
 
-      fastify.close()
-    })
-  })
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 500)
+  t.assert.strictEqual(JSON.parse(responseContent).message, 'Render Error')
+
+  await fastify.close()
 })
 
-test('reply.view with nunjucks engine and raw template', t => {
-  t.plan(6)
+test('reply.view with nunjucks engine and raw template', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const nunjucks = require('nunjucks')
   const data = { text: 'text' }
@@ -555,25 +516,22 @@ test('reply.view with nunjucks engine and raw template', t => {
     reply.view({ raw: fs.readFileSync('./templates/index.njk') }, data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(nunjucks.render('index.njk', data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(nunjucks.render('index.njk', data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with nunjucks engine and function template', t => {
-  t.plan(6)
+test('reply.view with nunjucks engine and function template', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const nunjucks = require('nunjucks')
   const data = { text: 'text' }
@@ -589,25 +547,22 @@ test('reply.view with nunjucks engine and function template', t => {
     reply.view(nunjucks.compile(fs.readFileSync('./templates/index.njk').toString()), data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(nunjucks.render('index.njk', data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(nunjucks.render('index.njk', data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with nunjucks engine and unknown template type', t => {
-  t.plan(3)
+test('reply.view with nunjucks engine and unknown template type', async t => {
+  t.plan(1)
   const fastify = Fastify()
   const nunjucks = require('nunjucks')
   const data = { text: 'text' }
@@ -623,16 +578,11 @@ test('reply.view with nunjucks engine and unknown template type', t => {
     reply.view({ }, data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 500)
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  t.assert.strictEqual(result.status, 500)
+
+  await fastify.close()
 })
