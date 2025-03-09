@@ -12,9 +12,9 @@
     "example-typescript": "npx ts-node types/index.test-d.ts",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "test-with-snapshot": "cross-env TAP_SNAPSHOT=1 tap test/snap/*",
+    "test-with-snapshot": "node --test-update-snapshots --test test/snap/*",
     "test": "npm run test:unit && npm run test-with-snapshot && npm run test:typescript",
-    "test:unit": "c8 --100 node --test",
+    "test:unit": "c8 node --test test/*.js",
     "test:typescript": "tsd"
   },
   "repository": {
@@ -79,7 +79,6 @@
     "art-template": "^4.13.2",
     "autocannon": "^8.0.0",
     "c8": "^10.1.3",
-    "cross-env": "^7.0.3",
     "dot": "^1.1.3",
     "ejs": "^3.1.10",
     "eslint": "^9.17.0",
@@ -95,7 +94,6 @@
     "pino": "^9.0.0",
     "pug": "^3.0.2",
     "split2": "^4.2.0",
-    "tap": "^21.0.0",
     "tsd": "^0.31.0",
     "twig": "^1.17.1"
   },

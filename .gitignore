@@ -159,3 +159,4 @@ yarn.lock
 out
 temp/
 tmp/
+*.snapshot
