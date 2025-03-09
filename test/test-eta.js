@@ -1,7 +1,6 @@
 'use strict'
 
 const { test, beforeEach } = require('node:test')
-const sget = require('simple-get').concat
 const Fastify = require('fastify')
 const fs = require('node:fs')
 const path = require('node:path')
@@ -18,8 +17,8 @@ beforeEach(async () => {
   eta = new Eta()
 })
 
-test('reply.view with eta engine and custom templates folder', t => {
-  t.plan(6)
+test('reply.view with eta engine and custom templates folder', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const data = { text: 'text' }
@@ -35,25 +34,21 @@ test('reply.view with eta engine and custom templates folder', t => {
     reply.view('index.eta', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with eta engine with layout option', t => {
-  t.plan(6)
+test('reply.view with eta engine with layout option', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const data = { text: 'text' }
@@ -70,25 +65,21 @@ test('reply.view with eta engine with layout option', t => {
     reply.view('index-for-layout.eta', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with eta engine with layout option on render', t => {
-  t.plan(6)
+test('reply.view with eta engine with layout option on render', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const data = { text: 'text' }
@@ -104,25 +95,21 @@ test('reply.view with eta engine with layout option on render', t => {
     reply.view('index-for-layout.eta', data, { layout: 'layout-eta.html' })
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view should return 500 if layout is missing on render', t => {
-  t.plan(3)
+test('reply.view should return 500 if layout is missing on render', async t => {
+  t.plan(1)
   const fastify = Fastify()
 
   const data = { text: 'text' }
@@ -138,22 +125,17 @@ test('reply.view should return 500 if layout is missing on render', t => {
     reply.view('index-for-layout.eta', data, { layout: 'non-existing-layout-eta.html' })
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 500)
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  t.assert.strictEqual(result.status, 500)
+
+  await fastify.close()
 })
 
-test('reply.view with eta engine and custom ext', t => {
-  t.plan(6)
+test('reply.view with eta engine and custom ext', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const data = { text: 'text' }
@@ -170,25 +152,21 @@ test('reply.view with eta engine and custom ext', t => {
     reply.view('index', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for eta without data-parameter but defaultContext', t => {
-  t.plan(6)
+test('reply.view for eta without data-parameter but defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const data = { text: 'text' }
@@ -205,25 +183,21 @@ test('reply.view for eta without data-parameter but defaultContext', t => {
     reply.view('index.eta')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for eta without data-parameter but defaultContext', t => {
-  t.plan(6)
+test('reply.view for eta without data-parameter but defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const data = { text: 'text' }
@@ -240,25 +214,21 @@ test('reply.view for eta without data-parameter but defaultContext', t => {
     reply.view('index.eta')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for eta without data-parameter and without defaultContext', t => {
-  t.plan(6)
+test('reply.view for eta without data-parameter and without defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   fastify.register(pointOfView, {
@@ -272,25 +242,22 @@ test('reply.view for eta without data-parameter and without defaultContext', t =
     reply.view('index-bare.html')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8')), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8')), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for eta engine without data-parameter and defaultContext but with reply.locals', t => {
-  t.plan(6)
+test('reply.view for eta engine without data-parameter and defaultContext but with reply.locals', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const localsData = { text: 'text from locals' }
@@ -310,25 +277,22 @@ test('reply.view for eta engine without data-parameter and defaultContext but wi
     reply.view('./templates/index-bare.html')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), localsData), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), localsData), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for eta engine without defaultContext but with reply.locals and data-parameter', t => {
-  t.plan(6)
+test('reply.view for eta engine without defaultContext but with reply.locals and data-parameter', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const localsData = { text: 'text from locals' }
@@ -349,25 +313,22 @@ test('reply.view for eta engine without defaultContext but with reply.locals and
     reply.view('./templates/index-bare.html', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for eta engine without data-parameter but with reply.locals and defaultContext', t => {
-  t.plan(6)
+test('reply.view for eta engine without data-parameter but with reply.locals and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const localsData = { text: 'text from locals' }
@@ -389,25 +350,22 @@ test('reply.view for eta engine without data-parameter but with reply.locals and
     reply.view('./templates/index-bare.html')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), localsData), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), localsData), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for eta engine with data-parameter and reply.locals and defaultContext', t => {
-  t.plan(6)
+test('reply.view for eta engine with data-parameter and reply.locals and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const localsData = { text: 'text from locals' }
@@ -430,25 +388,22 @@ test('reply.view for eta engine with data-parameter and reply.locals and default
     reply.view('./templates/index-bare.html', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index-bare.html', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with eta engine and full path templates folder', t => {
-  t.plan(6)
+test('reply.view with eta engine and full path templates folder', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const data = { text: 'text' }
@@ -464,25 +419,22 @@ test('reply.view with eta engine and full path templates folder', t => {
     reply.view('index.eta', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with eta engine', t => {
-  t.plan(6)
+test('reply.view with eta engine', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const data = { text: 'text' }
@@ -497,25 +449,22 @@ test('reply.view with eta engine', t => {
     reply.view('templates/index.eta', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with eta engine and defaultContext', t => {
-  t.plan(6)
+test('reply.view with eta engine and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const data = { text: 'text' }
@@ -531,25 +480,22 @@ test('reply.view with eta engine and defaultContext', t => {
     reply.view('templates/index.eta', {})
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with eta engine and includeViewExtension property as true', t => {
-  t.plan(6)
+test('reply.view with eta engine and includeViewExtension property as true', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const data = { text: 'text' }
@@ -565,25 +511,22 @@ test('reply.view with eta engine and includeViewExtension property as true', t =
     reply.view('templates/index', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with eta engine, template folder specified, include files (eta and html) used in template, includeViewExtension property as true', t => {
-  t.plan(7)
+test('reply.view with eta engine, template folder specified, include files (eta and html) used in template, includeViewExtension property as true', async t => {
+  t.plan(5)
   const fastify = Fastify()
 
   const templatesFolder = path.join(__dirname, '../templates')
@@ -605,29 +548,25 @@ test('reply.view with eta engine, template folder specified, include files (eta 
     reply.type('text/html; charset=utf-8').view('index-linking-other-pages', data) // sample for specifying with type
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
 
-      const content = eta.render('/index-linking-other-pages.eta', data, options)
-      t.assert.strictEqual(content.length, body.length)
-      t.assert.strictEqual(content, body.toString())
+  const responseContent = await result.text()
 
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+
+  const content = eta.render('/index-linking-other-pages.eta', data, options)
+  t.assert.strictEqual(content.length, responseContent.length)
+  t.assert.strictEqual(content, responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with eta engine, templates with folder specified, include files and attributes; home', t => {
-  t.plan(6)
+test('reply.view with eta engine, templates with folder specified, include files and attributes; home', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const templatesFolder = path.join(__dirname, '../templates')
@@ -649,28 +588,24 @@ test('reply.view with eta engine, templates with folder specified, include files
     reply.type('text/html; charset=utf-8').view('index', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
 
-      const content = eta.render('/index.eta', data, options)
-      t.assert.strictEqual(content.length, body.length)
+  const responseContent = await result.text()
 
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+
+  const content = eta.render('/index.eta', data, options)
+  t.assert.strictEqual(content.length, responseContent.length)
+
+  await fastify.close()
 })
 
-test('reply.view with eta engine, templates with folder specified, include files and attributes; page with no data', t => {
-  t.plan(6)
+test('reply.view with eta engine, templates with folder specified, include files and attributes; page with no data', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const templatesFolder = path.join(__dirname, '../templates')
@@ -691,28 +626,24 @@ test('reply.view with eta engine, templates with folder specified, include files
     reply.type('text/html; charset=utf-8').view('index-with-no-data')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port + '/no-data-test'
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/no-data-test')
 
-      const content = eta.render('/index-with-no-data.eta', null, options)
-      t.assert.strictEqual(content.length, body.length)
+  const responseContent = await result.text()
 
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+
+  const content = eta.render('/index-with-no-data.eta', null, options)
+  t.assert.strictEqual(content.length, responseContent.length)
+
+  await fastify.close()
 })
 
-test('reply.view with eta engine, templates with folder specified, include files and attributes; page with includes', t => {
-  t.plan(6)
+test('reply.view with eta engine, templates with folder specified, include files and attributes; page with includes', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const templatesFolder = path.join(__dirname, '../templates')
@@ -735,28 +666,24 @@ test('reply.view with eta engine, templates with folder specified, include files
     reply.type('text/html; charset=utf-8').view('index-with-includes', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port + '/include-test'
-    }, async (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/include-test')
 
-      const content = await eta.renderAsync('/index-with-includes.eta', data, options)
-      t.assert.strictEqual(content.length, body.length)
+  const responseContent = await result.text()
 
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+
+  const content = eta.render('/index-with-includes.eta', data, options)
+  t.assert.strictEqual(content.length, responseContent.length)
+
+  await fastify.close()
 })
 
-test('reply.view with eta engine, templates with folder specified, include files and attributes; page with one include missing', t => {
-  t.plan(7)
+test('reply.view with eta engine, templates with folder specified, include files and attributes; page with one include missing', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const templatesFolder = path.join(__dirname, '../templates')
@@ -778,32 +705,22 @@ test('reply.view with eta engine, templates with folder specified, include files
     reply.type('text/html; charset=utf-8').view('index-with-includes-one-missing', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port + '/include-one-include-missing-test'
-    }, async (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 500)
-      t.assert.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/include-one-include-missing-test')
 
-      let content = null
-      try {
-        content = await eta.renderAsync('/index-with-includes-one-missing.eta', data, options)
-      } catch (e) {
-        t.type(e, Error) // expected Error here ...
-        t.assert.strictEqual(content, null)
-      }
+  const responseContent = await result.text()
 
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 500)
+  t.assert.strictEqual(result.headers.get('content-type'), 'application/json; charset=utf-8')
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+
+  await t.assert.rejects(eta.renderAsync('/index-with-includes-one-missing.eta', data, options))
+
+  await fastify.close()
 })
 
-test('fastify.view with eta engine and callback in production mode', t => {
+test('fastify.view with eta engine and callback in production mode', (t, end) => {
   t.plan(6)
   const fastify = Fastify()
 
@@ -830,13 +747,14 @@ test('fastify.view with eta engine and callback in production mode', t => {
           t.assert.ifError(err)
           t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), compiled)
           fastify.close()
+          end()
         })
       })
     })
   })
 })
 
-test('fastify.view with eta engine in production mode should use cache', t => {
+test('fastify.view with eta engine in production mode should use cache', async t => {
   t.plan(1)
 
   const fastify = Fastify()
@@ -844,7 +762,7 @@ test('fastify.view with eta engine in production mode should use cache', t => {
     cache: {},
     get (k) {
       if (this.cache[k] !== undefined) {
-        t.pass()
+        t.assert.ok(true)
       }
       return this.cache[k]
     },
@@ -863,15 +781,15 @@ test('fastify.view with eta engine in production mode should use cache', t => {
     }
   })
 
-  fastify.ready(async () => {
-    await fastify.view('templates/index.eta', { text: 'test' })
-    await fastify.view('templates/index.eta', { text: 'test' }) // This should trigger the cache
-    fastify.close()
-  })
+  await fastify.ready()
+
+  await fastify.view('templates/index.eta', { text: 'test' })
+  await fastify.view('templates/index.eta', { text: 'test' }) // This should trigger the cache
+  await fastify.close()
 })
 
-test('fastify.view with eta engine and custom cache', t => {
-  t.plan(8)
+test('fastify.view with eta engine and custom cache', async t => {
+  t.plan(6)
   const fastify = Fastify()
 
   const tplPath = 'templates/index.eta'
@@ -882,7 +800,7 @@ test('fastify.view with eta engine and custom cache', t => {
   const pseudoCache = {
     cache: {},
     get: function (k) {
-      t.pass('the cache is set')
+      t.assert.ok('the cache is set')
       return this.cache[k]
     },
     define: function (k, v) {
@@ -914,7 +832,7 @@ test('fastify.view with eta engine and custom cache', t => {
       const res = reply.view(tplPath, data)
       t.assert.strictEqual(eta.templatesSync, pseudoCache,
         'Cache instance should be equal to the pre-defined one')
-      t.not(eta.templatesSync.get(tplAbsPath), undefined,
+      t.assert.notStrictEqual(eta.templatesSync.get(tplAbsPath), undefined,
         'Template should be pre-cached')
       return res
     } catch (e) {
@@ -922,24 +840,21 @@ test('fastify.view with eta engine and custom cache', t => {
     }
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200, 'Response should be 200')
+  await fastify.listen()
 
-      const str = eta.render(tplF, data)
-      t.assert.strictEqual(str, body.toString(), 'Route should return the same result as cached template function')
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
 
-      fastify.close()
-    })
-  })
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200, 'Response should be 200')
+
+  const str = eta.render(tplF, data)
+  t.assert.strictEqual(str, responseContent, 'Route should return the same result as cached template function')
+
+  await fastify.close()
 })
 
-test('fastify.view with eta engine, should throw page missing', t => {
+test('fastify.view with eta engine, should throw page missing', (t, end) => {
   t.plan(3)
   const fastify = Fastify()
 
@@ -956,11 +871,12 @@ test('fastify.view with eta engine, should throw page missing', t => {
       t.assert.ok(err instanceof Error)
       t.assert.strictEqual(err.message, 'Missing page')
       fastify.close()
+      end()
     })
   })
 })
 
-test('fastify.view with eta engine and async in production mode', t => {
+test('fastify.view with eta engine and async in production mode', (t, end) => {
   t.plan(3)
   const fastify = Fastify()
 
@@ -986,13 +902,14 @@ test('fastify.view with eta engine and async in production mode', t => {
         .catch((err) => {
           t.assert.ok(err instanceof Error)
           fastify.close()
+          end()
         })
     })
   })
 })
 
-test('reply.view with eta engine and raw template', t => {
-  t.plan(6)
+test('reply.view with eta engine and raw template', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const data = { text: 'text' }
@@ -1007,25 +924,23 @@ test('reply.view with eta engine and raw template', t => {
     reply.view({ raw: fs.readFileSync('./templates/index.eta', 'utf8') }, data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with eta engine and function template', t => {
-  t.plan(6)
+test('reply.view with eta engine and function template', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   const data = { text: 'text' }
@@ -1041,25 +956,23 @@ test('reply.view with eta engine and function template', t => {
     reply.view(eta.compile(fs.readFileSync('./templates/index.eta', 'utf8')), data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 200)
-      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view should return 500 if function return sync error', t => {
-  t.plan(3)
+test('reply.view should return 500 if function return sync error', async t => {
+  t.plan(1)
   const fastify = Fastify()
 
   const data = { text: 'text' }
@@ -1075,22 +988,17 @@ test('reply.view should return 500 if function return sync error', t => {
     reply.view(() => { throw new Error('kaboom') }, data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 500)
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  t.assert.strictEqual(result.status, 500)
+
+  await fastify.close()
 })
 
-test('reply.view should return 500 if function return async error', t => {
-  t.plan(3)
+test('reply.view should return 500 if function return async error', async t => {
+  t.plan(1)
   const fastify = Fastify()
 
   const data = { text: 'text' }
@@ -1106,16 +1014,11 @@ test('reply.view should return 500 if function return async error', t => {
     reply.view(() => Promise.reject(new Error('kaboom')), data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.assert.ifError(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response) => {
-      t.assert.ifError(err)
-      t.assert.strictEqual(response.statusCode, 500)
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  t.assert.strictEqual(result.status, 500)
+
+  await fastify.close()
 })
