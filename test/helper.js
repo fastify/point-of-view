@@ -376,8 +376,7 @@ module.exports.nunjucksHtmlMinifierTests = function (withMinifierOptions) {
   })
 }
 
-module.exports.pugHtmlMinifierTests = function (t, withMinifierOptions) {
-  const test = t.test
+module.exports.pugHtmlMinifierTests = function (withMinifierOptions) {
   const options = withMinifierOptions ? minifierOpts : {}
 
   test('reply.view with pug engine and html-minifier-terser', async t => {
