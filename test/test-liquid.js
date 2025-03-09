@@ -1,7 +1,6 @@
 'use strict'
 
 const { test } = require('node:test')
-const sget = require('simple-get').concat
 const fs = require('node:fs')
 const Fastify = require('fastify')
 
