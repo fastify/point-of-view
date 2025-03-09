@@ -32,12 +32,12 @@ test('reply.view with twig engine', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', data, (err, html) => {
         t.assert.ifError(err)
-        t.assert.deepStrictEqual(html, body.toString())
+        t.assert.strictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -68,12 +68,12 @@ test('reply.view with twig engine and simple include', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/template.twig', data, (err, html) => {
         t.assert.ifError(err)
-        t.assert.deepStrictEqual(html, body.toString())
+        t.assert.strictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -105,12 +105,12 @@ test('reply.view for twig without data-parameter but defaultContext', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', data, (err, html) => {
         t.assert.ifError(err)
-        t.assert.deepStrictEqual(html, body.toString())
+        t.assert.strictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -140,12 +140,12 @@ test('reply.view for twig without data-parameter and without defaultContext', t 
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', (err, html) => {
         t.assert.ifError(err)
-        t.assert.deepStrictEqual(html, body.toString())
+        t.assert.strictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -177,12 +177,12 @@ test('reply.view with twig engine and defaultContext', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', data, (err, html) => {
         t.assert.ifError(err)
-        t.assert.deepStrictEqual(html, body.toString())
+        t.assert.strictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -218,12 +218,12 @@ test('reply.view for twig engine without data-parameter and defaultContext but w
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', localsData, (err, html) => {
         t.assert.ifError(err)
-        t.assert.deepStrictEqual(html, body.toString())
+        t.assert.strictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -260,12 +260,12 @@ test('reply.view for twig engine without defaultContext but with reply.locals an
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', data, (err, html) => {
         t.assert.ifError(err)
-        t.assert.deepStrictEqual(html, body.toString())
+        t.assert.strictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -303,12 +303,12 @@ test('reply.view for twig engine without data-parameter but with reply.locals an
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', localsData, (err, html) => {
         t.assert.ifError(err)
-        t.assert.deepStrictEqual(html, body.toString())
+        t.assert.strictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -347,12 +347,12 @@ test('reply.view for twig engine with data-parameter and reply.locals and defaul
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', data, (err, html) => {
         t.assert.ifError(err)
-        t.assert.deepStrictEqual(html, body.toString())
+        t.assert.strictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -384,12 +384,12 @@ test('reply.view with twig engine, will preserve content-type', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/xml')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/xml')
       Twig.renderFile('./templates/index.twig', data, (err, html) => {
         t.assert.ifError(err)
-        t.assert.deepStrictEqual(html, body.toString())
+        t.assert.strictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -412,7 +412,7 @@ test('fastify.view with twig engine, should throw page missing', t => {
 
     fastify.view(null, {}, err => {
       t.assert.ok(err instanceof Error)
-      t.assert.deepStrictEqual(err.message, 'Missing page')
+      t.assert.strictEqual(err.message, 'Missing page')
       fastify.close()
     })
   })
@@ -444,8 +444,8 @@ test('reply.view with twig engine should return 500 if renderFile fails', t => {
     }, (err, response, body) => {
       const { message } = JSON.parse(body.toString())
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 500)
-      t.assert.deepStrictEqual('RenderFile Error', message)
+      t.assert.strictEqual(response.statusCode, 500)
+      t.assert.strictEqual('RenderFile Error', message)
 
       fastify.close()
     })
@@ -476,12 +476,12 @@ test('reply.view with twig engine and raw template', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', data, (err, html) => {
         t.assert.ifError(err)
-        t.assert.deepStrictEqual(html, body.toString())
+        t.assert.strictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -512,12 +512,12 @@ test('reply.view with twig engine and function template', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       Twig.renderFile('./templates/index.twig', data, (err, html) => {
         t.assert.ifError(err)
-        t.assert.deepStrictEqual(html, body.toString())
+        t.assert.strictEqual(html, body.toString())
       })
       fastify.close()
     })
@@ -548,7 +548,7 @@ test('reply.view with twig engine and unknown template type', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 500)
+      t.assert.strictEqual(response.statusCode, 500)
       fastify.close()
     })
   })

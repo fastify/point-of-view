@@ -39,10 +39,10 @@ test('reply.view with dot engine .dot file', async t => {
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual(responseContent, engine.process({ path: 'templates', destination: 'out' }).testdot(data))
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(responseContent, engine.process({ path: 'templates', destination: 'out' }).testdot(data))
 
   await fastify.close()
 })
@@ -79,7 +79,7 @@ test('reply.view with dot engine .dot file should log WARN if template not found
   t.plan(1)
   const splitStream = split(JSON.parse)
   splitStream.on('data', (line) => {
-    t.assert.deepStrictEqual(line.msg, `WARN: no template found in ${join(__dirname, '..')}`)
+    t.assert.strictEqual(line.msg, `WARN: no template found in ${join(__dirname, '..')}`)
   })
   const logger = pino({ level: 'warn' }, splitStream)
   const fastify = Fastify({
@@ -127,11 +127,11 @@ test('reply.view with dot engine .jst file', async t => {
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
   engine.process(compileOptions)
-  t.assert.deepStrictEqual(responseContent, require('../out/testjst')(data))
+  t.assert.strictEqual(responseContent, require('../out/testjst')(data))
 
   await fastify.close()
 })
@@ -162,10 +162,10 @@ test('reply.view with dot engine without data-parameter but defaultContext', asy
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual(responseContent, engine.process(compileOptions).testdot(data))
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(responseContent, engine.process(compileOptions).testdot(data))
 
   await fastify.close()
 })
@@ -194,11 +194,11 @@ test('reply.view with dot engine without data-parameter but without defaultConte
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
   engine.process(compileOptions)
-  t.assert.deepStrictEqual(responseContent, engine.process(compileOptions).testdot())
+  t.assert.strictEqual(responseContent, engine.process(compileOptions).testdot())
 
   await fastify.close()
 })
@@ -229,10 +229,10 @@ test('reply.view with dot engine with data-parameter and defaultContext', async 
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual(responseContent, engine.process(compileOptions).testdot(data))
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(responseContent, engine.process(compileOptions).testdot(data))
 
   await fastify.close()
 })
@@ -267,10 +267,10 @@ test('reply.view for dot engine without data-parameter and defaultContext but wi
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual(responseContent, engine.process(compileOptions).testdot(localsData))
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(responseContent, engine.process(compileOptions).testdot(localsData))
 
   await fastify.close()
 })
@@ -306,10 +306,10 @@ test('reply.view for dot engine without defaultContext but with reply.locals and
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual(responseContent, engine.process(compileOptions).testdot(data))
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(responseContent, engine.process(compileOptions).testdot(data))
 
   await fastify.close()
 })
@@ -346,10 +346,10 @@ test('reply.view for dot engine without data-parameter but with reply.locals and
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual(responseContent, engine.process(compileOptions).testdot(localsData))
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(responseContent, engine.process(compileOptions).testdot(localsData))
 
   await fastify.close()
 })
@@ -386,10 +386,10 @@ test('reply.view for dot engine with data-parameter and reply.locals and default
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual(responseContent, engine.process(compileOptions).testdot(data))
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(responseContent, engine.process(compileOptions).testdot(data))
 
   await fastify.close()
 })
@@ -411,7 +411,7 @@ test('fastify.view with dot engine, should throw page missing', (t, end) => {
 
     fastify.view(null, {}, err => {
       t.assert.ok(err instanceof Error)
-      t.assert.deepStrictEqual(err.message, 'Missing page')
+      t.assert.strictEqual(err.message, 'Missing page')
       fastify.close()
       end()
     })
@@ -442,10 +442,10 @@ test('reply.view with dot engine with layout option', async t => {
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual('header: textfoo text1 <p>foo</p>footer', responseContent)
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual('header: textfoo text1 <p>foo</p>footer', responseContent)
 
   await fastify.close()
 })
@@ -473,10 +473,10 @@ test('reply.view with dot engine with layout option on render', async t => {
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual('header: textfoo text1 <p>foo</p>footer', responseContent)
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual('header: textfoo text1 <p>foo</p>footer', responseContent)
 
   await fastify.close()
 })
@@ -504,10 +504,10 @@ test('reply.view with dot engine with layout option on render', async t => {
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual('header: textfoo text1 <p>foo</p>footer', responseContent)
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual('header: textfoo text1 <p>foo</p>footer', responseContent)
 
   await fastify.close()
 })
@@ -533,7 +533,7 @@ test('reply.view should return 500 if layout is missing on render', async t => {
 
   const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
 
-  t.assert.deepStrictEqual(result.status, 500)
+  t.assert.strictEqual(result.status, 500)
 
   await fastify.close()
 })
@@ -561,10 +561,10 @@ test('reply.view with dot engine and raw template', async t => {
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual(responseContent, engine.process({ path: 'templates', destination: 'out' }).testdot(data))
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(responseContent, engine.process({ path: 'templates', destination: 'out' }).testdot(data))
 
   await fastify.close()
 })
@@ -592,10 +592,10 @@ test('reply.view with dot engine and function template', async t => {
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html')
-  t.assert.deepStrictEqual(responseContent, engine.process({ path: 'templates', destination: 'out' }).testdot(data))
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html')
+  t.assert.strictEqual(responseContent, engine.process({ path: 'templates', destination: 'out' }).testdot(data))
 
   await fastify.close()
 })

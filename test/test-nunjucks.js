@@ -34,10 +34,10 @@ test('reply.view with nunjucks engine and custom templates folder', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(nunjucks.render('index.njk', data), body.toString())
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(nunjucks.render('index.njk', data), body.toString())
       fastify.close()
     })
   })
@@ -71,10 +71,10 @@ test('reply.view with nunjucks engine and custom templates array of folders', t 
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(nunjucks.render('index.njk', data), body.toString())
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(nunjucks.render('index.njk', data), body.toString())
       fastify.close()
     })
   })
@@ -105,10 +105,10 @@ test('reply.view for nunjucks engine without data-parameter but defaultContext',
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(nunjucks.render('./templates/index.njk', data), body.toString())
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(nunjucks.render('./templates/index.njk', data), body.toString())
       fastify.close()
     })
   })
@@ -137,10 +137,10 @@ test('reply.view for nunjucks engine without data-parameter and without defaultC
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(nunjucks.render('./templates/index.njk'), body.toString())
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(nunjucks.render('./templates/index.njk'), body.toString())
       fastify.close()
     })
   })
@@ -175,10 +175,10 @@ test('reply.view for nunjucks engine without data-parameter and defaultContext b
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(nunjucks.render('./templates/index.njk', localsData), body.toString())
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(nunjucks.render('./templates/index.njk', localsData), body.toString())
       fastify.close()
     })
   })
@@ -214,10 +214,10 @@ test('reply.view for nunjucks engine without defaultContext but with reply.local
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(nunjucks.render('./templates/index.njk', data), body.toString())
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(nunjucks.render('./templates/index.njk', data), body.toString())
       fastify.close()
     })
   })
@@ -254,10 +254,10 @@ test('reply.view for nunjucks engine without data-parameter but with reply.local
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(nunjucks.render('./templates/index.njk', localsData), body.toString())
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(nunjucks.render('./templates/index.njk', localsData), body.toString())
       fastify.close()
     })
   })
@@ -295,10 +295,10 @@ test('reply.view for nunjucks engine with data-parameter and reply.locals and de
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(nunjucks.render('./templates/index.njk', data), body.toString())
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(nunjucks.render('./templates/index.njk', data), body.toString())
       fastify.close()
     })
   })
@@ -329,10 +329,10 @@ test('reply.view with nunjucks engine, will preserve content-type', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/xml')
-      t.assert.deepStrictEqual(nunjucks.render('./templates/index.njk', data), body.toString())
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/xml')
+      t.assert.strictEqual(nunjucks.render('./templates/index.njk', data), body.toString())
       fastify.close()
     })
   })
@@ -363,11 +363,11 @@ test('reply.view with nunjucks engine and full path templates folder', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       // Global Nunjucks templates dir changed here.
-      t.assert.deepStrictEqual(nunjucks.render('./index.njk', data), body.toString())
+      t.assert.strictEqual(nunjucks.render('./index.njk', data), body.toString())
       fastify.close()
     })
   })
@@ -398,11 +398,11 @@ test('reply.view with nunjucks engine and includeViewExtension is true', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       // Global Nunjucks templates dir is  `./` here.
-      t.assert.deepStrictEqual(nunjucks.render('./templates/index.njk', data), body.toString())
+      t.assert.strictEqual(nunjucks.render('./templates/index.njk', data), body.toString())
       fastify.close()
     })
   })
@@ -437,11 +437,11 @@ test('reply.view with nunjucks engine using onConfigure callback', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       // Global Nunjucks templates dir is  `./` here.
-      t.assert.deepStrictEqual(nunjucks.render('./templates/index-with-global.njk', data), body.toString())
+      t.assert.strictEqual(nunjucks.render('./templates/index-with-global.njk', data), body.toString())
       t.match(body.toString(), /.*<p>my global var value<\/p>/)
       fastify.close()
     })
@@ -465,14 +465,14 @@ test('fastify.view with nunjucks engine', t => {
 
     fastify.view('templates/index.njk', data, (err, compiled) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(nunjucks.render('./templates/index.njk', data), compiled)
+      t.assert.strictEqual(nunjucks.render('./templates/index.njk', data), compiled)
 
       fastify.ready(err => {
         t.assert.ifError(err)
 
         fastify.view('templates/index.njk', data, (err, compiled) => {
           t.assert.ifError(err)
-          t.assert.deepStrictEqual(nunjucks.render('./templates/index.njk', data), compiled)
+          t.assert.strictEqual(nunjucks.render('./templates/index.njk', data), compiled)
           fastify.close()
         })
       })
@@ -496,7 +496,7 @@ test('fastify.view with nunjucks should throw page missing', t => {
 
     fastify.view(null, {}, err => {
       t.assert.ok(err instanceof Error)
-      t.assert.deepStrictEqual(err.message, 'Missing page')
+      t.assert.strictEqual(err.message, 'Missing page')
       fastify.close()
     })
   })
@@ -530,8 +530,8 @@ test('fastify.view with nunjucks engine should return 500 if render fails', t =>
     }, (err, response, body) => {
       const { message } = JSON.parse(body.toString())
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 500)
-      t.assert.deepStrictEqual('Render Error', message)
+      t.assert.strictEqual(response.statusCode, 500)
+      t.assert.strictEqual('Render Error', message)
 
       fastify.close()
     })
@@ -563,10 +563,10 @@ test('reply.view with nunjucks engine and raw template', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(nunjucks.render('index.njk', data), body.toString())
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(nunjucks.render('index.njk', data), body.toString())
       fastify.close()
     })
   })
@@ -597,10 +597,10 @@ test('reply.view with nunjucks engine and function template', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(nunjucks.render('index.njk', data), body.toString())
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(nunjucks.render('index.njk', data), body.toString())
       fastify.close()
     })
   })
@@ -631,7 +631,7 @@ test('reply.view with nunjucks engine and unknown template type', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 500)
+      t.assert.strictEqual(response.statusCode, 500)
       fastify.close()
     })
   })

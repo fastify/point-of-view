@@ -38,15 +38,15 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
       ejs.renderFile(path.join(templatesFolder, 'index-linking-other-pages.ejs'), data, options, function (err, str) {
         content = str
         t.assert.ifError(err)
-        t.assert.deepStrictEqual(content.length, body.length)
+        t.assert.strictEqual(content.length, body.length)
       })
       t.matchSnapshot(content.replace(/\r?\n/g, ''), 'output') // normalize new lines for cross-platform
 
@@ -82,15 +82,15 @@ test('reply.view with ejs engine, templates with folder specified, include files
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
       ejs.renderFile(path.join(templatesFolder, 'index.ejs'), data, options, function (err, str) {
         content = str
         t.assert.ifError(err)
-        t.assert.deepStrictEqual(content.length, body.length)
+        t.assert.strictEqual(content.length, body.length)
       })
       t.matchSnapshot(content.replace(/\r?\n/g, ''), 'output') // normalize new lines for cross-platform
 
@@ -126,15 +126,15 @@ test('reply.view with ejs engine, templates with folder specified, include files
       url: 'http://localhost:' + fastify.server.address().port + '/include-test'
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
       ejs.renderFile(path.join(templatesFolder, 'index-with-includes.ejs'), data, options, function (err, str) {
         content = str
         t.assert.ifError(err)
-        t.assert.deepStrictEqual(content.length, body.length)
+        t.assert.strictEqual(content.length, body.length)
       })
       t.matchSnapshot(content.replace(/\r?\n/g, ''), 'output') // normalize new lines for cross-platform
 
@@ -170,15 +170,15 @@ test('reply.view with ejs engine, templates with folder specified, include files
       url: 'http://localhost:' + fastify.server.address().port + '/include-one-include-missing-test'
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 500)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.statusCode, 500)
+      t.assert.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
       ejs.renderFile(path.join(templatesFolder, 'index-with-includes-one-missing.ejs'), data, options, function (err, str) {
         content = str
         t.type(err, Error) // expected Error here ...
-        t.assert.deepStrictEqual(content, undefined)
+        t.assert.strictEqual(content, undefined)
       })
       t.matchSnapshot(content, 'output')
 
@@ -214,15 +214,15 @@ test('reply.view with ejs engine, templates with folder specified, include files
       url: 'http://localhost:' + fastify.server.address().port + '/include-one-attribute-missing-test'
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 500)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.statusCode, 500)
+      t.assert.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
 
       let content = null
       ejs.renderFile(path.join(templatesFolder, 'index-with-includes-and-attribute-missing.ejs'), data, options, function (err, str) {
         content = str
         t.type(err, Error) // expected Error here ...
-        t.assert.deepStrictEqual(content, undefined)
+        t.assert.strictEqual(content, undefined)
       })
       t.matchSnapshot(content, 'output')
 

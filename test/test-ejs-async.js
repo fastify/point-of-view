@@ -27,10 +27,10 @@ test('reply.view with ejs engine and async: true (global option)', async t => {
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), responseContent)
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), responseContent)
 
   await fastify.close()
 })
@@ -59,10 +59,10 @@ test('reply.view with ejs engine, async: true (global option), and production: t
 
     const responseContent = await result.text()
 
-    t.assert.deepStrictEqual(result.status, 200)
-    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-    t.assert.deepStrictEqual(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), responseContent)
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), responseContent)
 
     if (i === numTests - 1) await fastify.close()
   }
@@ -94,10 +94,10 @@ test('reply.view with ejs engine, async: true (global option), and html-minifier
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual(await minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), minifierOpts), responseContent)
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(await minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), minifierOpts), responseContent)
 
   await fastify.close()
 })
@@ -126,10 +126,10 @@ test('reply.view with ejs engine, async: true (global option), and html-minifier
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual(await minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true })), responseContent)
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(await minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true })), responseContent)
 
   await fastify.close()
 })
@@ -162,10 +162,10 @@ test('reply.view with ejs engine, async: true (global option), and html-minifier
 
     const responseContent = await result.text()
 
-    t.assert.deepStrictEqual(result.status, 200)
-    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-    t.assert.deepStrictEqual(await minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), minifierOpts), responseContent)
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(await minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), minifierOpts), responseContent)
 
     if (i === numTests - 1) await fastify.close()
   }
@@ -191,10 +191,10 @@ test('reply.view with ejs engine and async: true (local option)', async t => {
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), responseContent)
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), responseContent)
 
   await fastify.close()
 })
@@ -222,10 +222,10 @@ test('reply.view with ejs engine, async: true (local option), and production: tr
 
     const responseContent = await result.text()
 
-    t.assert.deepStrictEqual(result.status, 200)
-    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-    t.assert.deepStrictEqual(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), responseContent)
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), responseContent)
 
     if (i === numTests - 1) await fastify.close()
   }
@@ -256,10 +256,10 @@ test('reply.view with ejs engine, async: true (local override), and html-minifie
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual(await minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), minifierOpts), responseContent)
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(await minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), minifierOpts), responseContent)
 
   await fastify.close()
 })
@@ -289,10 +289,10 @@ test('reply.view with ejs engine, async: false (local override), and html-minifi
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual(await minifier.minify(await ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), { text: 'text' }, { async: false }), minifierOpts), responseContent)
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(await minifier.minify(await ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), { text: 'text' }, { async: false }), minifierOpts), responseContent)
 
   await fastify.close()
 })
@@ -325,10 +325,10 @@ test('reply.view with ejs engine, async: true (local override), and html-minifie
 
     const responseContent = await result.text()
 
-    t.assert.deepStrictEqual(result.status, 200)
-    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-    t.assert.deepStrictEqual(await minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), minifierOpts), responseContent)
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(await minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), minifierOpts), responseContent)
 
     if (i === numTests - 1) await fastify.close()
   }
@@ -362,10 +362,10 @@ test('reply.view with ejs engine, async: false (local override), and html-minifi
 
     const responseContent = await result.text()
 
-    t.assert.deepStrictEqual(result.status, 200)
-    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-    t.assert.deepStrictEqual(await minifier.minify(await ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), { text: 'text' }, { async: false }), minifierOpts), responseContent)
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(await minifier.minify(await ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), { text: 'text' }, { async: false }), minifierOpts), responseContent)
 
     if (i === numTests - 1) await fastify.close()
   }
@@ -390,10 +390,10 @@ test('reply.view with ejs engine and async: true and raw template', async t => {
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), responseContent)
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), responseContent)
 
   await fastify.close()
 })
@@ -417,10 +417,10 @@ test('reply.view with ejs engine and async: true and function template', async t
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), responseContent)
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), responseContent)
 
   await fastify.close()
 })
@@ -442,7 +442,7 @@ test('reply.view with promise error', async t => {
 
   const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
 
-  t.assert.deepStrictEqual(result.status, 500)
+  t.assert.strictEqual(result.status, 500)
 
   await fastify.close()
 })
@@ -468,10 +468,10 @@ test('reply.viewAsync with ejs engine and async: true (global option)', async t 
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), responseContent)
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), responseContent)
 
   await fastify.close()
 })
@@ -501,10 +501,10 @@ test('reply.viewAsync with ejs engine, async: true (global option), and html-min
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.deepStrictEqual(await minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), minifierOpts), responseContent)
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(await minifier.minify(await ejs.render(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), {}, { async: true }), minifierOpts), responseContent)
 
   await fastify.close()
 })

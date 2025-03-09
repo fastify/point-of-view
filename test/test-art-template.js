@@ -28,13 +28,13 @@ test('reply.view with art-template engine and custom templates folder', async t 
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
   const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-  t.assert.deepStrictEqual(art(templatePath, data), responseContent)
+  t.assert.strictEqual(art(templatePath, data), responseContent)
 
   await fastify.close()
 })
@@ -62,13 +62,13 @@ test('reply.view with art-template engine and explicit root folder', async t => 
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
   const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-  t.assert.deepStrictEqual(art(templatePath, data), responseContent)
+  t.assert.strictEqual(art(templatePath, data), responseContent)
 
   await fastify.close()
 })
@@ -95,13 +95,13 @@ test('reply.view for art-template without data-parameter and defaultContext', as
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
   const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-  t.assert.deepStrictEqual(art(templatePath, {}), responseContent)
+  t.assert.strictEqual(art(templatePath, {}), responseContent)
 
   await fastify.close()
 })
@@ -130,13 +130,13 @@ test('reply.view for art-template without data-parameter but with defaultContext
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
   const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-  t.assert.deepStrictEqual(art(templatePath, data), responseContent)
+  t.assert.strictEqual(art(templatePath, data), responseContent)
 
   await fastify.close()
 })
@@ -165,13 +165,13 @@ test('reply.view with art-template engine and defaultContext', async t => {
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
   const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-  t.assert.deepStrictEqual(art(templatePath, data), responseContent)
+  t.assert.strictEqual(art(templatePath, data), responseContent)
 
   await fastify.close()
 })
@@ -203,13 +203,13 @@ test('reply.view for art-template engine without data-parameter and defaultConte
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
   const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-  t.assert.deepStrictEqual(art(templatePath, localsData), responseContent)
+  t.assert.strictEqual(art(templatePath, localsData), responseContent)
 
   await fastify.close()
 })
@@ -242,13 +242,13 @@ test('reply.view for art-template engine without defaultContext but with reply.l
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
   const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-  t.assert.deepStrictEqual(art(templatePath, data), responseContent)
+  t.assert.strictEqual(art(templatePath, data), responseContent)
 
   await fastify.close()
 })
@@ -282,13 +282,13 @@ test('reply.view for art-template engine without data-parameter but with reply.l
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
   const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-  t.assert.deepStrictEqual(art(templatePath, localsData), responseContent)
+  t.assert.strictEqual(art(templatePath, localsData), responseContent)
 
   await fastify.close()
 })
@@ -323,13 +323,13 @@ test('reply.view for art-template engine with data-parameter and reply.locals an
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
   const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-  t.assert.deepStrictEqual(art(templatePath, data), responseContent)
+  t.assert.strictEqual(art(templatePath, data), responseContent)
 
   await fastify.close()
 })
@@ -358,13 +358,13 @@ test('reply.view with art-template engine and full path templates folder', async
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
   const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-  t.assert.deepStrictEqual(art(templatePath, data), responseContent)
+  t.assert.strictEqual(art(templatePath, data), responseContent)
 
   await fastify.close()
 })
@@ -393,13 +393,13 @@ test('reply.view with art-template engine and includeViewExtension is true', asy
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
   const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-  t.assert.deepStrictEqual(art(templatePath, data), responseContent)
+  t.assert.strictEqual(art(templatePath, data), responseContent)
 
   await fastify.close()
 })
@@ -431,12 +431,12 @@ test('fastify.view with art-template engine and full path templates folder', asy
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/plain; charset=utf-8')
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/plain; charset=utf-8')
 
   const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-  t.assert.deepStrictEqual(art(templatePath, data), responseContent)
+  t.assert.strictEqual(art(templatePath, data), responseContent)
 
   await fastify.close()
 })
@@ -457,7 +457,7 @@ test('fastify.view with art-template should throw page missing', (t, end) => {
 
     fastify.view(null, {}, err => {
       t.assert.ok(err instanceof Error)
-      t.assert.deepStrictEqual(err.message, 'Missing page')
+      t.assert.strictEqual(err.message, 'Missing page')
       fastify.close()
       end()
     })
@@ -485,8 +485,8 @@ test('reply.view with art-template should return 500 if render fails', async t =
 
   const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
 
-  t.assert.deepStrictEqual(result.status, 500)
-  t.assert.deepStrictEqual('Compile Error', (await result.json()).message)
+  t.assert.strictEqual(result.status, 500)
+  t.assert.strictEqual('Compile Error', (await result.json()).message)
 
   await fastify.close()
 })
@@ -514,13 +514,13 @@ test('reply.view with art-template engine and raw template', async t => {
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
   const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-  t.assert.deepStrictEqual(art(templatePath, data), responseContent)
+  t.assert.strictEqual(art(templatePath, data), responseContent)
 
   await fastify.close()
 })
@@ -548,13 +548,13 @@ test('reply.view with art-template engine and function template', async t => {
 
   const responseContent = await result.text()
 
-  t.assert.deepStrictEqual(result.status, 200)
-  t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html')
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html')
 
   const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
 
-  t.assert.deepStrictEqual(art(templatePath, data), responseContent)
+  t.assert.strictEqual(art(templatePath, data), responseContent)
 
   await fastify.close()
 })
@@ -580,7 +580,7 @@ test('reply.view with art-template engine and unknown template type', async t =>
 
   const result = await fetch('http://127.0.0.1:10086/')
 
-  t.assert.deepStrictEqual(result.status, 500)
+  t.assert.strictEqual(result.status, 500)
 
   await fastify.close()
 })

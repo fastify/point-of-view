@@ -51,10 +51,10 @@ module.exports.dotHtmlMinifierTests = function (compileOptions, withMinifierOpti
 
     const responseContent = await result.text()
 
-    t.assert.deepStrictEqual(result.status, 200)
-    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-    t.assert.deepStrictEqual(await minifier.minify(dot.process(compileOptions).testdot(data), options), responseContent)
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(await minifier.minify(dot.process(compileOptions).testdot(data), options), responseContent)
 
     await fastify.close()
   })
@@ -85,10 +85,10 @@ module.exports.dotHtmlMinifierTests = function (compileOptions, withMinifierOpti
 
     const responseContent = await result.text()
 
-    t.assert.deepStrictEqual(result.status, 200)
-    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-    t.assert.deepStrictEqual(dot.process(compileOptions).testdot(data), responseContent)
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(dot.process(compileOptions).testdot(data), responseContent)
 
     await fastify.close()
   })
@@ -124,10 +124,10 @@ module.exports.etaHtmlMinifierTests = function (withMinifierOptions) {
 
     const responseContent = await result.text()
 
-    t.assert.deepStrictEqual(result.status, 200)
-    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-    t.assert.deepStrictEqual(await minifier.minify(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), responseContent)
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(await minifier.minify(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), responseContent)
 
     await fastify.close()
   })
@@ -157,10 +157,10 @@ module.exports.etaHtmlMinifierTests = function (withMinifierOptions) {
 
     const responseContent = await result.text()
 
-    t.assert.deepStrictEqual(result.status, 200)
-    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-    t.assert.deepStrictEqual(await minifier.minify(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), responseContent)
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(await minifier.minify(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), options), responseContent)
 
     await fastify.close()
   })
@@ -189,10 +189,10 @@ module.exports.etaHtmlMinifierTests = function (withMinifierOptions) {
 
     const responseContent = await result.text()
 
-    t.assert.deepStrictEqual(result.status, 200)
-    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-    t.assert.deepStrictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), responseContent)
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(eta.renderString(fs.readFileSync('./templates/index.eta', 'utf8'), data), responseContent)
 
     await fastify.close()
   })
@@ -220,7 +220,7 @@ module.exports.handleBarsHtmlMinifierTests = function (withMinifierOptions) {
       t.assert.ifError(err)
 
       fastify.view('./templates/index.html', data).then(async compiled => {
-        t.assert.deepStrictEqual(await minifier.minify(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), options), compiled)
+        t.assert.strictEqual(await minifier.minify(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), options), compiled)
         fastify.close()
         end()
       })
@@ -256,13 +256,13 @@ module.exports.liquidHtmlMinifierTests = function (withMinifierOptions) {
 
     const responseContent = await result.text()
 
-    t.assert.deepStrictEqual(result.status, 200)
-    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
     const html = await engine.renderFile('./templates/index.liquid', data)
 
-    t.assert.deepStrictEqual(await minifier.minify(html, options), responseContent)
+    t.assert.strictEqual(await minifier.minify(html, options), responseContent)
 
     await fastify.close()
   })
@@ -292,13 +292,13 @@ module.exports.liquidHtmlMinifierTests = function (withMinifierOptions) {
 
     const responseContent = await result.text()
 
-    t.assert.deepStrictEqual(result.status, 200)
-    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
     const html = await engine.renderFile('./templates/index.liquid', data)
 
-    t.assert.deepStrictEqual(await minifier.minify(html, options), responseContent)
+    t.assert.strictEqual(await minifier.minify(html, options), responseContent)
 
     await fastify.close()
   })
@@ -332,11 +332,11 @@ module.exports.nunjucksHtmlMinifierTests = function (withMinifierOptions) {
 
     const responseContent = await result.text()
 
-    t.assert.deepStrictEqual(result.status, 200)
-    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
-    t.assert.deepStrictEqual(await minifier.minify(nunjucks.render('./index.njk', data), options), responseContent)
+    t.assert.strictEqual(await minifier.minify(nunjucks.render('./index.njk', data), options), responseContent)
 
     await fastify.close()
   })
@@ -366,11 +366,11 @@ module.exports.nunjucksHtmlMinifierTests = function (withMinifierOptions) {
 
     const responseContent = await result.text()
 
-    t.assert.deepStrictEqual(result.status, 200)
-    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
-    t.assert.deepStrictEqual(nunjucks.render('./index.njk', data), responseContent)
+    t.assert.strictEqual(nunjucks.render('./index.njk', data), responseContent)
 
     await fastify.close()
   })
@@ -404,11 +404,11 @@ module.exports.pugHtmlMinifierTests = function (t, withMinifierOptions) {
 
     const responseContent = await result.text()
 
-    t.assert.deepStrictEqual(result.status, 200)
-    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
-    t.assert.deepStrictEqual(await minifier.minify(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), options), responseContent)
+    t.assert.strictEqual(await minifier.minify(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), options), responseContent)
 
     await fastify.close()
   })
@@ -437,11 +437,11 @@ module.exports.pugHtmlMinifierTests = function (t, withMinifierOptions) {
 
     const responseContent = await result.text()
 
-    t.assert.deepStrictEqual(result.status, 200)
-    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
-    t.assert.deepStrictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), responseContent)
+    t.assert.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), responseContent)
 
     await fastify.close()
   })
@@ -475,14 +475,14 @@ module.exports.twigHtmlMinifierTests = function (t, withMinifierOptions) {
 
     const responseContent = await result.text()
 
-    t.assert.deepStrictEqual(result.status, 200)
-    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
     await new Promise((resolve) => {
       Twig.renderFile('./templates/index.twig', data, async (err, html) => {
         t.assert.ifError(err)
-        t.assert.deepStrictEqual(await minifier.minify(html, options), responseContent)
+        t.assert.strictEqual(await minifier.minify(html, options), responseContent)
         resolve()
       })
     })
@@ -514,14 +514,14 @@ module.exports.twigHtmlMinifierTests = function (t, withMinifierOptions) {
 
     const responseContent = await result.text()
 
-    t.assert.deepStrictEqual(result.status, 200)
-    t.assert.deepStrictEqual(result.headers.get('content-length'), '' + responseContent.length)
-    t.assert.deepStrictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
     await new Promise((resolve) => {
       Twig.renderFile('./templates/index.twig', data, async (err, html) => {
         t.assert.ifError(err)
-        t.assert.deepStrictEqual(html, responseContent)
+        t.assert.strictEqual(html, responseContent)
         resolve()
       })
     })

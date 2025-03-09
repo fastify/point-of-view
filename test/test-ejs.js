@@ -1255,7 +1255,7 @@ test('reply.viewAsync should allow errors to be handled by custom error handler'
 
   fastify.setErrorHandler((err, _request, reply) => {
     t.assert.ok(err instanceof Error)
-    t.assert.deepStrictEqual(reply.getHeader('Content-Type'), undefined)
+    t.assert.strictEqual(reply.getHeader('Content-Type'), undefined)
     return 'something went wrong'
   })
 

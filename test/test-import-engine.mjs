@@ -25,7 +25,7 @@ test('using an imported engine as a promise', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, async (err, _response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual((await ejs).render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
+      t.assert.strictEqual((await ejs).render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
       fastify.close()
     })
   })

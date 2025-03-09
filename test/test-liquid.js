@@ -34,13 +34,13 @@ test('reply.view with liquid engine', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/index.liquid', data)
         .then((html) => {
           t.assert.ifError(err)
-          t.assert.deepStrictEqual(html, body.toString())
+          t.assert.strictEqual(html, body.toString())
         })
       fastify.close()
     })
@@ -74,13 +74,13 @@ test('reply.view with liquid engine without data-parameter but defaultContext', 
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/index.liquid', data)
         .then((html) => {
           t.assert.ifError(err)
-          t.assert.deepStrictEqual(html, body.toString())
+          t.assert.strictEqual(html, body.toString())
         })
       fastify.close()
     })
@@ -112,13 +112,13 @@ test('reply.view with liquid engine without data-parameter but without defaultCo
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/index.liquid')
         .then((html) => {
           t.assert.ifError(err)
-          t.assert.deepStrictEqual(html, body.toString())
+          t.assert.strictEqual(html, body.toString())
         })
       fastify.close()
     })
@@ -152,13 +152,13 @@ test('reply.view with liquid engine with data-parameter and defaultContext', t =
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/index.liquid', data)
         .then((html) => {
           t.assert.ifError(err)
-          t.assert.deepStrictEqual(html, body.toString())
+          t.assert.strictEqual(html, body.toString())
         })
       fastify.close()
     })
@@ -196,13 +196,13 @@ test('reply.view for liquid engine without data-parameter and defaultContext but
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/index.liquid', localsData)
         .then((html) => {
           t.assert.ifError(err)
-          t.assert.deepStrictEqual(html, body.toString())
+          t.assert.strictEqual(html, body.toString())
         })
       fastify.close()
     })
@@ -241,13 +241,13 @@ test('reply.view for liquid engine without defaultContext but with reply.locals 
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/index.liquid', data)
         .then((html) => {
           t.assert.ifError(err)
-          t.assert.deepStrictEqual(html, body.toString())
+          t.assert.strictEqual(html, body.toString())
         })
       fastify.close()
     })
@@ -287,13 +287,13 @@ test('reply.view for liquid engine without data-parameter but with reply.locals 
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/index.liquid', localsData)
         .then((html) => {
           t.assert.ifError(err)
-          t.assert.deepStrictEqual(html, body.toString())
+          t.assert.strictEqual(html, body.toString())
         })
       fastify.close()
     })
@@ -334,13 +334,13 @@ test('reply.view for liquid engine with data-parameter and reply.locals and defa
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/index.liquid', data)
         .then((html) => {
           t.assert.ifError(err)
-          t.assert.deepStrictEqual(html, body.toString())
+          t.assert.strictEqual(html, body.toString())
         })
       fastify.close()
     })
@@ -384,13 +384,13 @@ test('reply.view with liquid engine and custom tag', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/index-with-custom-tag.liquid', data)
         .then((html) => {
           t.assert.ifError(err)
-          t.assert.deepStrictEqual(html, body.toString())
+          t.assert.strictEqual(html, body.toString())
         })
       fastify.close()
     })
@@ -423,13 +423,13 @@ test('reply.view with liquid engine and double quoted variable', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/double-quotes-variable.liquid', data)
         .then((html) => {
           t.assert.ifError(err)
-          t.assert.deepStrictEqual(html, body.toString())
+          t.assert.strictEqual(html, body.toString())
         })
       fastify.close()
     })
@@ -453,7 +453,7 @@ test('fastify.view with liquid engine, should throw page missing', t => {
 
     fastify.view(null, {}, err => {
       t.assert.ok(err instanceof Error)
-      t.assert.deepStrictEqual(err.message, 'Missing page')
+      t.assert.strictEqual(err.message, 'Missing page')
       fastify.close()
     })
   })
@@ -508,13 +508,13 @@ test('reply.view with liquid engine and raw template', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html; charset=utf-8')
       engine.renderFile('./templates/index.liquid', data)
         .then((html) => {
           t.assert.ifError(err)
-          t.assert.deepStrictEqual(html, body.toString())
+          t.assert.strictEqual(html, body.toString())
         })
       fastify.close()
     })
@@ -547,13 +547,13 @@ test('reply.view with liquid engine and function template', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 200)
-      t.assert.deepStrictEqual(response.headers['content-length'], '' + body.length)
-      t.assert.deepStrictEqual(response.headers['content-type'], 'text/html')
+      t.assert.strictEqual(response.statusCode, 200)
+      t.assert.strictEqual(response.headers['content-length'], '' + body.length)
+      t.assert.strictEqual(response.headers['content-type'], 'text/html')
       engine.renderFile('./templates/index.liquid', data)
         .then((html) => {
           t.assert.ifError(err)
-          t.assert.deepStrictEqual(html, body.toString())
+          t.assert.strictEqual(html, body.toString())
         })
       fastify.close()
     })
@@ -586,7 +586,7 @@ test('reply.view with liquid engine and unknown template type', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response) => {
       t.assert.ifError(err)
-      t.assert.deepStrictEqual(response.statusCode, 500)
+      t.assert.strictEqual(response.statusCode, 500)
       fastify.close()
     })
   })
