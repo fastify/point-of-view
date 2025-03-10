@@ -1,6 +1,7 @@
 'use strict'
 
-const { test } = require('node:test')
+const t = require('tap')
+const test = t.test
 const Fastify = require('fastify')
 const path = require('node:path')
 const ejs = require('ejs')
@@ -35,21 +36,21 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
 
   const responseContent = await result.text()
 
-  t.assert.strictEqual(result.status, 200)
-  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.equal(result.status, 200)
+  t.equal(result.headers.get('content-length'), '' + responseContent.length)
+  t.equal(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
   let content = null
 
   await new Promise(resolve => {
     ejs.renderFile(path.join(templatesFolder, 'index-linking-other-pages.ejs'), data, options, function (err, str) {
       content = str
-      t.assert.ifError(err)
-      t.assert.strictEqual(content.length, responseContent.length)
+      t.error(err)
+      t.equal(content.length, responseContent.length)
       resolve()
     })
   })
-  t.assert.snapshot(content.replace(/\r?\n/g, '')) // normalize new lines for cross-platform
+  t.matchSnapshot(content.replace(/\r?\n/g, ''), 'output') // normalize new lines for cross-platform
 
   await fastify.close()
 })
@@ -79,20 +80,20 @@ test('reply.view with ejs engine, templates with folder specified, include files
 
   const responseContent = await result.text()
 
-  t.assert.strictEqual(result.status, 200)
-  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.equal(result.status, 200)
+  t.equal(result.headers.get('content-length'), '' + responseContent.length)
+  t.equal(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
   let content = null
   await new Promise(resolve => {
     ejs.renderFile(path.join(templatesFolder, 'index.ejs'), data, options, function (err, str) {
       content = str
-      t.assert.ifError(err)
-      t.assert.strictEqual(content.length, responseContent.length)
+      t.error(err)
+      t.equal(content.length, responseContent.length)
       resolve()
     })
   })
-  t.assert.snapshot(content.replace(/\r?\n/g, '')) // normalize new lines for cross-platform
+  t.matchSnapshot(content.replace(/\r?\n/g, '')) // normalize new lines for cross-platform
 
   await fastify.close()
 })
@@ -122,20 +123,20 @@ test('reply.view with ejs engine, templates with folder specified, include files
 
   const responseContent = await result.text()
 
-  t.assert.strictEqual(result.status, 200)
-  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.equal(result.status, 200)
+  t.equal(result.headers.get('content-length'), '' + responseContent.length)
+  t.equal(result.headers.get('content-type'), 'text/html; charset=utf-8')
 
   let content = null
   await new Promise(resolve => {
     ejs.renderFile(path.join(templatesFolder, 'index-with-includes.ejs'), data, options, function (err, str) {
       content = str
-      t.assert.ifError(err)
-      t.assert.strictEqual(content.length, responseContent.length)
+      t.error(err)
+      t.equal(content.length, responseContent.length)
       resolve()
     })
   })
-  t.assert.snapshot(content.replace(/\r?\n/g, '')) // normalize new lines for cross-platform
+  t.matchSnapshot(content.replace(/\r?\n/g, '')) // normalize new lines for cross-platform
 
   await fastify.close()
 })
@@ -165,20 +166,20 @@ test('reply.view with ejs engine, templates with folder specified, include files
 
   const responseContent = await result.text()
 
-  t.assert.strictEqual(result.status, 500)
-  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.strictEqual(result.headers.get('content-type'), 'application/json; charset=utf-8')
+  t.equal(result.status, 500)
+  t.equal(result.headers.get('content-length'), '' + responseContent.length)
+  t.equal(result.headers.get('content-type'), 'application/json; charset=utf-8')
 
   let content = null
   await new Promise(resolve => {
     ejs.renderFile(path.join(templatesFolder, 'index-with-includes-one-missing.ejs'), data, options, function (err, str) {
       content = str
-      t.assert.ok(err instanceof Error)
-      t.assert.strictEqual(content, undefined)
+      t.ok(err instanceof Error)
+      t.equal(content, undefined)
       resolve()
     })
   })
-  t.assert.snapshot(content)
+  t.matchSnapshot(content)
 
   await fastify.close()
 })
@@ -208,21 +209,21 @@ test('reply.view with ejs engine, templates with folder specified, include files
 
   const responseContent = await result.text()
 
-  t.assert.strictEqual(result.status, 500)
-  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.strictEqual(result.headers.get('content-type'), 'application/json; charset=utf-8')
+  t.equal(result.status, 500)
+  t.equal(result.headers.get('content-length'), '' + responseContent.length)
+  t.equal(result.headers.get('content-type'), 'application/json; charset=utf-8')
 
   let content = null
   await new Promise(resolve => {
     ejs.renderFile(path.join(templatesFolder, 'index-with-includes-and-attribute-missing.ejs'), data, options, function (err, str) {
       content = str
-      t.assert.ok(err instanceof Error)
-      t.assert.strictEqual(content, undefined)
+      t.ok(err instanceof Error)
+      t.equal(content, undefined)
       resolve()
     })
   })
 
-  t.assert.snapshot(content)
+  t.matchSnapshot(content)
 
   await fastify.close()
 })
