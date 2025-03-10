@@ -1,12 +1,9 @@
-import t from 'tap'
-import get from 'simple-get'
 import Fastify from 'fastify'
 import fs from 'node:fs'
-const test = t.test
-const sget = get.concat
+import { test } from 'node:test'
 
-test('using an imported engine as a promise', t => {
-  t.plan(3)
+test('using an imported engine as a promise', async t => {
+  t.plan(1)
   const fastify = Fastify()
   const data = { text: 'text' }
   const ejs = import('ejs')
@@ -17,16 +14,10 @@ test('using an imported engine as a promise', t => {
     reply.view('index.ejs', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, async (err, _response, body) => {
-      t.error(err)
-      t.equal((await ejs).render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  t.assert.strictEqual((await ejs).render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), await result.text())
+  fastify.close()
 })

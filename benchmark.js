@@ -2,8 +2,6 @@
 
 const { readdirSync } = require('node:fs')
 const { spawn } = require('node:child_process')
-const { promisify } = require('node:util')
-const sget = promisify(require('simple-get').concat)
 const autocannon = require('autocannon')
 const { join } = require('node:path')
 
@@ -55,7 +53,7 @@ process.on('SIGINT', () => {
       ])
 
       // fire single initial request as warmup
-      await sget('http://localhost:3000/')
+      await fetch('http://localhost:3000/')
 
       // run autocannon
       const result = await autocannon({
