@@ -1,16 +1,14 @@
 'use strict'
 
-const t = require('tap')
-const test = t.test
-const sget = require('simple-get').concat
+const { test } = require('node:test')
 const Fastify = require('fastify')
 const fs = require('node:fs')
 const { join } = require('node:path')
 
-require('./helper').handleBarsHtmlMinifierTests(t, true)
-require('./helper').handleBarsHtmlMinifierTests(t, false)
+require('./helper').handleBarsHtmlMinifierTests(true)
+require('./helper').handleBarsHtmlMinifierTests(false)
 
-test('fastify.view with handlebars engine', t => {
+test('fastify.view with handlebars engine', (t, end) => {
   t.plan(2)
   const fastify = Fastify()
   const handlebars = require('handlebars')
@@ -23,16 +21,17 @@ test('fastify.view with handlebars engine', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('./templates/index.html', data).then(compiled => {
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
       fastify.close()
+      end()
     })
   })
 })
 
-test('fastify.view for handlebars without data-parameter but defaultContext', t => {
+test('fastify.view for handlebars without data-parameter but defaultContext', (t, end) => {
   t.plan(2)
   const fastify = Fastify()
   const handlebars = require('handlebars')
@@ -46,16 +45,17 @@ test('fastify.view for handlebars without data-parameter but defaultContext', t 
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('./templates/index.html').then(compiled => {
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
       fastify.close()
+      end()
     })
   })
 })
 
-test('fastify.view for handlebars without data-parameter and without defaultContext', t => {
+test('fastify.view for handlebars without data-parameter and without defaultContext', (t, end) => {
   t.plan(2)
   const fastify = Fastify()
   const handlebars = require('handlebars')
@@ -67,16 +67,17 @@ test('fastify.view for handlebars without data-parameter and without defaultCont
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('./templates/index.html').then(compiled => {
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(), compiled)
+      t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(), compiled)
       fastify.close()
+      end()
     })
   })
 })
 
-test('fastify.view with handlebars engine and defaultContext', t => {
+test('fastify.view with handlebars engine and defaultContext', (t, end) => {
   t.plan(2)
   const fastify = Fastify()
   const handlebars = require('handlebars')
@@ -91,17 +92,18 @@ test('fastify.view with handlebars engine and defaultContext', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('./templates/index.html', {}).then(compiled => {
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
       fastify.close()
+      end()
     })
   })
 })
 
-test('reply.view for handlebars engine without data-parameter and defaultContext but with reply.locals', t => {
-  t.plan(6)
+test('reply.view for handlebars engine without data-parameter and defaultContext but with reply.locals', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const handlebars = require('handlebars')
   const localsData = { text: 'text from locals' }
@@ -121,25 +123,22 @@ test('reply.view for handlebars engine without data-parameter and defaultContext
     reply.view('./templates/index.html')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(localsData), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://localhost:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(localsData), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for handlebars engine without defaultContext but with reply.locals and data-parameter', t => {
-  t.plan(6)
+test('reply.view for handlebars engine without defaultContext but with reply.locals and data-parameter', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const handlebars = require('handlebars')
   const localsData = { text: 'text from locals' }
@@ -160,25 +159,22 @@ test('reply.view for handlebars engine without defaultContext but with reply.loc
     reply.view('./templates/index.html', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://localhost:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for handlebars engine without data-parameter but with reply.locals and defaultContext', t => {
-  t.plan(6)
+test('reply.view for handlebars engine without data-parameter but with reply.locals and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const handlebars = require('handlebars')
   const localsData = { text: 'text from locals' }
@@ -200,25 +196,22 @@ test('reply.view for handlebars engine without data-parameter but with reply.loc
     reply.view('./templates/index.html')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(localsData), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://localhost:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(localsData), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for handlebars engine with data-parameter and reply.locals and defaultContext', t => {
-  t.plan(6)
+test('reply.view for handlebars engine with data-parameter and reply.locals and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const handlebars = require('handlebars')
   const localsData = { text: 'text from locals' }
@@ -241,24 +234,21 @@ test('reply.view for handlebars engine with data-parameter and reply.locals and 
     reply.view('./templates/index.html', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://localhost:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), responseContent)
+
+  await fastify.close()
 })
 
-test('fastify.view with handlebars engine and callback', t => {
+test('fastify.view with handlebars engine and callback', (t, end) => {
   t.plan(3)
   const fastify = Fastify()
   const handlebars = require('handlebars')
@@ -271,17 +261,18 @@ test('fastify.view with handlebars engine and callback', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('./templates/index.html', data, (err, compiled) => {
-      t.error(err)
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      t.assert.ifError(err)
+      t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
       fastify.close()
+      end()
     })
   })
 })
 
-test('fastify.view with handlebars engine with layout option', t => {
+test('fastify.view with handlebars engine with layout option', (t, end) => {
   t.plan(3)
 
   const fastify = Fastify()
@@ -296,17 +287,18 @@ test('fastify.view with handlebars engine with layout option', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('./templates/index-for-layout.hbs', data, (err, compiled) => {
-      t.error(err)
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), compiled)
+      t.assert.ifError(err)
+      t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), compiled)
       fastify.close()
+      end()
     })
   })
 })
 
-test('fastify.view with handlebars engine with layout option on render', t => {
+test('fastify.view with handlebars engine with layout option on render', (t, end) => {
   t.plan(3)
 
   const fastify = Fastify()
@@ -320,17 +312,18 @@ test('fastify.view with handlebars engine with layout option on render', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('./templates/index-for-layout.hbs', data, { layout: './templates/layout.hbs' }, (err, compiled) => {
-      t.error(err)
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), compiled)
+      t.assert.ifError(err)
+      t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), compiled)
       fastify.close()
+      end()
     })
   })
 })
 
-test('fastify.view with handlebars engine with invalid layout option on render should throw', t => {
+test('fastify.view with handlebars engine with invalid layout option on render should throw', (t, end) => {
   t.plan(5)
 
   const fastify = Fastify()
@@ -344,21 +337,22 @@ test('fastify.view with handlebars engine with invalid layout option on render s
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
     fastify.view('./templates/index-for-layout.hbs', data, { layout: './templates/invalid-layout.hbs' }, (err) => {
-      t.ok(err instanceof Error)
-      t.equal(err.message, 'unable to access template "./templates/invalid-layout.hbs"')
+      t.assert.ok(err instanceof Error)
+      t.assert.strictEqual(err.message, 'unable to access template "./templates/invalid-layout.hbs"')
     })
     // repeated for test coverage of layout access check lru
     fastify.view('./templates/index-for-layout.hbs', data, { layout: './templates/invalid-layout.hbs' }, (err) => {
-      t.ok(err instanceof Error)
-      t.equal(err.message, 'unable to access template "./templates/invalid-layout.hbs"')
+      t.assert.ok(err instanceof Error)
+      t.assert.strictEqual(err.message, 'unable to access template "./templates/invalid-layout.hbs"')
+      end()
     })
   })
 })
 
-test('reply.view with handlebars engine', t => {
-  t.plan(6)
+test('reply.view with handlebars engine', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const handlebars = require('handlebars')
   const data = { text: 'text' }
@@ -373,25 +367,21 @@ test('reply.view with handlebars engine', t => {
     reply.view('./templates/index.html', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with handlebars engine catches render error', t => {
-  t.plan(3)
+test('reply.view with handlebars engine catches render error', async t => {
+  t.plan(2)
   const fastify = Fastify()
   const handlebars = require('handlebars')
 
@@ -407,18 +397,17 @@ test('reply.view with handlebars engine catches render error', t => {
     reply.view('./templates/error.hbs')
   })
 
-  fastify.inject({
+  const result = await fastify.inject({
     method: 'GET',
     url: '/'
-  }, (err, res) => {
-    t.error(err)
-    t.equal(JSON.parse(res.body).message, 'kaboom')
-    t.equal(res.statusCode, 500)
   })
+
+  t.assert.strictEqual(result.json().message, 'kaboom')
+  t.assert.strictEqual(result.statusCode, 500)
 })
 
-test('reply.view with handlebars engine and layout catches render error', t => {
-  t.plan(3)
+test('reply.view with handlebars engine and layout catches render error', async t => {
+  t.plan(2)
   const fastify = Fastify()
   const handlebars = require('handlebars')
 
@@ -435,18 +424,17 @@ test('reply.view with handlebars engine and layout catches render error', t => {
     reply.view('./templates/error.hbs')
   })
 
-  fastify.inject({
+  const result = await fastify.inject({
     method: 'GET',
     url: '/'
-  }, (err, res) => {
-    t.error(err)
-    t.equal(JSON.parse(res.body).message, 'kaboom')
-    t.equal(res.statusCode, 500)
   })
+
+  t.assert.strictEqual(result.json().message, 'kaboom')
+  t.assert.strictEqual(result.statusCode, 500)
 })
 
-test('reply.view with handlebars engine and defaultContext', t => {
-  t.plan(6)
+test('reply.view with handlebars engine and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const handlebars = require('handlebars')
   const data = { text: 'text' }
@@ -462,25 +450,21 @@ test('reply.view with handlebars engine and defaultContext', t => {
     reply.view('./templates/index.html', {})
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with handlebars engine and includeViewExtension property as true', t => {
-  t.plan(6)
+test('reply.view with handlebars engine and includeViewExtension property as true', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const handlebars = require('handlebars')
   const data = { text: 'text' }
@@ -496,24 +480,20 @@ test('reply.view with handlebars engine and includeViewExtension property as tru
     reply.view('./templates/index', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(data), responseContent)
+
+  await fastify.close()
 })
 
-test('fastify.view with handlebars engine and callback in production mode', t => {
+test('fastify.view with handlebars engine and callback in production mode', (t, end) => {
   t.plan(6)
   const fastify = Fastify()
   const handlebars = require('handlebars')
@@ -527,27 +507,28 @@ test('fastify.view with handlebars engine and callback in production mode', t =>
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('./templates/index.html', data, (err, compiled) => {
-      t.error(err)
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+      t.assert.ifError(err)
+      t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
 
       fastify.ready(err => {
-        t.error(err)
+        t.assert.ifError(err)
 
         fastify.view('./templates/index.html', data, (err, compiled) => {
-          t.error(err)
-          t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
+          t.assert.ifError(err)
+          t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), compiled)
           fastify.close()
+          end()
         })
       })
     })
   })
 })
 
-test('reply.view with handlebars engine with partials', t => {
-  t.plan(6)
+test('reply.view with handlebars engine with partials', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const handlebars = require('handlebars')
   const data = { text: 'text' }
@@ -565,24 +546,21 @@ test('reply.view with handlebars engine with partials', t => {
     reply.view('./templates/index-with-partials.hbs', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + replyBody.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'))(data), replyBody.toString())
-      fastify.close()
-    })
-  })
+  await fastify.listen({ port: 0 })
+
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'))(data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with handlebars engine with missing partials path', t => {
-  t.plan(5)
+test('reply.view with handlebars engine with missing partials path', async t => {
+  t.plan(3)
   const fastify = Fastify()
   const handlebars = require('handlebars')
   const data = { text: 'text' }
@@ -600,34 +578,30 @@ test('reply.view with handlebars engine with missing partials path', t => {
     reply.view('./templates/index-with-partials.hbs', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      t.equal(response.headers['content-length'], String(replyBody.length))
-      t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
+  await fastify.listen({ port: 0 })
 
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 500)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'application/json; charset=utf-8')
+
+  await fastify.close()
 })
 
-test('reply.view with handlebars engine with partials in production mode should use cache', t => {
-  t.plan(4)
+test('reply.view with handlebars engine with partials in production mode should use cache', async t => {
+  t.plan(3)
   const fastify = Fastify()
   const handlebars = require('handlebars')
   const POV = require('..')
   fastify.decorate(POV.fastifyViewCache, {
     get: (key) => {
-      t.equal(key, 'handlebars|body:./templates/body.hbs|null-Partials')
+      t.assert.strictEqual(key, 'handlebars|body:./templates/body.hbs|null-Partials')
     },
     set: (key, value) => {
-      t.equal(key, 'handlebars|body:./templates/body.hbs|null-Partials')
-      t.strictSame(value, { body: fs.readFileSync('./templates/body.hbs', 'utf8') })
+      t.assert.strictEqual(key, 'handlebars|body:./templates/body.hbs|null-Partials')
+      t.assert.deepStrictEqual(value, { body: fs.readFileSync('./templates/body.hbs', 'utf8') })
     }
   })
 
@@ -641,14 +615,12 @@ test('reply.view with handlebars engine with partials in production mode should 
     production: true
   })
 
-  fastify.ready(err => {
-    t.error(err)
-    fastify.close()
-  })
+  await fastify.ready()
+  await fastify.close()
 })
 
-test('fastify.view with handlebars engine with missing partials path in production mode does not start', t => {
-  t.plan(2)
+test('fastify.view with handlebars engine with missing partials path in production mode does not start', async t => {
+  t.plan(1)
   const fastify = Fastify()
   const handlebars = require('handlebars')
 
@@ -662,14 +634,11 @@ test('fastify.view with handlebars engine with missing partials path in producti
     production: true
   })
 
-  fastify.ready(err => {
-    t.ok(err instanceof Error)
-    t.equal(err.message, `ENOENT: no such file or directory, open '${join(__dirname, '../non-existent')}'`)
-  })
+  await t.assert.rejects(fastify.ready(), undefined, `ENOENT: no such file or directory, open '${join(__dirname, '../non-existent')}'`)
 })
 
-test('reply.view with handlebars engine with compile options', t => {
-  t.plan(6)
+test('reply.view with handlebars engine with compile options', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const handlebars = require('handlebars').create()
   const compileOptions = { preventIndent: true, strict: true }
@@ -689,24 +658,21 @@ test('reply.view with handlebars engine with compile options', t => {
     reply.view('./templates/index-with-partials.hbs', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + replyBody.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'), compileOptions)(data), replyBody.toString())
-      fastify.close()
-    })
-  })
+  await fastify.listen({ port: 0 })
+
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'), compileOptions)(data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with handlebars engine with useDataVariables', t => {
-  t.plan(6)
+test('reply.view with handlebars engine with useDataVariables', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const handlebars = require('handlebars').create()
   const compileOptions = { strict: true }
@@ -728,24 +694,21 @@ test('reply.view with handlebars engine with useDataVariables', t => {
     reply.view('./templates/index-with-partials.hbs', null)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + replyBody.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'), compileOptions)(null, { data }), replyBody.toString())
-      fastify.close()
-    })
-  })
+  await fastify.listen({ port: 0 })
+
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'), compileOptions)(null, { data }), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with handlebars engine with useDataVariables and global Ctx', t => {
-  t.plan(6)
+test('reply.view with handlebars engine with useDataVariables and global Ctx', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const handlebars = require('handlebars').create()
   const compileOptions = { strict: true }
@@ -767,24 +730,21 @@ test('reply.view with handlebars engine with useDataVariables and global Ctx', t
     reply.view('./templates/index-with-partials.hbs', null)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + replyBody.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'), compileOptions)(null, { data }), replyBody.toString())
-      fastify.close()
-    })
-  })
+  await fastify.listen({ port: 0 })
+
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index-with-partials.hbs', 'utf8'), compileOptions)(null, { data }), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with handlebars engine with layout option', t => {
-  t.plan(6)
+test('reply.view with handlebars engine with layout option', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const handlebars = require('handlebars')
 
@@ -799,24 +759,21 @@ test('reply.view with handlebars engine with layout option', t => {
     reply.view('./templates/index-for-layout.hbs')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + replyBody.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))({}), replyBody.toString())
-      fastify.close()
-    })
-  })
+  await fastify.listen({ port: 0 })
+
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with handlebars engine with layout option on render', t => {
-  t.plan(6)
+test('reply.view with handlebars engine with layout option on render', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const handlebars = require('handlebars')
 
@@ -830,24 +787,21 @@ test('reply.view with handlebars engine with layout option on render', t => {
     reply.view('./templates/index-for-layout.hbs', {}, { layout: './templates/layout.hbs' })
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, replyBody) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + replyBody.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))({}), replyBody.toString())
-      fastify.close()
-    })
-  })
+  await fastify.listen({ port: 0 })
+
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view should return 500 if layout is missing on render', t => {
-  t.plan(3)
+test('reply.view should return 500 if layout is missing on render', async t => {
+  t.plan(1)
   const fastify = Fastify()
   const handlebars = require('handlebars')
 
@@ -861,20 +815,16 @@ test('reply.view should return 500 if layout is missing on render', t => {
     reply.view('./templates/index-for-layout.hbs', {}, { layout: './templates/missing-layout.hbs' })
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      fastify.close()
-    })
-  })
+  await fastify.listen({ port: 0 })
+
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  t.assert.strictEqual(result.status, 500)
+
+  await fastify.close()
 })
 
-test('fastify.view with handlebars engine, missing template file', t => {
+test('fastify.view with handlebars engine, missing template file', (t, end) => {
   t.plan(3)
   const fastify = Fastify()
   const handlebars = require('handlebars')
@@ -886,17 +836,18 @@ test('fastify.view with handlebars engine, missing template file', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view('./missing.html', {}, err => {
-      t.ok(err instanceof Error)
-      t.equal(err.message, `ENOENT: no such file or directory, open '${join(__dirname, '../missing.html')}'`)
+      t.assert.ok(err instanceof Error)
+      t.assert.strictEqual(err.message, `ENOENT: no such file or directory, open '${join(__dirname, '../missing.html')}'`)
       fastify.close()
+      end()
     })
   })
 })
 
-test('fastify.view with handlebars engine should throw page missing', t => {
+test('fastify.view with handlebars engine should throw page missing', (t, end) => {
   t.plan(3)
   const fastify = Fastify()
   const handlebars = require('handlebars')
@@ -908,18 +859,19 @@ test('fastify.view with handlebars engine should throw page missing', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view(null, {}, err => {
-      t.ok(err instanceof Error)
-      t.equal(err.message, 'Missing page')
+      t.assert.ok(err instanceof Error)
+      t.assert.strictEqual(err.message, 'Missing page')
       fastify.close()
+      end()
     })
   })
 })
 
-test('reply.view with handlebars engine should return 500 if template fails in production mode', t => {
-  t.plan(4)
+test('reply.view with handlebars engine should return 500 if template fails in production mode', async t => {
+  t.plan(2)
   const fastify = Fastify()
   const handlebars = require('handlebars')
   const POV = require('..')
@@ -942,25 +894,20 @@ test('reply.view with handlebars engine should return 500 if template fails in p
     reply.view('./templates/index-for-layout.hbs')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      const { message } = JSON.parse(body.toString())
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      t.equal('Template Error', message)
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
 
-      fastify.close()
-    })
-  })
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 500)
+  t.assert.strictEqual(JSON.parse(responseContent).message, 'Template Error')
+
+  await fastify.close()
 })
 
-test('reply.view with handlebars engine and raw template', t => {
-  t.plan(6)
+test('reply.view with handlebars engine and raw template', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const handlebars = require('handlebars')
   const data = { text: 'text' }
@@ -975,25 +922,21 @@ test('reply.view with handlebars engine and raw template', t => {
     reply.header('Content-Type', 'text/html').view({ raw: fs.readFileSync('./templates/index.html', 'utf8') }, data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html')
+  t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with handlebars engine and function template', t => {
-  t.plan(6)
+test('reply.view with handlebars engine and function template', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const handlebars = require('handlebars')
   const data = { text: 'text' }
@@ -1008,25 +951,21 @@ test('reply.view with handlebars engine and function template', t => {
     reply.view(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8')), data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with handlebars engine and empty template', t => {
-  t.plan(3)
+test('reply.view with handlebars engine and empty template', async t => {
+  t.plan(1)
   const fastify = Fastify()
   const handlebars = require('handlebars')
   const data = { text: 'text' }
@@ -1041,22 +980,17 @@ test('reply.view with handlebars engine and empty template', t => {
     reply.view(null, data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  t.assert.strictEqual(result.status, 500)
+
+  await fastify.close()
 })
 
-test('fastify.view with handlebars engine and callback in production mode and header', t => {
-  t.plan(6)
+test('fastify.view with handlebars engine and callback in production mode and header', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const handlebars = require('handlebars')
 
@@ -1072,25 +1006,21 @@ test('fastify.view with handlebars engine and callback in production mode and he
     reply.header('Content-Type', 'text/html').view('./templates/index-for-layout.hbs', null)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html')
+  t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(), responseContent)
+
+  await fastify.close()
 })
 
-test('fastify.view with handlebars engine and both layout', t => {
-  t.plan(3)
+test('fastify.view with handlebars engine and both layout', async t => {
+  t.plan(1)
   const fastify = Fastify()
   const handlebars = require('handlebars')
   const data = { text: 'text' }
@@ -1106,22 +1036,17 @@ test('fastify.view with handlebars engine and both layout', t => {
     reply.header('Content-Type', 'text/html').view('./templates/index.hbs', data, { layout: './templates/layout.hbs' })
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  t.assert.strictEqual(result.status, 500)
+
+  await fastify.close()
 })
 
-test('reply.viewAsync for handlebars engine without defaultContext but with reply.locals and data-parameter, with async fastify  hooks', t => {
-  t.plan(6)
+test('reply.viewAsync for handlebars engine without defaultContext but with reply.locals and data-parameter, with async fastify  hooks', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const handlebars = require('handlebars')
   const localsData = { text: 'text from locals' }
@@ -1141,19 +1066,16 @@ test('reply.viewAsync for handlebars engine without defaultContext but with repl
     return reply.viewAsync('./templates/index.html', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://localhost:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8'))(data), responseContent)
+
+  await fastify.close()
 })

@@ -1,15 +1,13 @@
 'use strict'
 
 const os = require('node:os')
-const t = require('tap')
-const test = t.test
-const sget = require('simple-get').concat
+const { test } = require('node:test')
 const path = require('node:path')
 const fs = require('node:fs')
 const Fastify = require('fastify')
 
-test('fastify.view exist', t => {
-  t.plan(2)
+test('fastify.view exist', async t => {
+  t.plan(1)
   const fastify = Fastify()
 
   fastify.register(require('../index'), {
@@ -18,16 +16,15 @@ test('fastify.view exist', t => {
     }
   })
 
-  fastify.ready(err => {
-    t.error(err)
-    t.ok(fastify.view)
+  await fastify.ready()
 
-    fastify.close()
-  })
+  t.assert.ok(fastify.view)
+
+  await fastify.close()
 })
 
-test('fastify.view.clearCache exist', t => {
-  t.plan(2)
+test('fastify.view.clearCache exist', async t => {
+  t.plan(1)
   const fastify = Fastify()
 
   fastify.register(require('../index'), {
@@ -36,16 +33,15 @@ test('fastify.view.clearCache exist', t => {
     }
   })
 
-  fastify.ready(err => {
-    t.error(err)
-    t.ok(fastify.view.clearCache)
+  await fastify.ready()
 
-    fastify.close()
-  })
+  t.assert.ok(fastify.view.clearCache)
+
+  await fastify.close()
 })
 
-test('fastify.view.clearCache clears cache', t => {
-  t.plan(13)
+test('fastify.view.clearCache clears cache', async t => {
+  t.plan(9)
   const templatesFolder = path.join(os.tmpdir(), 'fastify')
   try {
     fs.mkdirSync(templatesFolder)
@@ -66,44 +62,41 @@ test('fastify.view.clearCache clears cache', t => {
     reply.type('text/html; charset=utf-8').view('cache_clear_test')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port + '/view-cache-test'
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      fs.writeFileSync(path.join(templatesFolder, 'cache_clear_test.ejs'), '<html><body><span>456</span></body></<html>')
-      const output = body.toString()
-      sget({
-        method: 'GET',
-        url: 'http://localhost:' + fastify.server.address().port + '/view-cache-test'
-      }, (err, response, body) => {
-        t.error(err)
-        t.equal(response.headers['content-length'], '' + body.length)
-        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.equal(output, body.toString())
-        fastify.view.clearCache()
-        sget({
-          method: 'GET',
-          url: 'http://localhost:' + fastify.server.address().port + '/view-cache-test'
-        }, (err, response, body) => {
-          t.error(err)
-          t.equal(response.headers['content-length'], '' + body.length)
-          t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-          t.not(output, body.toString())
-          t.match(body.toString(), '456')
-          fastify.close()
-        })
-      })
-    })
-  })
+  await fastify.listen({ port: 0 })
+
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/view-cache-test')
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  fs.writeFileSync(path.join(templatesFolder, 'cache_clear_test.ejs'), '<html><body><span>456</span></body></<html>')
+
+  const result2 = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/view-cache-test')
+
+  const responseContent2 = await result2.text()
+
+  t.assert.strictEqual(result2.headers.get('content-length'), '' + responseContent2.length)
+  t.assert.strictEqual(result2.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(responseContent, responseContent2)
+
+  fastify.view.clearCache()
+
+  const result3 = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/view-cache-test')
+
+  const responseContent3 = await result3.text()
+
+  t.assert.strictEqual(result3.headers.get('content-length'), '' + responseContent3.length)
+  t.assert.strictEqual(result3.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  t.assert.notStrictEqual(responseContent, responseContent3)
+  t.assert.ok(responseContent3.includes('456'))
+
+  await fastify.close()
 })
 
-test('reply.view exist', t => {
-  t.plan(6)
+test('reply.view exist', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   fastify.register(require('../index'), {
@@ -113,28 +106,24 @@ test('reply.view exist', t => {
   })
 
   fastify.get('/', (_req, reply) => {
-    t.ok(reply.view)
+    t.assert.ok(reply.view)
     reply.send({ hello: 'world' })
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.same(JSON.parse(body), { hello: 'world' })
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.deepStrictEqual(JSON.parse(responseContent), { hello: 'world' })
+
+  await fastify.close()
 })
 
-test('reply.locals exist', t => {
-  t.plan(6)
+test('reply.locals exist', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   fastify.register(require('../index'), {
@@ -144,28 +133,24 @@ test('reply.locals exist', t => {
   })
 
   fastify.get('/', (_req, reply) => {
-    t.ok(reply.locals)
+    t.assert.ok(reply.locals)
     reply.send({ hello: 'world' })
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.same(JSON.parse(body), { hello: 'world' })
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.deepStrictEqual(JSON.parse(responseContent), { hello: 'world' })
+
+  await fastify.close()
 })
 
-test('reply.view can be returned from async function to indicate response processing finished', t => {
-  t.plan(6)
+test('reply.view can be returned from async function to indicate response processing finished', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const ejs = require('ejs')
   const data = { text: 'text' }
@@ -182,25 +167,21 @@ test('reply.view can be returned from async function to indicate response proces
     return reply.view('index-for-layout.ejs', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('Possibility to access res.locals variable across all views', t => {
-  t.plan(6)
+test('Possibility to access res.locals variable across all views', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   fastify.register(require('../index'), {
@@ -222,25 +203,21 @@ test('Possibility to access res.locals variable across all views', t => {
     return reply.view('index-layout-content')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal('ok', body.toString().trim())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual('ok', responseContent.trim())
+
+  await fastify.close()
 })
 
-test('Default extension for ejs', t => {
-  t.plan(6)
+test('Default extension for ejs', async t => {
+  t.plan(4)
   const fastify = Fastify()
 
   fastify.register(require('../index'), {
@@ -255,25 +232,21 @@ test('Default extension for ejs', t => {
     return reply.view('index-with-includes-without-ext')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal('ok', body.toString().trim())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual('ok', responseContent.trim())
+
+  await fastify.close()
 })
 
-test('reply.view with ejs engine and custom propertyName', t => {
-  t.plan(11)
+test('reply.view with ejs engine and custom propertyName', async t => {
+  t.plan(8)
   const fastify = Fastify()
   const ejs = require('ejs')
 
@@ -299,37 +272,37 @@ test('reply.view with ejs engine and custom propertyName', t => {
     return reply[text]('index-for-layout.ejs', { text })
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port,
-      headers: { 'user-agent': 'mobile' }
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), { text: 'mobile' }), body.toString())
-      sget({
-        method: 'GET',
-        url: 'http://localhost:' + fastify.server.address().port,
-        headers: { 'user-agent': 'desktop' }
-      }, (err, response, body) => {
-        t.error(err)
-        t.equal(response.statusCode, 200)
-        t.equal(response.headers['content-length'], '' + body.length)
-        t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-        t.equal(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), { text: 'desktop' }), body.toString())
-        fastify.close()
-      })
-    })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port, {
+    headers: {
+      'user-agent': 'mobile'
+    }
   })
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), { text: 'mobile' }), responseContent)
+
+  const result2 = await fetch('http://127.0.0.1:' + fastify.server.address().port, {
+    headers: {
+      'user-agent': 'desktop'
+    }
+  })
+  const responseContent2 = await result2.text()
+
+  t.assert.strictEqual(result2.status, 200)
+  t.assert.strictEqual(result2.headers.get('content-length'), '' + responseContent2.length)
+  t.assert.strictEqual(result2.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), { text: 'desktop' }), responseContent2)
+
+  await fastify.close()
 })
 
-test('reply.view should return 500 if page is missing', t => {
-  t.plan(3)
+test('reply.view should return 500 if page is missing', async t => {
+  t.plan(1)
   const fastify = Fastify()
 
   fastify.register(require('../index'), {
@@ -342,22 +315,17 @@ test('reply.view should return 500 if page is missing', t => {
     reply.view()
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  t.assert.strictEqual(result.status, 500)
+
+  await fastify.close()
 })
 
-test('reply.view should return 500 if layout is set globally and provided on render', t => {
-  t.plan(3)
+test('reply.view should return 500 if layout is set globally and provided on render', async t => {
+  t.plan(1)
   const fastify = Fastify()
   const data = { text: 'text' }
   fastify.register(require('../index'), {
@@ -371,93 +339,81 @@ test('reply.view should return 500 if layout is set globally and provided on ren
     reply.view('index-for-layout.ejs', data, { layout: 'layout.html' })
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  t.assert.strictEqual(result.status, 500)
+
+  await fastify.close()
 })
 
-test('register callback should throw if the engine is missing', t => {
-  t.plan(2)
+test('register callback should throw if the engine is missing', async t => {
+  t.plan(1)
   const fastify = Fastify()
 
   fastify.register(require('../index'))
 
-  fastify.ready(err => {
-    t.ok(err instanceof Error)
-    t.equal(err.message, 'Missing engine')
-  })
+  await t.assert.rejects(fastify.ready(), undefined, 'Missing engine')
 })
 
-test('register callback should throw if the engine is not supported', t => {
-  t.plan(2)
+test('register callback should throw if the engine is not supported', async t => {
+  t.plan(1)
   const fastify = Fastify()
 
-  fastify.register(require('../index'), {
+  const register = fastify.register(require('../index'), {
     engine: {
       notSupported: null
     }
-  }).ready(err => {
-    t.ok(err instanceof Error)
-    t.equal(err.message, '\'notSupported\' not yet supported, PR? :)')
   })
+
+  await t.assert.rejects(register.ready(), undefined, '\'notSupported\' not yet supported, PR? :)')
 })
 
-test('register callback with handlebars engine should throw if layout file does not exist', t => {
-  t.plan(2)
+test('register callback with handlebars engine should throw if layout file does not exist', async t => {
+  t.plan(1)
   const fastify = Fastify()
 
-  fastify.register(require('../index'), {
+  const register = fastify.register(require('../index'), {
     engine: {
       handlebars: require('handlebars')
     },
     layout: './templates/does-not-exist.hbs'
-  }).ready(err => {
-    t.ok(err instanceof Error)
-    t.same('unable to access template "./templates/does-not-exist.hbs"', err.message)
   })
+
+  await t.assert.rejects(register.ready(), undefined, 'unable to access template "./templates/does-not-exist.hbs"')
 })
 
-test('register callback should throw if layout option provided with wrong engine', t => {
-  t.plan(2)
+test('register callback should throw if layout option provided with wrong engine', async t => {
+  t.plan(1)
   const fastify = Fastify()
 
-  fastify.register(require('../index'), {
+  const register = fastify.register(require('../index'), {
     engine: {
       pug: require('pug')
     },
     layout: 'template'
-  }).ready(err => {
-    t.ok(err instanceof Error)
-    t.equal(err.message, 'Only Dot, Handlebars, EJS, and Eta support the "layout" option')
   })
+
+  await t.assert.rejects(register.ready(), undefined, 'Only Dot, Handlebars, EJS, and Eta support the "layout" option')
 })
 
-test('register callback should throw if templates option provided as array with wrong engine', t => {
-  t.plan(2)
+test('register callback should throw if templates option provided as array with wrong engine', async t => {
+  t.plan(1)
   const fastify = Fastify()
 
-  fastify.register(require('../index'), {
+  const register = fastify.register(require('../index'), {
     engine: {
       pug: require('pug')
     },
     templates: ['layouts', 'pages']
-  }).ready(err => {
-    t.ok(err instanceof Error)
-    t.equal(err.message, 'Only Nunjucks supports the "templates" option as an array')
   })
+
+  await t.assert.rejects(register.ready(), undefined, 'Only Nunjucks supports the "templates" option as an array')
 })
 
-test('plugin is registered with "point-of-view" name', t => {
-  t.plan(2)
+test('plugin is registered with "point-of-view" name', async t => {
+  t.plan(1)
   const fastify = Fastify()
 
   fastify.register(require('../index'), {
@@ -466,13 +422,11 @@ test('plugin is registered with "point-of-view" name', t => {
     }
   })
 
-  fastify.ready(err => {
-    t.error(err)
+  await fastify.ready()
 
-    const kRegistedPlugins = Symbol.for('registered-plugin')
-    const registeredPlugins = fastify[kRegistedPlugins]
-    t.ok(registeredPlugins.find(name => name === '@fastify/view'))
+  const kRegistedPlugins = Symbol.for('registered-plugin')
+  const registeredPlugins = fastify[kRegistedPlugins]
+  t.assert.ok(registeredPlugins.find(name => name === '@fastify/view'))
 
-    fastify.close()
-  })
+  await fastify.close()
 })

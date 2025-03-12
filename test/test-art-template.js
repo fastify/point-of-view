@@ -1,14 +1,12 @@
 'use strict'
 
-const t = require('tap')
-const test = t.test
-const sget = require('simple-get').concat
+const { test } = require('node:test')
 const Fastify = require('fastify')
 const fs = require('node:fs')
 const path = require('node:path')
 
-test('reply.view with art-template engine and custom templates folder', t => {
-  t.plan(6)
+test('reply.view with art-template engine and custom templates folder', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const art = require('art-template')
   const data = { text: 'text' }
@@ -24,28 +22,25 @@ test('reply.view with art-template engine and custom templates folder', t => {
     reply.view('./index.art', data)
   })
 
-  fastify.listen({ port: 10086 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 10086 })
 
-    sget({
-      method: 'GET',
-      url: 'http://127.0.0.1:10086/'
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+  const result = await fetch('http://127.0.0.1:10086/')
 
-      const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+  const responseContent = await result.text()
 
-      t.equal(art(templatePath, data), body.toString())
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+
+  t.assert.strictEqual(art(templatePath, data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with art-template engine and explicit root folder', t => {
-  t.plan(6)
+test('reply.view with art-template engine and explicit root folder', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const art = require('art-template')
   const data = { text: 'text' }
@@ -61,28 +56,25 @@ test('reply.view with art-template engine and explicit root folder', t => {
     reply.view('./index.art', data)
   })
 
-  fastify.listen({ port: 10086 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 10086 })
 
-    sget({
-      method: 'GET',
-      url: 'http://127.0.0.1:10086/'
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+  const result = await fetch('http://127.0.0.1:10086/')
 
-      const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+  const responseContent = await result.text()
 
-      t.equal(art(templatePath, data), body.toString())
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+
+  t.assert.strictEqual(art(templatePath, data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for art-template without data-parameter and defaultContext', t => {
-  t.plan(6)
+test('reply.view for art-template without data-parameter and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const art = require('art-template')
 
@@ -97,28 +89,25 @@ test('reply.view for art-template without data-parameter and defaultContext', t 
     reply.view('./index.art')
   })
 
-  fastify.listen({ port: 10086 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 10086 })
 
-    sget({
-      method: 'GET',
-      url: 'http://127.0.0.1:10086/'
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+  const result = await fetch('http://127.0.0.1:10086/')
 
-      const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+  const responseContent = await result.text()
 
-      t.equal(art(templatePath, {}), body.toString())
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+
+  t.assert.strictEqual(art(templatePath, {}), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for art-template without data-parameter but with defaultContext', t => {
-  t.plan(6)
+test('reply.view for art-template without data-parameter but with defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const art = require('art-template')
   const data = { text: 'text' }
@@ -135,28 +124,25 @@ test('reply.view for art-template without data-parameter but with defaultContext
     reply.view('./index.art')
   })
 
-  fastify.listen({ port: 10086 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 10086 })
 
-    sget({
-      method: 'GET',
-      url: 'http://127.0.0.1:10086/'
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+  const result = await fetch('http://127.0.0.1:10086/')
 
-      const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+  const responseContent = await result.text()
 
-      t.equal(art(templatePath, data), body.toString())
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+
+  t.assert.strictEqual(art(templatePath, data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with art-template engine and defaultContext', t => {
-  t.plan(6)
+test('reply.view with art-template engine and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const art = require('art-template')
   const data = { text: 'text' }
@@ -173,28 +159,25 @@ test('reply.view with art-template engine and defaultContext', t => {
     reply.view('./index.art', {})
   })
 
-  fastify.listen({ port: 10086 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 10086 })
 
-    sget({
-      method: 'GET',
-      url: 'http://127.0.0.1:10086/'
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+  const result = await fetch('http://127.0.0.1:10086/')
 
-      const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+  const responseContent = await result.text()
 
-      t.equal(art(templatePath, data), body.toString())
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+
+  t.assert.strictEqual(art(templatePath, data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for art-template engine without data-parameter and defaultContext but with reply.locals', t => {
-  t.plan(6)
+test('reply.view for art-template engine without data-parameter and defaultContext but with reply.locals', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const art = require('art-template')
   const localsData = { text: 'text from locals' }
@@ -214,28 +197,25 @@ test('reply.view for art-template engine without data-parameter and defaultConte
     reply.view('./templates/index.art')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
 
-      const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+  const responseContent = await result.text()
 
-      t.equal(art(templatePath, localsData), body.toString())
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+
+  t.assert.strictEqual(art(templatePath, localsData), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for art-template engine without defaultContext but with reply.locals and data-parameter', t => {
-  t.plan(6)
+test('reply.view for art-template engine without defaultContext but with reply.locals and data-parameter', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const art = require('art-template')
   const localsData = { text: 'text from locals' }
@@ -256,28 +236,25 @@ test('reply.view for art-template engine without defaultContext but with reply.l
     reply.view('./templates/index.art', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
 
-      const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+  const responseContent = await result.text()
 
-      t.equal(art(templatePath, data), body.toString())
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+
+  t.assert.strictEqual(art(templatePath, data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for art-template engine without data-parameter but with reply.locals and defaultContext', t => {
-  t.plan(6)
+test('reply.view for art-template engine without data-parameter but with reply.locals and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const art = require('art-template')
   const localsData = { text: 'text from locals' }
@@ -299,28 +276,25 @@ test('reply.view for art-template engine without data-parameter but with reply.l
     reply.view('./templates/index.art')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
 
-      const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+  const responseContent = await result.text()
 
-      t.equal(art(templatePath, localsData), body.toString())
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+
+  t.assert.strictEqual(art(templatePath, localsData), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for art-template engine with data-parameter and reply.locals and defaultContext', t => {
-  t.plan(6)
+test('reply.view for art-template engine with data-parameter and reply.locals and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const art = require('art-template')
   const localsData = { text: 'text from locals' }
@@ -343,28 +317,25 @@ test('reply.view for art-template engine with data-parameter and reply.locals an
     reply.view('./templates/index.art', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
 
-      const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+  const responseContent = await result.text()
 
-      t.equal(art(templatePath, data), body.toString())
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+
+  t.assert.strictEqual(art(templatePath, data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with art-template engine and full path templates folder', t => {
-  t.plan(6)
+test('reply.view with art-template engine and full path templates folder', async t => {
+  t.plan(4)
 
   const fastify = Fastify()
   const art = require('art-template')
@@ -381,28 +352,25 @@ test('reply.view with art-template engine and full path templates folder', t => 
     reply.view('./index.art', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
 
-      const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+  const responseContent = await result.text()
 
-      t.equal(art(templatePath, data), body.toString())
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+
+  t.assert.strictEqual(art(templatePath, data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with art-template engine and includeViewExtension is true', t => {
-  t.plan(6)
+test('reply.view with art-template engine and includeViewExtension is true', async t => {
+  t.plan(4)
 
   const fastify = Fastify()
   const art = require('art-template')
@@ -419,28 +387,25 @@ test('reply.view with art-template engine and includeViewExtension is true', t =
     reply.view('./templates/index', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
 
-      const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+  const responseContent = await result.text()
 
-      t.equal(art(templatePath, data), body.toString())
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+
+  t.assert.strictEqual(art(templatePath, data), responseContent)
+
+  await fastify.close()
 })
 
-test('fastify.view with art-template engine and full path templates folder', t => {
-  t.plan(6)
+test('fastify.view with art-template engine and full path templates folder', async t => {
+  t.plan(4)
 
   const fastify = Fastify()
   const art = require('art-template')
@@ -455,31 +420,28 @@ test('fastify.view with art-template engine and full path templates folder', t =
 
   fastify.get('/', (_req, reply) => {
     fastify.view('./index', data, (err, html) => {
-      t.error(err)
+      t.assert.ifError(err)
       reply.send(html)
     })
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-type'], 'text/plain; charset=utf-8')
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
 
-      const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+  const responseContent = await result.text()
 
-      t.equal(art(templatePath, data), body.toString())
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/plain; charset=utf-8')
+
+  const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+
+  t.assert.strictEqual(art(templatePath, data), responseContent)
+
+  await fastify.close()
 })
 
-test('fastify.view with art-template should throw page missing', t => {
+test('fastify.view with art-template should throw page missing', (t, end) => {
   t.plan(3)
   const fastify = Fastify()
   const art = require('art-template')
@@ -491,18 +453,19 @@ test('fastify.view with art-template should throw page missing', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view(null, {}, err => {
-      t.ok(err instanceof Error)
-      t.equal(err.message, 'Missing page')
+      t.assert.ok(err instanceof Error)
+      t.assert.strictEqual(err.message, 'Missing page')
       fastify.close()
+      end()
     })
   })
 })
 
-test('reply.view with art-template should return 500 if render fails', t => {
-  t.plan(4)
+test('reply.view with art-template should return 500 if render fails', async t => {
+  t.plan(2)
   const fastify = Fastify()
   const art = {
     compile: () => { throw Error('Compile Error') }
@@ -518,25 +481,18 @@ test('reply.view with art-template should return 500 if render fails', t => {
     reply.view('./templates/index')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      const { message } = JSON.parse(body.toString())
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      t.equal('Compile Error', message)
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
 
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 500)
+  t.assert.strictEqual('Compile Error', (await result.json()).message)
+
+  await fastify.close()
 })
 
-test('reply.view with art-template engine and raw template', t => {
-  t.plan(6)
+test('reply.view with art-template engine and raw template', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const art = require('art-template')
   const data = { text: 'text' }
@@ -552,28 +508,25 @@ test('reply.view with art-template engine and raw template', t => {
     reply.view({ raw: fs.readFileSync('./templates/index.art') }, data)
   })
 
-  fastify.listen({ port: 10086 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 10086 })
 
-    sget({
-      method: 'GET',
-      url: 'http://127.0.0.1:10086/'
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
+  const result = await fetch('http://127.0.0.1:10086/')
 
-      const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+  const responseContent = await result.text()
 
-      t.equal(art(templatePath, data), body.toString())
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+
+  t.assert.strictEqual(art(templatePath, data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with art-template engine and function template', t => {
-  t.plan(6)
+test('reply.view with art-template engine and function template', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const art = require('art-template')
   const data = { text: 'text' }
@@ -589,28 +542,25 @@ test('reply.view with art-template engine and function template', t => {
     reply.header('Content-Type', 'text/html').view(art.compile({ filename: path.join(__dirname, '..', 'templates', 'index.art') }), data)
   })
 
-  fastify.listen({ port: 10086 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 10086 })
 
-    sget({
-      method: 'GET',
-      url: 'http://127.0.0.1:10086/'
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html')
+  const result = await fetch('http://127.0.0.1:10086/')
 
-      const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+  const responseContent = await result.text()
 
-      t.equal(art(templatePath, data), body.toString())
-      fastify.close()
-    })
-  })
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html')
+
+  const templatePath = path.join(__dirname, '..', 'templates', 'index.art')
+
+  t.assert.strictEqual(art(templatePath, data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with art-template engine and unknown template type', t => {
-  t.plan(3)
+test('reply.view with art-template engine and unknown template type', async t => {
+  t.plan(1)
   const fastify = Fastify()
   const art = require('art-template')
   const data = { text: 'text' }
@@ -626,16 +576,11 @@ test('reply.view with art-template engine and unknown template type', t => {
     reply.view({}, data)
   })
 
-  fastify.listen({ port: 10086 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 10086 })
 
-    sget({
-      method: 'GET',
-      url: 'http://127.0.0.1:10086/'
-    }, (err, response) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:10086/')
+
+  t.assert.strictEqual(result.status, 500)
+
+  await fastify.close()
 })

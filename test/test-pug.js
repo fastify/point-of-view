@@ -1,16 +1,14 @@
 'use strict'
 
-const t = require('tap')
-const test = t.test
-const sget = require('simple-get').concat
+const { test } = require('node:test')
 const Fastify = require('fastify')
 const fs = require('node:fs')
 
-require('./helper').pugHtmlMinifierTests(t, true)
-require('./helper').pugHtmlMinifierTests(t, false)
+require('./helper').pugHtmlMinifierTests(true)
+require('./helper').pugHtmlMinifierTests(false)
 
-test('reply.view with pug engine', t => {
-  t.plan(6)
+test('reply.view with pug engine', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const pug = require('pug')
   const data = { text: 'text' }
@@ -25,25 +23,22 @@ test('reply.view with pug engine', t => {
     reply.view('./templates/index.pug', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with pug engine in production mode should use cache', t => {
-  t.plan(6)
+test('reply.view with pug engine in production mode should use cache', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const pug = require('pug')
   const POV = require('..')
@@ -66,25 +61,22 @@ test('reply.view with pug engine in production mode should use cache', t => {
     reply.view('./templates/index.pug')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], String(body.length))
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal('<div>Cached Response</div>', body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual('<div>Cached Response</div>', responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with pug engine and includes', t => {
-  t.plan(6)
+test('reply.view with pug engine and includes', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const pug = require('pug')
   const data = { text: 'text' }
@@ -99,25 +91,22 @@ test('reply.view with pug engine and includes', t => {
     reply.view('./templates/sample.pug', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(pug.renderFile('./templates/sample.pug', data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(pug.renderFile('./templates/sample.pug', data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for pug without data-parameter but defaultContext', t => {
-  t.plan(6)
+test('reply.view for pug without data-parameter but defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const pug = require('pug')
   const data = { text: 'text' }
@@ -133,25 +122,22 @@ test('reply.view for pug without data-parameter but defaultContext', t => {
     reply.view('./templates/index.pug')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for pug without data-parameter and without defaultContext', t => {
-  t.plan(6)
+test('reply.view for pug without data-parameter and without defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const pug = require('pug')
 
@@ -165,25 +151,22 @@ test('reply.view for pug without data-parameter and without defaultContext', t =
     reply.view('./templates/index.pug')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8')), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8')), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with pug engine and defaultContext', t => {
-  t.plan(6)
+test('reply.view with pug engine and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const pug = require('pug')
   const data = { text: 'text' }
@@ -199,25 +182,22 @@ test('reply.view with pug engine and defaultContext', t => {
     reply.view('./templates/index.pug', {})
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for pug engine without data-parameter and defaultContext but with reply.locals', t => {
-  t.plan(6)
+test('reply.view for pug engine without data-parameter and defaultContext but with reply.locals', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const pug = require('pug')
   const localsData = { text: 'text from locals' }
@@ -237,25 +217,22 @@ test('reply.view for pug engine without data-parameter and defaultContext but wi
     reply.view('./templates/index.pug')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), localsData), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), localsData), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for pug engine without defaultContext but with reply.locals and data-parameter', t => {
-  t.plan(6)
+test('reply.view for pug engine without defaultContext but with reply.locals and data-parameter', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const pug = require('pug')
   const localsData = { text: 'text from locals' }
@@ -276,25 +253,22 @@ test('reply.view for pug engine without defaultContext but with reply.locals and
     reply.view('./templates/index.pug', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for pug engine without data-parameter but with reply.locals and defaultContext', t => {
-  t.plan(6)
+test('reply.view for pug engine without data-parameter but with reply.locals and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const pug = require('pug')
   const localsData = { text: 'text from locals' }
@@ -316,25 +290,22 @@ test('reply.view for pug engine without data-parameter but with reply.locals and
     reply.view('./templates/index.pug')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), localsData), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), localsData), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view for pug engine with data-parameter and reply.locals and defaultContext', t => {
-  t.plan(6)
+test('reply.view for pug engine with data-parameter and reply.locals and defaultContext', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const pug = require('pug')
   const localsData = { text: 'text from locals' }
@@ -357,25 +328,22 @@ test('reply.view for pug engine with data-parameter and reply.locals and default
     reply.view('./templates/index.pug', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with pug engine, will preserve content-type', t => {
-  t.plan(6)
+test('reply.view with pug engine, will preserve content-type', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const pug = require('pug')
   const data = { text: 'text' }
@@ -391,24 +359,21 @@ test('reply.view with pug engine, will preserve content-type', t => {
     reply.view('./templates/index.pug', data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/xml')
-      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/xml')
+  t.assert.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('fastify.view with pug engine, should throw page missing', t => {
+test('fastify.view with pug engine, should throw page missing', (t, end) => {
   t.plan(3)
   const fastify = Fastify()
   const pug = require('pug')
@@ -420,18 +385,19 @@ test('fastify.view with pug engine, should throw page missing', t => {
   })
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.view(null, {}, err => {
-      t.ok(err instanceof Error)
-      t.equal(err.message, 'Missing page')
+      t.assert.ok(err instanceof Error)
+      t.assert.strictEqual(err.message, 'Missing page')
       fastify.close()
+      end()
     })
   })
 })
 
-test('reply.view with pug engine, should throw error if non existent template path', t => {
-  t.plan(5)
+test('reply.view with pug engine, should throw error if non existent template path', async t => {
+  t.plan(3)
   const fastify = Fastify()
   const pug = require('pug')
 
@@ -446,24 +412,21 @@ test('reply.view with pug engine, should throw error if non existent template pa
     reply.view('./test/index.html')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
-      t.equal(response.headers['content-length'], String(body.length))
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 500)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'application/json; charset=utf-8')
+
+  await fastify.close()
 })
 
-test('reply.view with pug engine should return 500 if compile fails', t => {
-  t.plan(4)
+test('reply.view with pug engine should return 500 if compile fails', async t => {
+  t.plan(2)
   const fastify = Fastify()
   const pug = {
     compile: () => { throw Error('Compile Error') }
@@ -479,25 +442,20 @@ test('reply.view with pug engine should return 500 if compile fails', t => {
     reply.view('./templates/index.pug')
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      const { message } = JSON.parse(body.toString())
-      t.error(err)
-      t.equal(response.statusCode, 500)
-      t.equal('Compile Error', message)
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
 
-      fastify.close()
-    })
-  })
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 500)
+  t.assert.strictEqual(JSON.parse(responseContent).message, 'Compile Error')
+
+  await fastify.close()
 })
 
-test('reply.view with pug engine and raw template', t => {
-  t.plan(6)
+test('reply.view with pug engine and raw template', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const pug = require('pug')
   const data = { text: 'text' }
@@ -512,25 +470,22 @@ test('reply.view with pug engine and raw template', t => {
     reply.view({ raw: fs.readFileSync('./templates/index.pug', 'utf8') }, data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })
 
-test('reply.view with pug engine and function template', t => {
-  t.plan(6)
+test('reply.view with pug engine and function template', async t => {
+  t.plan(4)
   const fastify = Fastify()
   const pug = require('pug')
   const data = { text: 'text' }
@@ -545,19 +500,16 @@ test('reply.view with pug engine and function template', t => {
     reply.view(pug.compile(fs.readFileSync('./templates/index.pug', 'utf8')), data)
   })
 
-  fastify.listen({ port: 0 }, err => {
-    t.error(err)
+  await fastify.listen({ port: 0 })
 
-    sget({
-      method: 'GET',
-      url: 'http://localhost:' + fastify.server.address().port
-    }, (err, response, body) => {
-      t.error(err)
-      t.equal(response.statusCode, 200)
-      t.equal(response.headers['content-length'], '' + body.length)
-      t.equal(response.headers['content-type'], 'text/html; charset=utf-8')
-      t.equal(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), body.toString())
-      fastify.close()
-    })
-  })
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(pug.render(fs.readFileSync('./templates/index.pug', 'utf8'), data), responseContent)
+
+  await fastify.close()
 })

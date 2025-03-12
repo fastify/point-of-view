@@ -14,7 +14,7 @@
     "lint:fix": "eslint --fix",
     "test-with-snapshot": "cross-env TAP_SNAPSHOT=1 tap test/snap/*",
     "test": "npm run test:unit && npm run test-with-snapshot && npm run test:typescript",
-    "test:unit": "tap",
+    "test:unit": "c8 borp test/*.js",
     "test:typescript": "tsd"
   },
   "repository": {
@@ -78,6 +78,8 @@
     "@types/node": "^22.0.0",
     "art-template": "^4.13.2",
     "autocannon": "^8.0.0",
+    "borp": "^0.19.0",
+    "c8": "^10.1.3",
     "cross-env": "^7.0.3",
     "dot": "^1.1.3",
     "ejs": "^3.1.10",
@@ -93,7 +95,6 @@
     "nunjucks": "^3.2.4",
     "pino": "^9.0.0",
     "pug": "^3.0.2",
-    "simple-get": "^4.0.1",
     "split2": "^4.2.0",
     "tap": "^21.0.0",
     "tsd": "^0.31.0",
