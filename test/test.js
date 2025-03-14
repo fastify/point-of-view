@@ -46,7 +46,7 @@ test('fastify.view.clearCache clears cache', async t => {
   try {
     fs.mkdirSync(templatesFolder)
   } catch {}
-  fs.writeFileSync(path.join(templatesFolder, 'cache_clear_test.ejs'), '<html><body><span>123</span></body></<html>')
+  fs.writeFileSync(path.join(templatesFolder, 'cache_clear_test.ejs'), '<html><body><span>123</span></body></<html>', { mode: 0o600 })
   const fastify = Fastify()
 
   fastify.register(require('../index'), {
@@ -70,7 +70,7 @@ test('fastify.view.clearCache clears cache', async t => {
 
   t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
   t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  fs.writeFileSync(path.join(templatesFolder, 'cache_clear_test.ejs'), '<html><body><span>456</span></body></<html>')
+  fs.writeFileSync(path.join(templatesFolder, 'cache_clear_test.ejs'), '<html><body><span>456</span></body></<html>', { mode: 0o600 })
 
   const result2 = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/view-cache-test')
 
