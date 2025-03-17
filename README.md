@@ -15,7 +15,6 @@ Currently supports the following templates engines:
 - [`pug`](https://pugjs.org/api/getting-started.html)
 - [`handlebars`](https://handlebarsjs.com/)
 - [`mustache`](https://mustache.github.io/)
-- [`art-template`](https://goofychris.github.io/art-template/)
 - [`twig`](https://twig.symfony.com/)
 - [`liquid`](https://github.com/harttle/liquidjs)
 - [`doT`](https://github.com/olado/doT)
@@ -746,45 +745,6 @@ fastify.get('/', (req, reply) => {
 })
 ```
 
-### art
-
-```js
-const art = require('art-template')
-fastify.register(pointOfView, {
-  engine: {
-    'art-template': art
-  }
-})
-
-
-fastify.get("/", (req, reply) => {
-  reply.view("./index.art", { text: "text" });
-});
-```
-
-```js
-fastify.get('/', (req, reply) => {
-  fs.readFile('./templates/index.art', 'utf8', (err, file) => {
-    if (err) {
-      reply.send(err)
-    } else {
-      reply.view(art.compile({ filename: path.join(__dirname, '..', 'templates', 'index.art') }), data)
-    }
-  })
-})
-```
-
-```js
-fastify.get('/', (req, reply) => {
-  fs.readFile('./templates/index.art', 'utf8', (err, file) => {
-    if (err) {
-      reply.send(err)
-    } else {
-      reply.view({ raw: file }, data)
-    }
-  })
-})
-```
 <!---
 // This seems a bit random given that there was no mention of typescript before.
 ### Typing

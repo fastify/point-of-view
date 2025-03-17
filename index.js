@@ -4,7 +4,7 @@ const fp = require('fastify-plugin')
 const { accessSync, existsSync, mkdirSync, readdirSync } = require('node:fs')
 const { basename, dirname, extname, join, resolve } = require('node:path')
 const { LruMap } = require('toad-cache')
-const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'mustache', 'art-template', 'twig', 'liquid', 'dot', 'eta']
+const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'mustache', 'twig', 'liquid', 'dot', 'eta']
 
 const viewCache = Symbol('@fastify/view/cache')
 
@@ -97,7 +97,6 @@ async function fastifyView (fastify, opts) {
     handlebars: withLayout(viewHandlebars, globalLayoutFileName),
     mustache: viewMustache,
     nunjucks: viewNunjucks,
-    'art-template': viewArtTemplate,
     twig: viewTwig,
     liquid: viewLiquid,
     dot: withLayout(dotRender, globalLayoutFileName),
@@ -189,7 +188,6 @@ async function fastifyView (fastify, opts) {
 
   function getDefaultExtension (type) {
     const mappedExtensions = {
-      'art-template': 'art',
       handlebars: 'hbs',
       nunjucks: 'njk'
     }
@@ -389,41 +387,6 @@ async function fastifyView (fastify, opts) {
     const file = await readFileSemaphore(join(templatesDir, page))
     const render = readCallback(page, data, opts, file)
     return render(data)
-  }
-
-  async function viewArtTemplate (page, data) {
-    data = Object.assign({}, defaultCtx, this.locals, data)
-
-    if (typeof page === 'string') {
-      // Append view extension.
-      page = getPage(page, 'art')
-    }
-
-    const defaultSetting = {
-      debug: process.env.NODE_ENV !== 'production',
-      root: templatesDir
-    }
-
-    // merge engine options
-    const confs = Object.assign({}, defaultSetting, globalOptions)
-
-    function render (filename, data) {
-      let render
-      if (typeof filename === 'string') {
-        confs.filename = filename
-        render = engine.compile(confs)
-      } else if (typeof filename === 'function') {
-        render = filename
-      } else if (typeof filename === 'object' && filename.raw) {
-        confs.source = filename.raw.toString()
-        render = engine.compile(confs)
-      } else {
-        throw new Error('Unknown template type')
-      }
-      return render(data)
-    }
-
-    return render(page, data)
   }
 
   async function viewNunjucks (page, data) {

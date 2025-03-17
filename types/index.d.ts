@@ -30,7 +30,6 @@ declare namespace fastifyView {
       pug?: any;
       handlebars?: any;
       mustache?: any;
-      'art-template'?: any;
       twig?: any;
       liquid?: any;
       dot?: any;

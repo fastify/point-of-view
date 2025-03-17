@@ -76,7 +76,6 @@
   "devDependencies": {
     "@fastify/pre-commit": "^2.1.0",
     "@types/node": "^22.0.0",
-    "art-template": "^4.13.2",
     "autocannon": "^8.0.0",
     "borp": "^0.19.0",
     "c8": "^10.1.3",
