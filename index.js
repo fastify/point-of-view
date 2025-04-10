@@ -458,9 +458,10 @@ async function fastifyView (fastify, opts) {
       // append view extension
       page = getPage(page, 'mustache')
     }
+    const partials = Object.assign({}, globalOptions.partials || {}, options.partials || {})
     const requestedPath = getRequestedPath(this)
     const templateString = await getTemplate(page)
-    const partialsObject = await getPartials(page, { partials: options.partials || {}, requestedPath })
+    const partialsObject = await getPartials(page, { partials, requestedPath })
 
     let html
     if (typeof templateString === 'function') {
