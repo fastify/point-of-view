@@ -273,6 +273,84 @@ test('reply.view for mustache engine with data-parameter and reply.locals and de
   await fastify.close()
 })
 
+test('reply.view with mustache engine with global partials', async t => {
+  t.plan(4)
+  const fastify = Fastify()
+  const mustache = require('mustache')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      mustache
+    },
+    options: {
+      partials: {
+        body: './templates/body.mustache'
+      }
+    }
+  })
+
+  fastify.get('/', (_req, reply) => {
+    reply.view('./templates/index.mustache', data)
+  })
+
+  await fastify.listen({ port: 0 })
+
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(mustache.render(fs.readFileSync('./templates/index.mustache', 'utf8'), data, { body: '<p>{{ text }}</p>' }), responseContent)
+
+  await fastify.close()
+})
+
+test('reply.view with mustache engine with global and local partials', async t => {
+  t.plan(4)
+  const fastify = Fastify()
+  const mustache = require('mustache')
+  const data = {}
+
+  fastify.register(require('../index'), {
+    engine: {
+      mustache
+    },
+    options: {
+      partials: {
+        partial1: './templates/partial-1.mustache'
+      }
+    }
+  })
+
+  fastify.get('/', (_req, reply) => {
+    reply.view('./templates/index-with-2-partials.mustache', data, { partials: { partial2: './templates/partial-2.mustache' } })
+  })
+
+  await fastify.listen({ port: 0 })
+
+  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(
+    mustache.render(
+      fs.readFileSync('./templates/index-with-2-partials.mustache', 'utf8'),
+      data,
+      {
+        partial1: 'Partial 1 - b4d932b9-4baa-4c99-8d14-d45411b9361e\n', // defined globally
+        partial2: 'Partial 2 - fdab0fe2-6dab-4429-ae9f-dfcb791d1d3d\n' // defined locally
+      }
+    ),
+    responseContent
+  )
+
+  await fastify.close()
+})
+
 test('reply.view with mustache engine with partials', async t => {
   t.plan(4)
   const fastify = Fastify()
