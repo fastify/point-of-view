@@ -19,6 +19,7 @@ Currently supports the following templates engines:
 - [`liquid`](https://github.com/harttle/liquidjs)
 - [`doT`](https://github.com/olado/doT)
 - [`eta`](https://eta.js.org)
+- [`edge`](https://edgejs.dev)
 
 In `production` mode, `@fastify/view` will heavily cache the templates file and functions, while in `development` will reload every time the template file and function.
 
@@ -742,6 +743,26 @@ fastify.get('/', (req, reply) => {
       reply.view({ raw: file }, data)
     }
   })
+})
+```
+
+### Edge
+
+```js
+const { Edge } = require('edge.js')
+const { join } = require('node:path')
+
+const engine = new Edge()
+engine.mount(join(__dirname, '..', 'templates'))
+
+fastify.register(require('../index'), {
+    engine: {
+        edge: engine
+    }
+})
+
+fastify.get('/', (_req, reply) => {
+    reply.view('index.edge', data)
 })
 ```
 
