@@ -4,7 +4,7 @@ const fp = require('fastify-plugin')
 const { accessSync, existsSync, mkdirSync, readdirSync } = require('node:fs')
 const { basename, dirname, extname, join, resolve } = require('node:path')
 const { LruMap } = require('toad-cache')
-const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'mustache', 'twig', 'liquid', 'dot', 'eta']
+const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'mustache', 'twig', 'liquid', 'dot', 'eta', 'edge']
 
 const viewCache = Symbol('@fastify/view/cache')
 
@@ -64,7 +64,7 @@ async function fastifyView (fastify, opts) {
 
   function layoutIsValid (_layoutFileName) {
     if (type !== 'dot' && type !== 'handlebars' && type !== 'ejs' && type !== 'eta') {
-      throw new Error('Only Dot, Handlebars, EJS, and Eta support the "layout" option')
+      throw new Error('Only Dot, Handlebars, EJS and Eta support the "layout" option')
     }
 
     if (!hasAccessToLayoutFile(_layoutFileName, getDefaultExtension(type))) {
@@ -101,6 +101,7 @@ async function fastifyView (fastify, opts) {
     liquid: viewLiquid,
     dot: withLayout(dotRender, globalLayoutFileName),
     eta: withLayout(viewEta, globalLayoutFileName),
+    edge: viewEdge,
     _default: view
   }
 
@@ -588,6 +589,21 @@ async function fastifyView (fastify, opts) {
     Object.keys(partialsObject).forEach((name) => {
       engine.registerPartial(name, engine.compile(partialsObject[name], globalOptions.compileOptions))
     })
+  }
+
+  async function viewEdge (page, data, opts) {
+    data = Object.assign({}, defaultCtx, this.locals, data)
+
+    switch (typeof page) {
+      case 'string':
+        return engine.render(getPage(page, 'edge'), data)
+      case 'function':
+        return page(data)
+      case 'object':
+        return engine.renderRaw(page, data)
+      default:
+        throw new Error('Unknown page type')
+    }
   }
 
   function withLayout (render, layout) {
