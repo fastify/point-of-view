@@ -249,6 +249,27 @@ fastify.get("/desktop", (req, reply) => {
 });
 ```
 
+## Rendering a template from a string ("raw" template)
+
+The `reply.view({ raw })` option allows you to render a template from a string instead of a file. This is useful when you want to render a template that is not stored in a file, or when you want to use a template that is generated dynamically.
+
+```js
+fastify.get('/', (req, reply) => {
+  fs.readFile('./templates/index.mustache', 'utf8', (err, file) => {
+    if (err) {
+      reply.send(err)
+    } else {
+      reply.view({ raw: file }, data)
+    }
+  })
+})
+```
+
+Note that by using the `raw` option, you are considering the template as trusted - `@fastify/view` does not perform any
+validation on the template content.
+
+__DO NOT USE `raw` with untrusted content, or you will make yourself vulnerable to Remote Code Execution (RCE) attacks.__
+
 ## Minifying HTML on render
 
 To utilize [`html-minifier-terser`](https://www.npmjs.com/package/html-minifier-terser) in the rendering process, you can add the option `useHtmlMinifier` with a reference to `html-minifier-terser`,
