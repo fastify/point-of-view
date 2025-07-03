@@ -187,6 +187,10 @@ async function fastifyView (fastify, opts) {
     return result
   }
 
+  function getCacheKey (key) {
+    return [propertyName, key].join('|')
+  }
+
   function getDefaultExtension (type) {
     const mappedExtensions = {
       handlebars: 'hbs',
@@ -223,7 +227,7 @@ async function fastifyView (fastify, opts) {
     if (type === 'handlebars') {
       data = engine.compile(data, globalOptions.compileOptions)
     }
-    fastify[viewCache].set(file, data)
+    fastify[viewCache].set(getCacheKey(file), data)
     return data
   }
 
@@ -238,7 +242,7 @@ async function fastifyView (fastify, opts) {
       isRaw = true
       file = file.raw
     }
-    const data = fastify[viewCache].get(file)
+    const data = fastify[viewCache].get(getCacheKey(file))
     if (data && prod) {
       return data
     }
@@ -270,7 +274,7 @@ async function fastifyView (fastify, opts) {
   }
 
   function getPartialsCacheKey (page, partials, requestedPath) {
-    let cacheKey = page
+    let cacheKey = getCacheKey(page)
 
     for (const key of Object.keys(partials)) {
       cacheKey += `|${key}:${partials[key]}`
@@ -295,7 +299,7 @@ async function fastifyView (fastify, opts) {
 
     const compiledPage = engine.compile(html, localOptions)
 
-    fastify[viewCache].set(page, compiledPage)
+    fastify[viewCache].set(getCacheKey(page), compiledPage)
     return compiledPage
   }
 
@@ -345,7 +349,7 @@ async function fastifyView (fastify, opts) {
       // append view extension
       page = getPage(page, type)
     }
-    const toHtml = fastify[viewCache].get(page)
+    const toHtml = fastify[viewCache].get(getCacheKey(page))
 
     if (toHtml && prod) {
       return toHtml(data)
@@ -376,7 +380,7 @@ async function fastifyView (fastify, opts) {
       // append view extension
       page = getPage(page, type)
     }
-    const toHtml = fastify[viewCache].get(page)
+    const toHtml = fastify[viewCache].get(getCacheKey(page))
 
     if (toHtml && prod) {
       return toHtml(data)
@@ -630,7 +634,7 @@ async function fastifyView (fastify, opts) {
   }
 
   function hasAccessToLayoutFile (fileName, ext) {
-    const layoutKey = `layout-${fileName}-${ext}`
+    const layoutKey = getCacheKey(`layout-${fileName}-${ext}`)
     let result = fastify[viewCache].get(layoutKey)
 
     if (typeof result === 'boolean') {

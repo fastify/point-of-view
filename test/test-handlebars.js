@@ -597,10 +597,10 @@ test('reply.view with handlebars engine with partials in production mode should 
   const POV = require('..')
   fastify.decorate(POV.fastifyViewCache, {
     get: (key) => {
-      t.assert.strictEqual(key, 'handlebars|body:./templates/body.hbs|null-Partials')
+      t.assert.strictEqual(key, 'view|handlebars|body:./templates/body.hbs|null-Partials')
     },
     set: (key, value) => {
-      t.assert.strictEqual(key, 'handlebars|body:./templates/body.hbs|null-Partials')
+      t.assert.strictEqual(key, 'view|handlebars|body:./templates/body.hbs|null-Partials')
       t.assert.deepStrictEqual(value, { body: fs.readFileSync('./templates/body.hbs', 'utf8') })
     }
   })
@@ -1017,6 +1017,44 @@ test('fastify.view with handlebars engine and callback in production mode and he
   t.assert.strictEqual(handlebars.compile(fs.readFileSync('./templates/index.hbs', 'utf8'))(), responseContent)
 
   await fastify.close()
+})
+
+test('reply.view with multiple handlebars instances in production mode', async t => {
+  t.plan(8)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+
+  const view = require('../index')
+  for (const name of ['foo', 'bar']) {
+    fastify.register(view, {
+      propertyName: name,
+      engine: {
+        handlebars: handlebars.create(),
+      },
+      root: `./templates/root-${name}`,
+      options: {
+        partials: { body: 'body.hbs' },
+      },
+      production: true,
+    })
+
+    fastify.get(`/${name}`, (_req, reply) => {
+      reply.header('Content-Type', 'text/plain')[name]('index.hbs', null)
+    })
+  }
+
+  await fastify.listen({ port: 0 })
+  t.after(() => fastify.close())
+
+  for (const name of ['foo', 'bar']) {
+    const result = await fetch(`http://127.0.0.1:${fastify.server.address().port}/${name}`)
+    const responseContent = await result.text()
+
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/plain')
+    t.assert.strictEqual(responseContent, `Index ${name} body ${name}\n\n`)
+  }
 })
 
 test('fastify.view with handlebars engine and both layout', async t => {
