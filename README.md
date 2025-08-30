@@ -28,8 +28,6 @@ _Note that at least Fastify `v2.0.0` is needed._
 
 ## Recent Changes
 
-_Note: `reply.viewAsync` added as a replacement for `reply.view` and `fastify.view`. See [Migrating from view to viewAsync](#migrating-from-view-to-viewAsync)._
-
 _Note: [`ejs-mate`](https://github.com/JacksonTian/ejs-mate) support [has been dropped](https://github.com/fastify/point-of-view/pull/157)._
 
 _Note: [`marko`](https://markojs.com/) support has been dropped. Please use [`@marko/fastify`](https://github.com/marko-js/fastify) instead._
@@ -88,7 +86,8 @@ fastify.get("/", (req, reply) => {
 
 // asynchronous handler:
 fastify.get("/", async (req, reply) => {
-  return reply.viewAsync("index.ejs", { name: "User" });
+  // Note the return statement
+  return reply.view("index.ejs", { name: "User" });
 })
 
 fastify.listen({ port: 3000 }, (err) => {
@@ -218,8 +217,23 @@ fastify.view("/templates/index.ejs", { text: "text" }, (err, html) => {
 });
 ```
 
-If called within a request hook and you need request-global variables, see [Migrating from view to viewAsync](#migrating-from-view-to-viewAsync).
+If called within a request hook and you need request-global variables, use `reply.viewAsync`:
 
+```js
+// synchronous handler:
+fastify.get("/", (req, reply) => {
+  reply.viewAsync("/templates/index.ejs", { text: "text" })
+    .then((html) => reply.send(html))
+    .catch((err) => reply.send(err))
+})
+
+// asynchronous handler:
+fastify.get("/", async (req, reply) => {
+  const data = await something();
+  const html = await reply.viewAsync("/templates/index.ejs", { data });
+  return html;
+})
+```
 
 ## Registering multiple engines
 
@@ -812,81 +826,6 @@ fastify.view.clearCache();
 ```
 
 <a name="note"></a>
-
-### Migrating from `view` to `viewAsync`
-
-The behavior of `reply.view` is to immediately send the HTML response as soon as rendering is completed, or immediately send a 500 response with error if encountered, short-circuiting fastify's error handling hooks, whereas `reply.viewAsync` returns a promise that either resolves to the rendered HTML, or rejects on any errors. `fastify.view` has no mechanism for providing request-global variables, if needed. `reply.viewAsync` can be used in both sync and async handlers.
-
-#### Sync handler
-Previously:
-```js
-fastify.get('/', (req, reply) => {
-  reply.view('index.ejs', { text: 'text' })
-})
-```
-Now:
-```js
-fastify.get('/', (req, reply) => {
-  return reply.viewAsync('index.ejs', { text: 'text' })
-})
-```
-#### Async handler
-Previously:
-```js
-// This is an async function
-fastify.get("/", async (req, reply) => {
-  const data = await something();
-  reply.view("/templates/index.ejs", { data });
-  return
-})
-```
-
-Now:
-```js
-// This is an async function
-fastify.get("/", async (req, reply) => {
-  const data = await something();
-  return reply.viewAsync("/templates/index.ejs", { data });
-})
-```
-#### fastify.view (when called inside a route hook)
-Previously:
-```js
-// Promise based, using async/await
-fastify.get("/", async (req, reply) => {
-  const html = await fastify.view("/templates/index.ejs", { text: "text" });
-  return html
-})
-```
-```js
-// Callback based
-fastify.get("/", (req, reply) => {
-  fastify.view("/templates/index.ejs", { text: "text" }, (err, html) => {
-    if(err) {
-      reply.send(err)
-    }
-    else {
-      reply.type("application/html").send(html)
-    }
-  });
-})
-```
-Now:
-```js
-// Promise based, using async/await
-fastify.get("/", (req, reply) => {
-  const html = await fastify.viewAsync("/templates/index.ejs", { text: "text" });
-  return html
-})
-```
-```js
-fastify.get("/", (req, reply) => {
-  fastify.viewAsync("/templates/index.ejs", { text: "text" })
-    .then((html) => reply.type("application/html").send(html))
-    .catch((err) => reply.send(err))
-  });
-})
-```
 
 ## Note
 
