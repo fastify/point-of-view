@@ -1,4 +1,4 @@
-import { FastifyPluginAsync } from 'fastify'
+import { FastifyPluginAsync } from 'fastify';
 
 declare module 'fastify' {
 
@@ -33,6 +33,7 @@ declare namespace fastifyView {
       twig?: any;
       liquid?: any;
       dot?: any;
+      squirrelly?: any;
     };
     templates?: string | string[];
     includeViewExtension?: boolean;
