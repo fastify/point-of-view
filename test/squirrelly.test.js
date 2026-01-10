@@ -28,9 +28,9 @@ test('reply.view with squirrelly engine and custom templates folder', async t =>
     reply.view('index.squirrelly', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -59,9 +59,9 @@ test('reply.view with squirrelly engine and custom ext', async t => {
     reply.view('index', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -90,9 +90,9 @@ test('reply.view for squirrelly without data-parameter but defaultContext', asyn
     reply.view('index.squirrelly')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -118,9 +118,9 @@ test('reply.view for squirrelly without data-parameter and without defaultContex
     reply.view('index-bare.html')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -153,9 +153,9 @@ test('reply.view for squirrelly engine without data-parameter and defaultContext
     reply.view('./templates/index-bare.html')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -189,9 +189,9 @@ test('reply.view for squirrelly engine without defaultContext but with reply.loc
     reply.view('./templates/index-bare.html', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -226,9 +226,9 @@ test('reply.view for squirrelly engine without data-parameter but with reply.loc
     reply.view('./templates/index-bare.html')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -264,9 +264,9 @@ test('reply.view for squirrelly engine with data-parameter and reply.locals and 
     reply.view('./templates/index-bare.html', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -295,9 +295,9 @@ test('reply.view with squirrelly engine and full path templates folder', async t
     reply.view('index.squirrelly', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -325,9 +325,9 @@ test('reply.view with squirrelly engine', async t => {
     reply.view('templates/index.squirrelly', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -356,9 +356,9 @@ test('reply.view with squirrelly engine and defaultContext', async t => {
     reply.view('templates/index.squirrelly', {})
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -387,9 +387,9 @@ test('reply.view with squirrelly engine and includeViewExtension property as tru
     reply.view('templates/index', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -473,9 +473,9 @@ test('reply.view with squirrelly engine and raw template', async t => {
     reply.view({ raw: fs.readFileSync('./templates/index.squirrelly', 'utf8') }, data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -505,9 +505,9 @@ test('reply.view with squirrelly engine and function template', async t => {
     reply.view((data) => `<p>${data.text}</p>`, data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -537,9 +537,9 @@ test('reply.view should return 500 if function return sync error', async t => {
     reply.view(() => { throw new Error('kaboom') }, data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual(result.status, 500)
 
@@ -563,9 +563,9 @@ test('reply.view should return 500 if function return async error', async t => {
     reply.view(() => Promise.reject(new Error('kaboom')), data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual(result.status, 500)
 
@@ -587,9 +587,9 @@ test('reply.view should return 500 if template not found', async t => {
     reply.view('non-existing.squirrelly', { text: 'text' })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual(result.status, 500)
 
@@ -637,9 +637,9 @@ test('reply.viewAsync with squirrelly engine', async t => {
     return reply.viewAsync('index.squirrelly', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -667,9 +667,9 @@ test('reply.view with squirrelly engine and root option', async t => {
     reply.view('index.squirrelly', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -698,9 +698,9 @@ test('reply.view with squirrelly engine and custom property name', async t => {
     reply.render('index.squirrelly', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)

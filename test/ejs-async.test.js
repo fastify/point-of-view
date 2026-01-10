@@ -20,9 +20,9 @@ test('reply.view with ejs engine and async: true (global option)', async t => {
     reply.view('ejs-async.ejs')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -51,10 +51,10 @@ test('reply.view with ejs engine, async: true (global option), and production: t
     reply.view('ejs-async.ejs')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
   for (let i = 0; i < numTests; i++) {
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+    const result = await fetch(address)
 
     const responseContent = await result.text()
 
@@ -87,9 +87,9 @@ test('reply.view with ejs engine, async: true (global option), and html-minifier
     reply.view('ejs-async.ejs')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -119,9 +119,9 @@ test('reply.view with ejs engine, async: true (global option), and html-minifier
     reply.view('ejs-async.ejs')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -154,10 +154,10 @@ test('reply.view with ejs engine, async: true (global option), and html-minifier
     reply.view('ejs-async.ejs')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
   for (let i = 0; i < numTests; i++) {
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+    const result = await fetch(address)
 
     const responseContent = await result.text()
 
@@ -184,9 +184,9 @@ test('reply.view with ejs engine and async: true (local option)', async t => {
     reply.view('ejs-async.ejs', {}, { async: true })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -214,10 +214,10 @@ test('reply.view with ejs engine, async: true (local option), and production: tr
     reply.view('ejs-async.ejs', {}, { async: true })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
   for (let i = 0; i < numTests; i++) {
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+    const result = await fetch(address)
 
     const responseContent = await result.text()
 
@@ -249,9 +249,9 @@ test('reply.view with ejs engine, async: true (local override), and html-minifie
     reply.view('ejs-async.ejs', {}, { async: true })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -282,9 +282,9 @@ test('reply.view with ejs engine, async: false (local override), and html-minifi
     reply.view('index.ejs', { text: 'text' }, { async: false })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -317,10 +317,10 @@ test('reply.view with ejs engine, async: true (local override), and html-minifie
     reply.view('ejs-async.ejs', {}, { async: true })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
   for (let i = 0; i < numTests; i++) {
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+    const result = await fetch(address)
 
     const responseContent = await result.text()
 
@@ -354,10 +354,10 @@ test('reply.view with ejs engine, async: false (local override), and html-minifi
     reply.view('index.ejs', { text: 'text' }, { async: false })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
   for (let i = 0; i < numTests; i++) {
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+    const result = await fetch(address)
 
     const responseContent = await result.text()
 
@@ -383,9 +383,9 @@ test('reply.view with ejs engine and async: true and raw template', async t => {
     reply.view({ raw: fs.readFileSync('./templates/ejs-async.ejs', 'utf8') }, {}, { async: true })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -410,9 +410,9 @@ test('reply.view with ejs engine and async: true and function template', async t
     reply.view(ejs.compile(fs.readFileSync('./templates/ejs-async.ejs', 'utf8'), { async: true }), {})
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -437,9 +437,9 @@ test('reply.view with promise error', async t => {
     reply.view(() => Promise.reject(new Error('error')), {})
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual(result.status, 500)
 
@@ -461,9 +461,9 @@ test('reply.viewAsync with ejs engine and async: true (global option)', async t 
     return reply.viewAsync('ejs-async.ejs')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -494,9 +494,9 @@ test('reply.viewAsync with ejs engine, async: true (global option), and html-min
     return reply.viewAsync('ejs-async.ejs')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 

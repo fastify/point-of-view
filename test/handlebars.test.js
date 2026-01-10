@@ -123,9 +123,9 @@ test('reply.view for handlebars engine without data-parameter and defaultContext
     reply.view('./templates/index.html')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://localhost:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -159,9 +159,9 @@ test('reply.view for handlebars engine without defaultContext but with reply.loc
     reply.view('./templates/index.html', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://localhost:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -196,9 +196,9 @@ test('reply.view for handlebars engine without data-parameter but with reply.loc
     reply.view('./templates/index.html')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://localhost:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -234,9 +234,9 @@ test('reply.view for handlebars engine with data-parameter and reply.locals and 
     reply.view('./templates/index.html', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://localhost:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -367,9 +367,9 @@ test('reply.view with handlebars engine', async t => {
     reply.view('./templates/index.html', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -450,9 +450,9 @@ test('reply.view with handlebars engine and defaultContext', async t => {
     reply.view('./templates/index.html', {})
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -480,9 +480,9 @@ test('reply.view with handlebars engine and includeViewExtension property as tru
     reply.view('./templates/index', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -546,9 +546,9 @@ test('reply.view with handlebars engine with partials', async t => {
     reply.view('./templates/index-with-partials.hbs', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -578,9 +578,9 @@ test('reply.view with handlebars engine with missing partials path', async t => 
     reply.view('./templates/index-with-partials.hbs', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 500)
@@ -658,9 +658,9 @@ test('reply.view with handlebars engine with compile options', async t => {
     reply.view('./templates/index-with-partials.hbs', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -694,9 +694,9 @@ test('reply.view with handlebars engine with useDataVariables', async t => {
     reply.view('./templates/index-with-partials.hbs', null)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -730,9 +730,9 @@ test('reply.view with handlebars engine with useDataVariables and global Ctx', a
     reply.view('./templates/index-with-partials.hbs', null)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -759,9 +759,9 @@ test('reply.view with handlebars engine with layout option', async t => {
     reply.view('./templates/index-for-layout.hbs')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -787,9 +787,9 @@ test('reply.view with handlebars engine with layout option on render', async t =
     reply.view('./templates/index-for-layout.hbs', {}, { layout: './templates/layout.hbs' })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -815,9 +815,9 @@ test('reply.view should return 500 if layout is missing on render', async t => {
     reply.view('./templates/index-for-layout.hbs', {}, { layout: './templates/missing-layout.hbs' })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual(result.status, 500)
 
@@ -894,9 +894,9 @@ test('reply.view with handlebars engine should return 500 if template fails in p
     reply.view('./templates/index-for-layout.hbs')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -922,9 +922,9 @@ test('reply.view with handlebars engine and raw template', async t => {
     reply.header('Content-Type', 'text/html').view({ raw: fs.readFileSync('./templates/index.html', 'utf8') }, data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -951,9 +951,9 @@ test('reply.view with handlebars engine and function template', async t => {
     reply.view(handlebars.compile(fs.readFileSync('./templates/index.html', 'utf8')), data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -980,9 +980,9 @@ test('reply.view with handlebars engine and empty template', async t => {
     reply.view(null, data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual(result.status, 500)
 
@@ -1006,9 +1006,9 @@ test('fastify.view with handlebars engine and callback in production mode and he
     reply.header('Content-Type', 'text/html').view('./templates/index-for-layout.hbs', null)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -1043,7 +1043,7 @@ test('reply.view with multiple handlebars instances in production mode', async t
     })
   }
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
   t.after(() => fastify.close())
 
   for (const name of ['foo', 'bar']) {
@@ -1074,9 +1074,9 @@ test('fastify.view with handlebars engine and both layout', async t => {
     reply.header('Content-Type', 'text/html').view('./templates/index.hbs', data, { layout: './templates/layout.hbs' })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual(result.status, 500)
 
@@ -1104,9 +1104,9 @@ test('reply.viewAsync for handlebars engine without defaultContext but with repl
     return reply.viewAsync('./templates/index.html', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://localhost:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 

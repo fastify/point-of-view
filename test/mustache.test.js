@@ -29,9 +29,9 @@ test('reply.view with mustache engine', async t => {
     reply.view('./templates/index.html', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -59,9 +59,9 @@ test('reply.view for mustache without data-parameter but defaultContext', async 
     reply.view('./templates/index.html')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -88,9 +88,9 @@ test('reply.view for mustache without data-parameter and without defaultContext'
     reply.view('./templates/index-bare.html')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -118,9 +118,9 @@ test('reply.view with mustache engine and defaultContext', async t => {
     reply.view('./templates/index.html', {})
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -152,9 +152,9 @@ test('reply.view for mustache engine without data-parameter and defaultContext b
     reply.view('./templates/index.html')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -187,9 +187,9 @@ test('reply.view for mustache engine without defaultContext but with reply.local
     reply.view('./templates/index.html', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -223,9 +223,9 @@ test('reply.view for mustache engine without data-parameter but with reply.local
     reply.view('./templates/index.html')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -260,9 +260,9 @@ test('reply.view for mustache engine with data-parameter and reply.locals and de
     reply.view('./templates/index.html', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -294,9 +294,9 @@ test('reply.view with mustache engine with global partials', async t => {
     reply.view('./templates/index.mustache', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -328,9 +328,9 @@ test('reply.view with mustache engine with global and local partials', async t =
     reply.view('./templates/index-with-2-partials.mustache', data, { partials: { partial2: './templates/partial-2.mustache' } })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -367,9 +367,9 @@ test('reply.view with mustache engine with partials', async t => {
     reply.view('./templates/index.mustache', data, { partials: { body: './templates/body.mustache' } })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -405,9 +405,9 @@ test('reply.view with mustache engine with partials in production mode should us
     reply.view('./templates/index.mustache', data, { partials: { body: './templates/body.mustache' } })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -439,9 +439,9 @@ test('reply.view with mustache engine with partials in production mode should ca
     reply.view('./templates/index.mustache', data, { partials: { body: './templates/partial-2.mustache' } })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/one')
+  const result = await fetch(address + '/one')
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -450,7 +450,7 @@ test('reply.view with mustache engine with partials in production mode should ca
 
   t.assert.match(responseContent, /Partial 1 - b4d932b9-4baa-4c99-8d14-d45411b9361e/g)
 
-  const result2 = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/two')
+  const result2 = await fetch(address + '/two')
   const responseContent2 = await result2.text()
 
   t.assert.strictEqual(result2.status, 200)
@@ -481,9 +481,9 @@ test('reply.view with mustache engine with partials and html-minifier-terser', a
     reply.view('./templates/index.mustache', data, { partials: { body: './templates/body.mustache' } })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -515,9 +515,9 @@ test('reply.view with mustache engine with partials and paths excluded from html
     reply.view('./templates/index.mustache', data, { partials: { body: './templates/body.mustache' } })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/test')
+  const result = await fetch(address + '/test')
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -546,9 +546,9 @@ test('reply.view with mustache engine, template folder specified', async t => {
     reply.view('index.html', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -577,9 +577,9 @@ test('reply.view with mustache engine, template folder specified with partials',
     reply.view('index.mustache', data, { partials: { body: 'body.mustache' } })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -606,9 +606,9 @@ test('reply.view with mustache engine, missing template file', async t => {
     reply.view('../templates/missing.html', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 500)
@@ -634,9 +634,9 @@ test('reply.view with mustache engine, with partials missing template file', asy
     reply.view('./templates/missing.mustache', data, { partials: { body: './templates/body.mustache' } })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 500)
@@ -662,9 +662,9 @@ test('reply.view with mustache engine, with partials missing partials file', asy
     reply.view('./templates/index.mustache', data, { partials: { body: './templates/missing.mustache' } })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 500)
@@ -690,9 +690,9 @@ test('reply.view with mustache engine, with partials and multiple missing partia
     reply.view('./templates/index.mustache', data, { partials: { body: './templates/missing.mustache', footer: './templates/alsomissing.mustache' } })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 500)
@@ -741,9 +741,9 @@ test('reply.view for mustache and raw template', async t => {
     reply.view({ raw: fs.readFileSync('./templates/index.html', 'utf8') })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -771,9 +771,9 @@ test('reply.view for mustache and function template', async t => {
     reply.header('Content-Type', 'text/html').view((mustache.render.bind(mustache, fs.readFileSync('./templates/index.html', 'utf8'))))
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)

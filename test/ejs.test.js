@@ -31,9 +31,9 @@ test('reply.view with ejs engine and custom templates folder', async t => {
     reply.view('index.ejs', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -63,9 +63,9 @@ test('reply.view with ejs engine with layout option', async t => {
     reply.view('index-for-layout.ejs', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -94,9 +94,9 @@ test('reply.view with ejs engine with layout option on render', async t => {
     reply.view('index-for-layout.ejs', data, { layout: 'layout.html' })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -124,9 +124,9 @@ test('reply.view should return 500 if layout is missing on render', async t => {
     reply.view('index-for-layout.ejs', data, { layout: 'non-existing-layout.html' })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual(result.status, 500)
 
@@ -151,41 +151,9 @@ test('reply.view with ejs engine and custom ext', async t => {
     reply.view('index', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
-
-  const responseContent = await result.text()
-
-  t.assert.strictEqual(result.status, 200)
-  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.strictEqual(await ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), responseContent)
-
-  await fastify.close()
-})
-
-test('reply.view for ejs without data-parameter but defaultContext', async t => {
-  t.plan(4)
-  const fastify = Fastify()
-  const ejs = require('ejs')
-  const data = { text: 'text' }
-
-  fastify.register(require('../index'), {
-    engine: {
-      ejs
-    },
-    defaultContext: data,
-    templates: 'templates'
-  })
-
-  fastify.get('/', (_req, reply) => {
-    reply.view('index.ejs')
-  })
-
-  await fastify.listen({ port: 0 })
-
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -215,9 +183,41 @@ test('reply.view for ejs without data-parameter but defaultContext', async t => 
     reply.view('index.ejs')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(await ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), responseContent)
+
+  await fastify.close()
+})
+
+test('reply.view for ejs without data-parameter but defaultContext', async t => {
+  t.plan(4)
+  const fastify = Fastify()
+  const ejs = require('ejs')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs
+    },
+    defaultContext: data,
+    templates: 'templates'
+  })
+
+  fastify.get('/', (_req, reply) => {
+    reply.view('index.ejs')
+  })
+
+  const address = await fastify.listen({ port: 0 })
+
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -245,9 +245,9 @@ test('reply.view for ejs without data-parameter and without defaultContext', asy
     reply.view('index-bare.html')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -280,9 +280,9 @@ test('reply.view for ejs engine without data-parameter and defaultContext but wi
     reply.view('./templates/index-bare.html')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -316,9 +316,9 @@ test('reply.view for ejs engine without defaultContext but with reply.locals and
     reply.view('./templates/index-bare.html', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -353,9 +353,9 @@ test('reply.view for ejs engine without data-parameter but with reply.locals and
     reply.view('./templates/index-bare.html')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -391,9 +391,9 @@ test('reply.view for ejs engine with data-parameter and reply.locals and default
     reply.view('./templates/index-bare.html', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -422,9 +422,9 @@ test('reply.view with ejs engine and full path templates folder', async t => {
     reply.view('index.ejs', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -452,9 +452,9 @@ test('reply.view with ejs engine', async t => {
     reply.view('templates/index.ejs', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -483,9 +483,9 @@ test('reply.view with ejs engine and defaultContext', async t => {
     reply.view('templates/index.ejs', {})
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -517,9 +517,9 @@ test('reply.view with ejs engine and html-minifier-terser', async t => {
     reply.view('templates/index.ejs', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -552,9 +552,9 @@ test('reply.view with ejs engine and paths excluded from html-minifier-terser', 
     reply.view('templates/index.ejs', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/test')
+  const result = await fetch(address + '/test')
 
   const responseContent = await result.text()
 
@@ -585,10 +585,10 @@ test('reply.view with ejs engine and html-minifier-terser in production mode', a
     reply.view('templates/index.ejs', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
   for (let i = 0; i < numTests; i++) {
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+    const result = await fetch(address)
 
     const responseContent = await result.text()
 
@@ -618,9 +618,9 @@ test('reply.view with ejs engine and includeViewExtension property as true', asy
     reply.view('templates/index', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -657,9 +657,9 @@ test('*** reply.view with ejs engine with layout option, includeViewExtension pr
     reply.view('index-for-layout.ejs', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -699,9 +699,9 @@ test('*** reply.view with ejs engine with layout option on render, includeViewEx
     reply.view('index-for-layout.ejs', data, { layout: 'layout-with-includes' })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -743,9 +743,9 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
     // reply.view('index-with-includes', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -789,9 +789,9 @@ test('reply.view with ejs engine, templates with folder specified, include files
     reply.type('text/html; charset=utf-8').view('index', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -834,9 +834,9 @@ test('reply.view with ejs engine, templates with folder specified, include files
     reply.type('text/html; charset=utf-8').view('index-with-no-data')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/no-data-test')
+  const result = await fetch(address + '/no-data-test')
 
   const responseContent = await result.text()
 
@@ -881,9 +881,9 @@ test('reply.view with ejs engine, templates with folder specified, include files
     reply.type('text/html; charset=utf-8').view('index-with-includes', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/include-test')
+  const result = await fetch(address + '/include-test')
 
   const responseContent = await result.text()
 
@@ -927,9 +927,9 @@ test('reply.view with ejs engine, templates with folder specified, include files
     reply.type('text/html; charset=utf-8').view('index-with-includes-one-missing', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/include-one-include-missing-test')
+  const result = await fetch(address + '/include-one-include-missing-test')
 
   const responseContent = await result.text()
 
@@ -973,9 +973,9 @@ test('reply.view with ejs engine, templates with folder specified, include files
     reply.type('text/html; charset=utf-8').view('index-with-includes-and-attribute-missing', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/include-one-attribute-missing-test')
+  const result = await fetch(address + '/include-one-attribute-missing-test')
 
   const responseContent = await result.text()
 
@@ -1067,9 +1067,9 @@ test('reply.view with ejs engine and raw template', async t => {
     reply.view({ raw: fs.readFileSync('./templates/index.ejs', 'utf8') }, data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -1097,9 +1097,9 @@ test('reply.view with ejs engine and function template', async t => {
     reply.view(ejs.compile(fs.readFileSync('./templates/index.ejs', 'utf8')), data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -1138,13 +1138,13 @@ test('reply.view with ejs engine and failed call to render when onError hook def
   // when onError hook is defined, certain errors (such as calls to reply.send inside the `onError` hook) are uncaught
   fastify.addHook('onError', async () => {})
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/invalid')
+  const result = await fetch(address + '/invalid')
 
   t.assert.strictEqual(result.status, 500)
 
-  const result2 = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/valid')
+  const result2 = await fetch(address + '/valid')
 
   t.assert.strictEqual(await result2.text(), 'text')
   t.assert.strictEqual(result2.status, 200)
@@ -1168,9 +1168,9 @@ test('reply.viewAsync with ejs engine - sync handler', async t => {
     return reply.viewAsync('templates/index.ejs', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -1198,9 +1198,9 @@ test('reply.viewAsync with ejs engine - async handler', async t => {
     return reply.viewAsync('templates/index.ejs', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -1228,9 +1228,9 @@ test('reply.viewAsync should return 500 if layout is missing on render', async t
     return reply.viewAsync('index-for-layout.ejs', data, { layout: 'non-existing-layout.html' })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual(result.status, 500)
 
@@ -1259,9 +1259,9 @@ test('reply.viewAsync should allow errors to be handled by custom error handler'
     return 'something went wrong'
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual(result.headers.get('content-type'), 'text/plain; charset=utf-8')
   t.assert.strictEqual(result.status, 200)
@@ -1287,9 +1287,9 @@ test('reply.viewAsync with ejs engine and custom propertyName', async t => {
     return reply.renderAsync('templates/index.ejs', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -1318,9 +1318,9 @@ test('reply.viewAsync with ejs engine and custom asyncPropertyName', async t => 
     return reply.viewAsPromise('templates/index.ejs', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -1354,9 +1354,9 @@ test('reply.viewAsync with ejs engine and custom asyncPropertyName and custom pr
     reply.oldRenderSend('templates/index.ejs', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/asyncPropertyName')
+  const result = await fetch(address + '/asyncPropertyName')
 
   const responseContent = await result.text()
 
@@ -1365,7 +1365,7 @@ test('reply.viewAsync with ejs engine and custom asyncPropertyName and custom pr
   t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
   t.assert.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), responseContent)
 
-  const result2 = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/propertyName')
+  const result2 = await fetch(address + '/propertyName')
 
   const responseContent2 = await result2.text()
 

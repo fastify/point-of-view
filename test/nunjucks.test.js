@@ -25,9 +25,9 @@ test('reply.view with nunjucks engine and custom templates folder', async t => {
     reply.view('index.njk', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -59,9 +59,9 @@ test('reply.view with nunjucks engine and custom templates array of folders', as
     reply.view('index.njk', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -90,9 +90,9 @@ test('reply.view for nunjucks engine without data-parameter but defaultContext',
     reply.view('./templates/index.njk')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -119,9 +119,9 @@ test('reply.view for nunjucks engine without data-parameter and without defaultC
     reply.view('./templates/index.njk')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -154,9 +154,9 @@ test('reply.view for nunjucks engine without data-parameter and defaultContext b
     reply.view('./templates/index.njk')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -190,9 +190,9 @@ test('reply.view for nunjucks engine without defaultContext but with reply.local
     reply.view('./templates/index.njk', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -227,9 +227,9 @@ test('reply.view for nunjucks engine without data-parameter but with reply.local
     reply.view('./templates/index.njk')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -265,9 +265,9 @@ test('reply.view for nunjucks engine with data-parameter and reply.locals and de
     reply.view('./templates/index.njk', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -296,9 +296,9 @@ test('reply.view with nunjucks engine, will preserve content-type', async t => {
     reply.view('./templates/index.njk', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -327,9 +327,9 @@ test('reply.view with nunjucks engine and full path templates folder', async t =
     reply.view('./index.njk', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -359,9 +359,9 @@ test('reply.view with nunjucks engine and includeViewExtension is true', async t
     reply.view('./templates/index', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -395,9 +395,9 @@ test('reply.view with nunjucks engine using onConfigure callback', async t => {
     reply.view('./templates/index-with-global.njk', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -486,9 +486,9 @@ test('fastify.view with nunjucks engine should return 500 if render fails', asyn
     reply.view('./templates/index.njk')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -515,9 +515,9 @@ test('reply.view with nunjucks engine and raw template', async t => {
     reply.view({ raw: fs.readFileSync('./templates/index.njk') }, data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -546,9 +546,9 @@ test('reply.view with nunjucks engine and function template', async t => {
     reply.view(nunjucks.compile(fs.readFileSync('./templates/index.njk').toString()), data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -577,9 +577,9 @@ test('reply.view with nunjucks engine and unknown template type', async t => {
     reply.view({ }, data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual(result.status, 500)
 

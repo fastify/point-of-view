@@ -23,9 +23,9 @@ test('reply.view with pug engine', async t => {
     reply.view('./templates/index.pug', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -61,9 +61,9 @@ test('reply.view with pug engine in production mode should use cache', async t =
     reply.view('./templates/index.pug')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -91,9 +91,9 @@ test('reply.view with pug engine and includes', async t => {
     reply.view('./templates/sample.pug', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -122,9 +122,9 @@ test('reply.view for pug without data-parameter but defaultContext', async t => 
     reply.view('./templates/index.pug')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -151,9 +151,9 @@ test('reply.view for pug without data-parameter and without defaultContext', asy
     reply.view('./templates/index.pug')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -182,9 +182,9 @@ test('reply.view with pug engine and defaultContext', async t => {
     reply.view('./templates/index.pug', {})
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -217,9 +217,9 @@ test('reply.view for pug engine without data-parameter and defaultContext but wi
     reply.view('./templates/index.pug')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -253,9 +253,9 @@ test('reply.view for pug engine without defaultContext but with reply.locals and
     reply.view('./templates/index.pug', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -290,9 +290,9 @@ test('reply.view for pug engine without data-parameter but with reply.locals and
     reply.view('./templates/index.pug')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -328,9 +328,9 @@ test('reply.view for pug engine with data-parameter and reply.locals and default
     reply.view('./templates/index.pug', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -359,9 +359,9 @@ test('reply.view with pug engine, will preserve content-type', async t => {
     reply.view('./templates/index.pug', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -412,9 +412,9 @@ test('reply.view with pug engine, should throw error if non existent template pa
     reply.view('./test/index.html')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -442,9 +442,9 @@ test('reply.view with pug engine should return 500 if compile fails', async t =>
     reply.view('./templates/index.pug')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -470,9 +470,9 @@ test('reply.view with pug engine and raw template', async t => {
     reply.view({ raw: fs.readFileSync('./templates/index.pug', 'utf8') }, data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -500,9 +500,9 @@ test('reply.view with pug engine and function template', async t => {
     reply.view(pug.compile(fs.readFileSync('./templates/index.pug', 'utf8')), data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 

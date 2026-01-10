@@ -33,9 +33,9 @@ test('reply.view with dot engine .dot file', async t => {
     reply.view('testdot', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -68,7 +68,7 @@ test('reply.view with dot engine .dot file should create non-existent destinatio
     reply.view('testdot')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
   t.assert.ok(existsSync('non-existent'))
 
@@ -99,7 +99,7 @@ test('reply.view with dot engine .dot file should log WARN if template not found
     }
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
   await fastify.close()
 })
 
@@ -121,9 +121,9 @@ test('reply.view with dot engine .jst file', async t => {
     reply.view('testjst', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -156,9 +156,9 @@ test('reply.view with dot engine without data-parameter but defaultContext', asy
     reply.view('testdot')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -188,9 +188,9 @@ test('reply.view with dot engine without data-parameter but without defaultConte
     reply.view('testdot')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -223,9 +223,9 @@ test('reply.view with dot engine with data-parameter and defaultContext', async 
     reply.view('testdot', {})
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -261,9 +261,9 @@ test('reply.view for dot engine without data-parameter and defaultContext but wi
     reply.view('testdot', {})
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -300,9 +300,9 @@ test('reply.view for dot engine without defaultContext but with reply.locals and
     reply.view('testdot', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -340,9 +340,9 @@ test('reply.view for dot engine without data-parameter but with reply.locals and
     reply.view('testdot')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -380,9 +380,9 @@ test('reply.view for dot engine with data-parameter and reply.locals and default
     reply.view('testdot', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -436,40 +436,9 @@ test('reply.view with dot engine with layout option', async t => {
     reply.view('testdot', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
-
-  const responseContent = await result.text()
-
-  t.assert.strictEqual(result.status, 200)
-  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
-  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
-  t.assert.strictEqual('header: textfoo text1 <p>foo</p>footer', responseContent)
-
-  await fastify.close()
-})
-
-test('reply.view with dot engine with layout option on render', async t => {
-  t.plan(4)
-  const fastify = Fastify()
-  const engine = require('dot')
-  const data = { text: 'text' }
-
-  fastify.register(require('../index'), {
-    engine: {
-      dot: engine
-    },
-    root: 'templates'
-  })
-
-  fastify.get('/', (_req, reply) => {
-    reply.view('testdot', data, { layout: 'layout' })
-  })
-
-  await fastify.listen({ port: 0 })
-
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -498,9 +467,40 @@ test('reply.view with dot engine with layout option on render', async t => {
     reply.view('testdot', data, { layout: 'layout' })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual('header: textfoo text1 <p>foo</p>footer', responseContent)
+
+  await fastify.close()
+})
+
+test('reply.view with dot engine with layout option on render', async t => {
+  t.plan(4)
+  const fastify = Fastify()
+  const engine = require('dot')
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      dot: engine
+    },
+    root: 'templates'
+  })
+
+  fastify.get('/', (_req, reply) => {
+    reply.view('testdot', data, { layout: 'layout' })
+  })
+
+  const address = await fastify.listen({ port: 0 })
+
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -529,9 +529,9 @@ test('reply.view should return 500 if layout is missing on render', async t => {
     reply.view('testdot', data, { layout: 'non-existing-layout' })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual(result.status, 500)
 
@@ -555,9 +555,9 @@ test('reply.view with dot engine and raw template', async t => {
     reply.view({ raw: readFileSync('./templates/testdot.dot'), imports: { testdef: readFileSync('./templates/testdef.def') } }, data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -586,9 +586,9 @@ test('reply.view with dot engine and function template', async t => {
     reply.header('Content-Type', 'text/html').view(engine.process({ path: 'templates', destination: 'out' }).testdot, data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 

@@ -46,9 +46,9 @@ module.exports.dotHtmlMinifierTests = function (compileOptions, withMinifierOpti
       reply.view('testdot', data)
     })
 
-    await fastify.listen({ port: 0 })
+    const address = await fastify.listen({ port: 0 })
 
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+    const result = await fetch(address)
 
     const responseContent = await result.text()
 
@@ -80,9 +80,9 @@ module.exports.dotHtmlMinifierTests = function (compileOptions, withMinifierOpti
       reply.view('testdot', data)
     })
 
-    await fastify.listen({ port: 0 })
+    const address = await fastify.listen({ port: 0 })
 
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/test')
+    const result = await fetch(address + '/test')
 
     const responseContent = await result.text()
 
@@ -119,9 +119,9 @@ module.exports.etaHtmlMinifierTests = function (withMinifierOptions) {
       reply.view('templates/index.eta', data)
     })
 
-    await fastify.listen({ port: 0 })
+    const address = await fastify.listen({ port: 0 })
 
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+    const result = await fetch(address)
 
     const responseContent = await result.text()
 
@@ -152,9 +152,9 @@ module.exports.etaHtmlMinifierTests = function (withMinifierOptions) {
       reply.view('templates/index.eta', data)
     })
 
-    await fastify.listen({ port: 0 })
+    const address = await fastify.listen({ port: 0 })
 
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+    const result = await fetch(address)
 
     const responseContent = await result.text()
 
@@ -184,9 +184,9 @@ module.exports.etaHtmlMinifierTests = function (withMinifierOptions) {
       reply.view('templates/index.eta', data)
     })
 
-    await fastify.listen({ port: 0 })
+    const address = await fastify.listen({ port: 0 })
 
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/test')
+    const result = await fetch(address + '/test')
 
     const responseContent = await result.text()
 
@@ -251,9 +251,9 @@ module.exports.liquidHtmlMinifierTests = function (withMinifierOptions) {
       reply.view('./templates/index.liquid', data)
     })
 
-    await fastify.listen({ port: 0 })
+    const address = await fastify.listen({ port: 0 })
 
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+    const result = await fetch(address)
 
     const responseContent = await result.text()
 
@@ -287,9 +287,9 @@ module.exports.liquidHtmlMinifierTests = function (withMinifierOptions) {
       reply.view('./templates/index.liquid', data)
     })
 
-    await fastify.listen({ port: 0 })
+    const address = await fastify.listen({ port: 0 })
 
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/test')
+    const result = await fetch(address + '/test')
 
     const responseContent = await result.text()
 
@@ -327,9 +327,9 @@ module.exports.nunjucksHtmlMinifierTests = function (withMinifierOptions) {
       reply.view('./index.njk', data)
     })
 
-    await fastify.listen({ port: 0 })
+    const address = await fastify.listen({ port: 0 })
 
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+    const result = await fetch(address)
 
     const responseContent = await result.text()
 
@@ -361,9 +361,9 @@ module.exports.nunjucksHtmlMinifierTests = function (withMinifierOptions) {
       reply.view('./index.njk', data)
     })
 
-    await fastify.listen({ port: 0 })
+    const address = await fastify.listen({ port: 0 })
 
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/test')
+    const result = await fetch(address + '/test')
 
     const responseContent = await result.text()
 
@@ -398,9 +398,9 @@ module.exports.pugHtmlMinifierTests = function (withMinifierOptions) {
       reply.view('./templates/index.pug', data)
     })
 
-    await fastify.listen({ port: 0 })
+    const address = await fastify.listen({ port: 0 })
 
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+    const result = await fetch(address)
 
     const responseContent = await result.text()
 
@@ -431,9 +431,9 @@ module.exports.pugHtmlMinifierTests = function (withMinifierOptions) {
       reply.view('./templates/index.pug', data)
     })
 
-    await fastify.listen({ port: 0 })
+    const address = await fastify.listen({ port: 0 })
 
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/test')
+    const result = await fetch(address + '/test')
 
     const responseContent = await result.text()
 
@@ -468,9 +468,9 @@ module.exports.twigHtmlMinifierTests = function (withMinifierOptions) {
       reply.view('./templates/index.twig', data)
     })
 
-    await fastify.listen({ port: 0 })
+    const address = await fastify.listen({ port: 0 })
 
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+    const result = await fetch(address)
 
     const responseContent = await result.text()
 
@@ -507,9 +507,9 @@ module.exports.twigHtmlMinifierTests = function (withMinifierOptions) {
       reply.view('./templates/index.twig', data)
     })
 
-    await fastify.listen({ port: 0 })
+    const address = await fastify.listen({ port: 0 })
 
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/test')
+    const result = await fetch(address + '/test')
 
     const responseContent = await result.text()
 
@@ -550,9 +550,9 @@ module.exports.squirrellyHtmlMinifierTests = function (withMinifierOptions) {
       reply.view('templates/index.squirrelly', data)
     })
 
-    await fastify.listen({ port: 0 })
+    const address = await fastify.listen({ port: 0 })
 
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+    const result = await fetch(address)
 
     const responseContent = await result.text()
 
@@ -582,9 +582,9 @@ module.exports.squirrellyHtmlMinifierTests = function (withMinifierOptions) {
       reply.view('templates/index.squirrelly', data)
     })
 
-    await fastify.listen({ port: 0 })
+    const address = await fastify.listen({ port: 0 })
 
-    const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/test')
+    const result = await fetch(address + '/test')
 
     const responseContent = await result.text()
 
