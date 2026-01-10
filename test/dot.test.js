@@ -68,7 +68,7 @@ test('reply.view with dot engine .dot file should create non-existent destinatio
     reply.view('testdot')
   })
 
-  const address = await fastify.listen({ port: 0 })
+  await fastify.listen({ port: 0 })
 
   t.assert.ok(existsSync('non-existent'))
 
@@ -99,7 +99,7 @@ test('reply.view with dot engine .dot file should log WARN if template not found
     }
   })
 
-  const address = await fastify.listen({ port: 0 })
+  await fastify.listen({ port: 0 })
   await fastify.close()
 })
 

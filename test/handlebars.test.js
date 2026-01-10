@@ -1047,7 +1047,7 @@ test('reply.view with multiple handlebars instances in production mode', async t
   t.after(() => fastify.close())
 
   for (const name of ['foo', 'bar']) {
-    const result = await fetch(`http://127.0.0.1:${fastify.server.address().port}/${name}`)
+    const result = await fetch(`${address}/${name}`)
     const responseContent = await result.text()
 
     t.assert.strictEqual(result.status, 200)
