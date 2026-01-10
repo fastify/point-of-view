@@ -14,9 +14,9 @@ test('using an imported engine as a promise', async t => {
     reply.view('index.ejs', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual((await ejs).render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), await result.text())
   fastify.close()

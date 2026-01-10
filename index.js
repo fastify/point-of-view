@@ -4,7 +4,7 @@ const fp = require('fastify-plugin')
 const { accessSync, existsSync, mkdirSync, readdirSync } = require('node:fs')
 const { basename, dirname, extname, join, resolve } = require('node:path')
 const { LruMap } = require('toad-cache')
-const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'mustache', 'twig', 'liquid', 'dot', 'eta', 'edge']
+const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'mustache', 'twig', 'liquid', 'dot', 'eta', 'edge', 'squirrelly']
 
 const viewCache = Symbol('@fastify/view/cache')
 
@@ -102,6 +102,7 @@ async function fastifyView (fastify, opts) {
     dot: withLayout(dotRender, globalLayoutFileName),
     eta: withLayout(viewEta, globalLayoutFileName),
     edge: viewEdge,
+    squirrelly: viewSquirrelly,
     _default: view
   }
 
@@ -608,6 +609,31 @@ async function fastifyView (fastify, opts) {
       default:
         throw new Error('Unknown page type')
     }
+  }
+
+  async function viewSquirrelly (page, data, opts) {
+    data = Object.assign({}, defaultCtx, this.locals, data)
+
+    if (typeof page === 'function') {
+      return page(data)
+    }
+
+    let isRaw = false
+    if (typeof page === 'object' && page.raw) {
+      isRaw = true
+      page = page.raw.toString()
+    } else {
+      page = getPage(page, 'squirrelly')
+    }
+
+    const config = Object.assign({}, globalOptions)
+
+    if (isRaw) {
+      return engine.render(page, data, config)
+    }
+
+    const file = await readFileSemaphore(join(templatesDir, page))
+    return engine.render(file, data, config)
   }
 
   function withLayout (render, layout) {

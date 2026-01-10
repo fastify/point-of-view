@@ -62,9 +62,9 @@ test('fastify.view.clearCache clears cache', async t => {
     reply.type('text/html; charset=utf-8').view('cache_clear_test')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/view-cache-test')
+  const result = await fetch(address + '/view-cache-test')
 
   const responseContent = await result.text()
 
@@ -72,7 +72,7 @@ test('fastify.view.clearCache clears cache', async t => {
   t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
   fs.writeFileSync(path.join(templatesFolder, 'cache_clear_test.ejs'), '<html><body><span>456</span></body></<html>', { mode: 0o600 })
 
-  const result2 = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/view-cache-test')
+  const result2 = await fetch(address + '/view-cache-test')
 
   const responseContent2 = await result2.text()
 
@@ -82,7 +82,7 @@ test('fastify.view.clearCache clears cache', async t => {
 
   fastify.view.clearCache()
 
-  const result3 = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/view-cache-test')
+  const result3 = await fetch(address + '/view-cache-test')
 
   const responseContent3 = await result3.text()
 
@@ -110,9 +110,9 @@ test('reply.view exist', async t => {
     reply.send({ hello: 'world' })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -137,9 +137,9 @@ test('reply.locals exist', async t => {
     reply.send({ hello: 'world' })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -167,9 +167,9 @@ test('reply.view can be returned from async function to indicate response proces
     return reply.view('index-for-layout.ejs', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -203,9 +203,9 @@ test('Possibility to access res.locals variable across all views', async t => {
     return reply.view('index-layout-content')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -232,9 +232,9 @@ test('Default extension for ejs', async t => {
     return reply.view('index-with-includes-without-ext')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -272,9 +272,9 @@ test('reply.view with ejs engine and custom propertyName', async t => {
     return reply[text]('index-for-layout.ejs', { text })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port, {
+  const result = await fetch(address, {
     headers: {
       'user-agent': 'mobile'
     }
@@ -286,7 +286,7 @@ test('reply.view with ejs engine and custom propertyName', async t => {
   t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
   t.assert.strictEqual(ejs.render(fs.readFileSync('./templates/index.ejs', 'utf8'), { text: 'mobile' }), responseContent)
 
-  const result2 = await fetch('http://127.0.0.1:' + fastify.server.address().port, {
+  const result2 = await fetch(address, {
     headers: {
       'user-agent': 'desktop'
     }
@@ -315,9 +315,9 @@ test('reply.view should return 500 if page is missing', async t => {
     reply.view()
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual(result.status, 500)
 
@@ -339,9 +339,9 @@ test('reply.view should return 500 if layout is set globally and provided on ren
     reply.view('index-for-layout.ejs', data, { layout: 'layout.html' })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual(result.status, 500)
 

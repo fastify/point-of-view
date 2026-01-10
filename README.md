@@ -20,6 +20,7 @@ Currently supports the following templates engines:
 - [`doT`](https://github.com/olado/doT)
 - [`eta`](https://eta.js.org)
 - [`edge`](https://edgejs.dev)
+- [`squirrelly`](https://squirrelly.js.org/)
 
 In `production` mode, `@fastify/view` will heavily cache the templates file and functions, while in `development` will reload every time the template file and function.
 
@@ -784,6 +785,23 @@ fastify.register(require('../index'), {
 
 fastify.get('/', (_req, reply) => {
     reply.view('index.edge', data)
+})
+```
+
+### Squirrelly
+
+```js
+const Sqrl = require('squirrelly')
+
+fastify.register(require('@fastify/view'), {
+    engine: {
+        squirrelly: Sqrl
+    },
+    templates: 'templates'
+})
+
+fastify.get('/', (_req, reply) => {
+    reply.view('index.squirrelly', { text: 'Hello World!' })
 })
 ```
 

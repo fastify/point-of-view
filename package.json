@@ -31,7 +31,8 @@
     "handlebars",
     "mustache",
     "twig",
-    "eta"
+    "eta",
+    "squirrelly"
   ],
   "author": "Tomas Della Vedova - @delvedor (http://delved.org)",
   "contributors": [
@@ -93,6 +94,7 @@
     "pino": "^10.1.0",
     "pug": "^3.0.2",
     "split2": "^4.2.0",
+    "squirrelly": "^9.1.0",
     "tsd": "^0.33.0",
     "twig": "^1.17.1"
   },

@@ -23,9 +23,9 @@ test('reply.view with twig engine', async t => {
     reply.view('./templates/index.twig', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -59,9 +59,9 @@ test('reply.view with twig engine and simple include', async t => {
     reply.view('./templates/template.twig', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -96,9 +96,9 @@ test('reply.view for twig without data-parameter but defaultContext', async t =>
     reply.view('./templates/index.twig')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -131,9 +131,9 @@ test('reply.view for twig without data-parameter and without defaultContext', as
     reply.view('./templates/index.twig')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -168,9 +168,9 @@ test('reply.view with twig engine and defaultContext', async t => {
     reply.view('./templates/index.twig', {})
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -209,9 +209,9 @@ test('reply.view for twig engine without data-parameter and defaultContext but w
     reply.view('./templates/index.twig')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -251,9 +251,9 @@ test('reply.view for twig engine without defaultContext but with reply.locals an
     reply.view('./templates/index.twig', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -294,9 +294,9 @@ test('reply.view for twig engine without data-parameter but with reply.locals an
     reply.view('./templates/index.twig')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -338,9 +338,9 @@ test('reply.view for twig engine with data-parameter and reply.locals and defaul
     reply.view('./templates/index.twig', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -375,9 +375,9 @@ test('reply.view with twig engine, will preserve content-type', async t => {
     reply.view('./templates/index.twig', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -435,9 +435,9 @@ test('reply.view with twig engine should return 500 if renderFile fails', async 
     reply.view('./templates/index.twig')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -463,9 +463,9 @@ test('reply.view with twig engine and raw template', async t => {
     reply.view({ raw: fs.readFileSync('./templates/index.twig') }, data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -499,9 +499,9 @@ test('reply.view with twig engine and function template', async t => {
     reply.view(Twig.twig({ data: fs.readFileSync('./templates/index.twig').toString() }), data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -535,9 +535,9 @@ test('reply.view with twig engine and unknown template type', async t => {
     reply.view({ }, data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual(result.status, 500)
 

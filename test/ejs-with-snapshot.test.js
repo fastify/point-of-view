@@ -29,9 +29,9 @@ test('reply.view with ejs engine, template folder specified, include files (ejs 
     reply.type('text/html; charset=utf-8').view('index-linking-other-pages', data) // sample for specifying with type
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -74,9 +74,9 @@ test('reply.view with ejs engine, templates with folder specified, include files
     reply.type('text/html; charset=utf-8').view('index', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -118,9 +118,9 @@ test('reply.view with ejs engine, templates with folder specified, include files
     reply.type('text/html; charset=utf-8').view('index-with-includes', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/include-test')
+  const result = await fetch(address + '/include-test')
 
   const responseContent = await result.text()
 
@@ -163,9 +163,9 @@ test('reply.view with ejs engine, templates with folder specified, include files
     reply.type('text/html; charset=utf-8').view('index-with-includes-one-missing', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/include-one-include-missing-test')
+  const result = await fetch(address + '/include-one-include-missing-test')
 
   const responseContent = await result.text()
 
@@ -206,9 +206,9 @@ test('reply.view with ejs engine, templates with folder specified, include files
     reply.type('text/html; charset=utf-8').view('index-with-includes-and-attribute-missing', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/include-one-attribute-missing-test')
+  const result = await fetch(address + '/include-one-attribute-missing-test')
 
   const responseContent = await result.text()
 

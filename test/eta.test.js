@@ -34,9 +34,9 @@ test('reply.view with eta engine and custom templates folder', async t => {
     reply.view('index.eta', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -65,9 +65,9 @@ test('reply.view with eta engine with layout option', async t => {
     reply.view('index-for-layout.eta', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -95,9 +95,9 @@ test('reply.view with eta engine with layout option on render', async t => {
     reply.view('index-for-layout.eta', data, { layout: 'layout-eta.html' })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -125,9 +125,9 @@ test('reply.view should return 500 if layout is missing on render', async t => {
     reply.view('index-for-layout.eta', data, { layout: 'non-existing-layout-eta.html' })
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual(result.status, 500)
 
@@ -152,9 +152,9 @@ test('reply.view with eta engine and custom ext', async t => {
     reply.view('index', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -183,9 +183,9 @@ test('reply.view for eta without data-parameter but defaultContext', async t => 
     reply.view('index.eta')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -214,9 +214,9 @@ test('reply.view for eta without data-parameter but defaultContext', async t => 
     reply.view('index.eta')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -242,9 +242,9 @@ test('reply.view for eta without data-parameter and without defaultContext', asy
     reply.view('index-bare.html')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -277,9 +277,9 @@ test('reply.view for eta engine without data-parameter and defaultContext but wi
     reply.view('./templates/index-bare.html')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -313,9 +313,9 @@ test('reply.view for eta engine without defaultContext but with reply.locals and
     reply.view('./templates/index-bare.html', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -350,9 +350,9 @@ test('reply.view for eta engine without data-parameter but with reply.locals and
     reply.view('./templates/index-bare.html')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -388,9 +388,9 @@ test('reply.view for eta engine with data-parameter and reply.locals and default
     reply.view('./templates/index-bare.html', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -419,9 +419,9 @@ test('reply.view with eta engine and full path templates folder', async t => {
     reply.view('index.eta', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -449,9 +449,9 @@ test('reply.view with eta engine', async t => {
     reply.view('templates/index.eta', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -480,9 +480,9 @@ test('reply.view with eta engine and defaultContext', async t => {
     reply.view('templates/index.eta', {})
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -511,9 +511,9 @@ test('reply.view with eta engine and includeViewExtension property as true', asy
     reply.view('templates/index', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -548,9 +548,9 @@ test('reply.view with eta engine, template folder specified, include files (eta 
     reply.type('text/html; charset=utf-8').view('index-linking-other-pages', data) // sample for specifying with type
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -588,9 +588,9 @@ test('reply.view with eta engine, templates with folder specified, include files
     reply.type('text/html; charset=utf-8').view('index', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -626,9 +626,9 @@ test('reply.view with eta engine, templates with folder specified, include files
     reply.type('text/html; charset=utf-8').view('index-with-no-data')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/no-data-test')
+  const result = await fetch(address + '/no-data-test')
 
   const responseContent = await result.text()
 
@@ -666,9 +666,9 @@ test('reply.view with eta engine, templates with folder specified, include files
     reply.type('text/html; charset=utf-8').view('index-with-includes', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/include-test')
+  const result = await fetch(address + '/include-test')
 
   const responseContent = await result.text()
 
@@ -705,9 +705,9 @@ test('reply.view with eta engine, templates with folder specified, include files
     reply.type('text/html; charset=utf-8').view('index-with-includes-one-missing', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port + '/include-one-include-missing-test')
+  const result = await fetch(address + '/include-one-include-missing-test')
 
   const responseContent = await result.text()
 
@@ -840,9 +840,9 @@ test('fastify.view with eta engine and custom cache', async t => {
     }
   })
 
-  await fastify.listen()
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -924,9 +924,9 @@ test('reply.view with eta engine and raw template', async t => {
     reply.view({ raw: fs.readFileSync('./templates/index.eta', 'utf8') }, data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -956,9 +956,9 @@ test('reply.view with eta engine and function template', async t => {
     reply.view(eta.compile(fs.readFileSync('./templates/index.eta', 'utf8')), data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   const responseContent = await result.text()
 
@@ -988,9 +988,9 @@ test('reply.view should return 500 if function return sync error', async t => {
     reply.view(() => { throw new Error('kaboom') }, data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual(result.status, 500)
 
@@ -1014,9 +1014,9 @@ test('reply.view should return 500 if function return async error', async t => {
     reply.view(() => Promise.reject(new Error('kaboom')), data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual(result.status, 500)
 

@@ -25,9 +25,9 @@ test('reply.view with liquid engine', async t => {
     reply.view('./templates/index.liquid', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -59,9 +59,9 @@ test('reply.view with liquid engine without data-parameter but defaultContext', 
     reply.view('./templates/index.liquid')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -91,9 +91,9 @@ test('reply.view with liquid engine without data-parameter but without defaultCo
     reply.view('./templates/index.liquid')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -125,9 +125,9 @@ test('reply.view with liquid engine with data-parameter and defaultContext', asy
     reply.view('./templates/index.liquid', {})
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -163,9 +163,9 @@ test('reply.view for liquid engine without data-parameter and defaultContext but
     reply.view('./templates/index.liquid', {})
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -202,9 +202,9 @@ test('reply.view for liquid engine without defaultContext but with reply.locals 
     reply.view('./templates/index.liquid', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -242,9 +242,9 @@ test('reply.view for liquid engine without data-parameter but with reply.locals 
     reply.view('./templates/index.liquid')
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -283,9 +283,9 @@ test('reply.view for liquid engine with data-parameter and reply.locals and defa
     reply.view('./templates/index.liquid', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -327,9 +327,9 @@ test('reply.view with liquid engine and custom tag', async t => {
     reply.view('./templates/index-with-custom-tag.liquid', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -360,9 +360,9 @@ test('reply.view with liquid engine and double quoted variable', async t => {
     reply.view('./templates/double-quotes-variable.liquid', data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -441,9 +441,9 @@ test('reply.view with liquid engine and raw template', async t => {
     reply.view({ raw: fs.readFileSync('./templates/index.liquid', 'utf8') }, data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -474,9 +474,9 @@ test('reply.view with liquid engine and function template', async t => {
     reply.header('Content-Type', 'text/html').view(engine.renderFile.bind(engine, './templates/index.liquid'), data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
   const responseContent = await result.text()
 
   t.assert.strictEqual(result.status, 200)
@@ -507,9 +507,9 @@ test('reply.view with liquid engine and unknown template type', async t => {
     reply.view({ }, data)
   })
 
-  await fastify.listen({ port: 0 })
+  const address = await fastify.listen({ port: 0 })
 
-  const result = await fetch('http://127.0.0.1:' + fastify.server.address().port)
+  const result = await fetch(address)
 
   t.assert.strictEqual(result.status, 500)
 
