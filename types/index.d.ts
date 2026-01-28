@@ -33,6 +33,7 @@ declare namespace fastifyView {
       twig?: any;
       liquid?: any;
       dot?: any;
+      edge?: any;
       squirrelly?: any;
     };
     templates?: string | string[];
