@@ -102,6 +102,6 @@ nunjucksApp.get('/', (_request, reply) => {
 
 expect(nunjucksApp.view('/', { text: 'Hello world' })).type.toBe<Promise<string>>()
 
-expect({ engine: { nunjucks: require('nunjucks') }, templates: 'templates' }).type.toBeAssignableTo<FastifyViewOptions>()
+expect<FastifyViewOptions>().type.toBeAssignableFrom({ engine: { nunjucks: require('nunjucks') }, templates: 'templates' })
 
 expect<FastifyViewOptions>().type.toBeAssignableFrom({ engine: { nunjucks: require('nunjucks') }, templates: ['templates/nunjucks-layout', 'templates/nunjucks-template'] })
