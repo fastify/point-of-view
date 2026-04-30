@@ -1,6 +1,6 @@
 import fastify from 'fastify'
-import fastifyView, { FastifyViewOptions } from '..'
-import { expectAssignable } from 'tsd'
+import fastifyView, { type FastifyViewOptions } from '..'
+import { expect } from 'tstyche'
 import * as path from 'node:path'
 
 interface Locals {
@@ -56,9 +56,4 @@ app.get('/dataTyped', (_request, reply) => {
   reply.view<{ text: string; }>('/layout-ts-content-with-data', { text: 'Sample data' })
 })
 
-app.listen({ port: 3000 }, (err, address) => {
-  if (err) throw err
-  console.log(`server listening on ${address} ...`)
-})
-
-expectAssignable<FastifyViewOptions>({ engine: { twig: require('twig') }, propertyName: 'mobile' })
+expect<FastifyViewOptions>().type.toBeAssignableFrom({ engine: { twig: require('twig') }, propertyName: 'mobile' })
