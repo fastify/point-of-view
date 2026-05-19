@@ -50,11 +50,6 @@ declare namespace fastifyView {
     asyncPropertyName?: string;
   }
 
-  /**
-   * @deprecated Use FastifyViewOptions
-   */
-  export type PointOfViewOptions = FastifyViewOptions
-
   export const fastifyView: FastifyView
   export { fastifyView as default }
   export const fastifyViewCache: Symbol
