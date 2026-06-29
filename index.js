@@ -33,7 +33,8 @@ async function fastifyView (fastify, opts) {
   const charset = opts.charset || 'utf-8'
   const propertyName = opts.propertyName || 'view'
   const asyncPropertyName = opts.asyncPropertyName || `${propertyName}Async`
-  const engine = await opts.engine[type]
+  const resolvedEngine = await opts.engine[type]
+  const engine = resolvedEngine?.default ?? resolvedEngine
   const globalOptions = opts.options || {}
   const templatesDir = resolveTemplateDir(opts)
   const includeViewExtension = opts.includeViewExtension || false

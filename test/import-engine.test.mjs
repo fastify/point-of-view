@@ -15,9 +15,11 @@ test('using an imported engine as a promise', async t => {
   })
 
   const address = await fastify.listen({ port: 0 })
-
   const result = await fetch(address)
 
-  t.assert.strictEqual((await ejs).render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), await result.text())
+  const ejsModule = await ejs
+  const ejsResolved = ejsModule.default ?? ejsModule
+
+  t.assert.strictEqual(ejsResolved.render(fs.readFileSync('./templates/index.ejs', 'utf8'), data), await result.text())
   fastify.close()
 })
