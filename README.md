@@ -19,7 +19,7 @@ Currently supports the following templates engines:
 - [`liquid`](https://github.com/harttle/liquidjs)
 - [`doT`](https://github.com/olado/doT)
 - [`eta`](https://eta.js.org)
-- [`edge`](https://edgejs.dev)
+- [`edge`](https://edgejs.dev/docs/introduction)
 - [`squirrelly`](https://squirrelly.js.org/)
 
 In `production` mode, `@fastify/view` will heavily cache the templates file and functions, while in `development` will reload every time the template file and function.
@@ -957,7 +957,10 @@ By default, views are served with the mime type `text/html`, with the charset sp
 This project is kindly sponsored by:
 
 - [nearForm](https://nearform.com)
-- [LetzDoIt](https://www.letzdoitapp.com/)
+
+Past sponsors:
+
+- LetzDoIt
 
 ## License
 
