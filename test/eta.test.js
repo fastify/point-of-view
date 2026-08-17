@@ -908,6 +908,37 @@ test('fastify.view with eta engine and async in production mode', (t, end) => {
   })
 })
 
+test('reply.view with eta engine and async via render options', async t => {
+  t.plan(4)
+  const fastify = Fastify()
+
+  const data = { text: 'text' }
+
+  fastify.register(pointOfView, {
+    engine: {
+      eta
+    }
+  })
+
+  fastify.get('/', (_req, reply) => {
+    reply.view('templates/index.eta', data, { async: true })
+  })
+
+  const address = await fastify.listen({ port: 0 })
+
+  const result = await fetch(address)
+
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+
+  t.assert.strictEqual(await eta.renderStringAsync(fs.readFileSync('./templates/index.eta', 'utf8'), data), responseContent)
+
+  await fastify.close()
+})
+
 test('reply.view with eta engine and raw template', async t => {
   t.plan(4)
   const fastify = Fastify()

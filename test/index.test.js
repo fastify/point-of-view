@@ -430,3 +430,34 @@ test('plugin is registered with "point-of-view" name', async t => {
 
   await fastify.close()
 })
+
+test('concurrent reply.view calls de-duplicate template reads', async t => {
+  t.plan(1)
+  const fastify = Fastify()
+  const data = { text: 'text' }
+
+  fastify.register(require('../index'), {
+    engine: {
+      ejs: require('ejs')
+    },
+    root: path.join(__dirname, '../templates')
+  })
+
+  // Multiple routes pointing at the same template so parallel
+  // fastify.inject() calls go through readFileSemaphore together.
+  fastify.get('/a', (_req, reply) => reply.view('index.ejs', data))
+  fastify.get('/b', (_req, reply) => reply.view('index.ejs', data))
+  fastify.get('/c', (_req, reply) => reply.view('index.ejs', data))
+
+  await fastify.ready()
+
+  const results = await Promise.all([
+    fastify.inject({ url: '/a' }),
+    fastify.inject({ url: '/b' }),
+    fastify.inject({ url: '/c' })
+  ])
+
+  t.assert.ok(results.every((r) => r.statusCode === 200 && r.payload.includes('text')))
+
+  await fastify.close()
+})
