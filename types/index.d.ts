@@ -6,16 +6,30 @@ declare module 'fastify' {
     layout?: string;
   }
 
+  // The plugin decorates with a configurable name (default `view`, see the
+  // `propertyName` / `asyncPropertyName` options). String-index signatures
+  // keep the types correct for any custom property name while preserving
+  // typed autocompletion for the default one.
+  interface FastifyViewFn {
+    <T extends { [key: string]: any; }>(page: string, data: T, opts?: RouteSpecificOptions): FastifyReply;
+    (page: string, data?: object, opts?: RouteSpecificOptions): FastifyReply;
+    clearCache(): void;
+  }
+
+  interface FastifyViewAsyncFn {
+    <T extends { [key: string]: any; }>(page: string, data: T, opts?: RouteSpecificOptions): Promise<string>;
+    (page: string, data?: object, opts?: RouteSpecificOptions): Promise<string>;
+  }
+
   interface FastifyReply {
-    view<T extends { [key: string]: any; }>(page: string, data: T, opts?: RouteSpecificOptions): FastifyReply;
-    view(page: string, data?: object, opts?: RouteSpecificOptions): FastifyReply;
-    viewAsync<T extends { [key: string]: any; }>(page: string, data: T, opts?: RouteSpecificOptions): Promise<string>;
-    viewAsync(page: string, data?: object, opts?: RouteSpecificOptions): Promise<string>;
+    view: FastifyViewFn;
+    viewAsync: FastifyViewAsyncFn;
+    [key: string]: any;
   }
 
   interface FastifyInstance {
-    view<T extends { [key: string]: any; }>(page: string, data: T, opts?: RouteSpecificOptions): Promise<string>;
-    view(page: string, data?: object, opts?: RouteSpecificOptions): Promise<string>;
+    view: FastifyViewAsyncFn;
+    [key: string]: any;
   }
 }
 
