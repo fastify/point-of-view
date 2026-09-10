@@ -21,6 +21,7 @@ Currently supports the following templates engines:
 - [`eta`](https://eta.js.org)
 - [`edge`](https://edgejs.dev/docs/introduction)
 - [`squirrelly`](https://squirrelly.js.org/)
+- [`swig`](https://github.com/freecycle/swig-templates) (via [`free-swig`](https://www.npmjs.com/package/free-swig))
 
 In `production` mode, `@fastify/view` will heavily cache the templates file and functions, while in `development` will reload every time the template file and function.
 
@@ -802,6 +803,23 @@ fastify.register(require('@fastify/view'), {
 
 fastify.get('/', (_req, reply) => {
     reply.view('index.squirrelly', { text: 'Hello World!' })
+})
+```
+
+### Swig
+
+```js
+const swig = require('free-swig')
+
+fastify.register(require('@fastify/view'), {
+    engine: {
+        swig
+    },
+    templates: 'templates'
+})
+
+fastify.get('/', (_req, reply) => {
+    reply.view('index.swig', { text: 'Hello World!' })
 })
 ```
 
