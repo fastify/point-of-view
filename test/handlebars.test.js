@@ -559,6 +559,48 @@ test('reply.view with handlebars engine with partials', async t => {
   await fastify.close()
 })
 
+test('reply.view with handlebars engine supports absolute layout and partial paths', async t => {
+  t.plan(4)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const data = { text: 'text' }
+  const templatesDir = join(__dirname, '../templates')
+  const page = fs.readFileSync(join(templatesDir, 'index-with-partials.hbs'), 'utf8')
+  const layout = fs.readFileSync(join(templatesDir, 'layout.hbs'), 'utf8')
+  const expectedHandlebars = handlebars.create()
+  expectedHandlebars.registerPartial('body', fs.readFileSync(join(templatesDir, 'body.hbs'), 'utf8'))
+  const expected = expectedHandlebars.compile(layout)({
+    body: expectedHandlebars.compile(page)(data)
+  })
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars
+    },
+    root: templatesDir,
+    layout: join(templatesDir, 'layout.hbs'),
+    options: {
+      partials: { body: join(templatesDir, 'body.hbs') }
+    }
+  })
+
+  fastify.get('/', (_req, reply) => {
+    reply.view('index-with-partials.hbs', data)
+  })
+
+  const address = await fastify.listen({ port: 0 })
+
+  const result = await fetch(address)
+  const responseContent = await result.text()
+
+  t.assert.strictEqual(result.status, 200)
+  t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+  t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+  t.assert.strictEqual(responseContent, expected)
+
+  await fastify.close()
+})
+
 test('reply.view with handlebars engine with missing partials path', async t => {
   t.plan(3)
   const fastify = Fastify()

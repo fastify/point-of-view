@@ -211,6 +211,10 @@ async function fastifyView (fastify, opts) {
     return viewExt ? `.${viewExt}` : (includeViewExtension ? `.${extension}` : filextension)
   }
 
+  function resolveTemplatePath (file) {
+    return resolve(templatesDir, file)
+  }
+
   const minify = typeof globalOptions.useHtmlMinifier?.minify === 'function'
     ? globalOptions.useHtmlMinifier.minify
     : null
@@ -251,7 +255,7 @@ async function fastifyView (fastify, opts) {
     if (isRaw) {
       return onTemplatesLoaded(file, file)
     }
-    const fileData = await readFileSemaphore(join(templatesDir, file))
+    const fileData = await readFileSemaphore(resolveTemplatePath(file))
     return onTemplatesLoaded(file, fileData)
   }
 
@@ -268,7 +272,7 @@ async function fastifyView (fastify, opts) {
       }
       const partialsHtml = {}
       await Promise.all(partialKeys.map(async (key) => {
-        partialsHtml[key] = await readFileSemaphore(join(templatesDir, partials[key]))
+        partialsHtml[key] = await readFileSemaphore(resolveTemplatePath(partials[key]))
       }))
       fastify[viewCache].set(cacheKey, partialsHtml)
       return partialsHtml
@@ -669,7 +673,7 @@ async function fastifyView (fastify, opts) {
     }
 
     try {
-      accessSync(join(templatesDir, getPage(fileName, ext)))
+      accessSync(resolveTemplatePath(getPage(fileName, ext)))
       result = true
     } catch {
       result = false
