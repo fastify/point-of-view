@@ -2,7 +2,7 @@
 const { readFile } = require('node:fs/promises')
 const fp = require('fastify-plugin')
 const { accessSync, existsSync, mkdirSync, readdirSync } = require('node:fs')
-const { basename, dirname, extname, join, resolve } = require('node:path')
+const { basename, dirname, extname, isAbsolute, join, relative, resolve } = require('node:path')
 const { LruMap } = require('toad-cache')
 const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'mustache', 'twig', 'liquid', 'dot', 'eta', 'edge', 'squirrelly']
 
@@ -41,7 +41,12 @@ async function fastifyView (fastify, opts) {
   const viewExt = opts.viewExt || ''
   const prod = typeof opts.production === 'boolean' ? opts.production : process.env.NODE_ENV === 'production'
   const defaultCtx = opts.defaultContext
-  const globalLayoutFileName = opts.layout
+  // The layout from the plugin options is trusted configuration, like `root`.
+  // An absolute one is made relative to the templates dir so it is read like
+  // any other template. Page names passed to reply.view() are still joined to it.
+  const globalLayoutFileName = opts.layout && isAbsolute(opts.layout) && typeof templatesDir === 'string'
+    ? relative(templatesDir, opts.layout)
+    : opts.layout
 
   /**
    * @type {Map<string, Promise>}
@@ -211,10 +216,6 @@ async function fastifyView (fastify, opts) {
     return viewExt ? `.${viewExt}` : (includeViewExtension ? `.${extension}` : filextension)
   }
 
-  function resolveTemplatePath (file) {
-    return resolve(templatesDir, file)
-  }
-
   const minify = typeof globalOptions.useHtmlMinifier?.minify === 'function'
     ? globalOptions.useHtmlMinifier.minify
     : null
@@ -255,7 +256,7 @@ async function fastifyView (fastify, opts) {
     if (isRaw) {
       return onTemplatesLoaded(file, file)
     }
-    const fileData = await readFileSemaphore(resolveTemplatePath(file))
+    const fileData = await readFileSemaphore(join(templatesDir, file))
     return onTemplatesLoaded(file, fileData)
   }
 
@@ -272,11 +273,17 @@ async function fastifyView (fastify, opts) {
       }
       const partialsHtml = {}
       await Promise.all(partialKeys.map(async (key) => {
-        partialsHtml[key] = await readFileSemaphore(resolveTemplatePath(partials[key]))
+        partialsHtml[key] = await readFileSemaphore(getPartialPath(key, partials[key]))
       }))
       fastify[viewCache].set(cacheKey, partialsHtml)
       return partialsHtml
     }
+  }
+
+  // Only partials from the plugin options may be absolute paths, not the ones
+  // passed when rendering.
+  function getPartialPath (key, file) {
+    return globalOptions.partials?.[key] === file ? resolve(templatesDir, file) : join(templatesDir, file)
   }
 
   function getPartialsCacheKey (page, partials, requestedPath) {
@@ -673,7 +680,7 @@ async function fastifyView (fastify, opts) {
     }
 
     try {
-      accessSync(resolveTemplatePath(getPage(fileName, ext)))
+      accessSync(join(templatesDir, getPage(fileName, ext)))
       result = true
     } catch {
       result = false

@@ -601,6 +601,31 @@ test('reply.view with handlebars engine supports absolute layout and partial pat
   await fastify.close()
 })
 
+test('reply.view with handlebars engine joins an absolute page path to root', async t => {
+  t.plan(1)
+  const fastify = Fastify()
+  const handlebars = require('handlebars')
+  const templatesDir = join(__dirname, '../templates')
+
+  fastify.register(require('../index'), {
+    engine: {
+      handlebars
+    },
+    root: templatesDir,
+    layout: join(templatesDir, 'layout.hbs')
+  })
+
+  fastify.get('/', (_req, reply) => {
+    // only the layout and partials from the plugin options may be absolute
+    reply.view(join(templatesDir, 'index.hbs'), { text: 'text' })
+  })
+
+  const response = await fastify.inject('/')
+  t.assert.strictEqual(response.statusCode, 500)
+
+  await fastify.close()
+})
+
 test('reply.view with handlebars engine with missing partials path', async t => {
   t.plan(3)
   const fastify = Fastify()
