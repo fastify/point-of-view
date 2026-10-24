@@ -272,6 +272,27 @@ validation on the template content.
 
 __DO NOT USE `raw` with untrusted content, or you will make yourself vulnerable to Remote Code Execution (RCE) attacks.__
 
+## Template names are trusted
+
+The template name (the first argument passed to `reply.view()` / `reply.viewAsync()` / `fastify.view()`) is
+resolved against the configured templates root and used to load a file from the filesystem. `@fastify/view` does not
+perform any validation on the template name.
+
+__DO NOT pass untrusted (e.g. request-derived) input as the template name, or you will make yourself vulnerable to
+Local File Inclusion (LFI) and, depending on the template engine, Remote Code Execution (RCE) attacks.__
+
+Always use a fixed template name, or validate and whitelist it against the set of templates you intend to serve:
+
+```js
+const allowedTemplates = new Set(['index.ejs', 'about.ejs', '404.ejs'])
+
+fastify.get('/page', (req, reply) => {
+  const page = allowedTemplates.has(req.query.page) ? req.query.page : '404.ejs'
+
+  reply.view(page)
+})
+```
+
 ## Minifying HTML on render
 
 To utilize [`html-minifier-terser`](https://www.npmjs.com/package/html-minifier-terser) in the rendering process, you can add the option `useHtmlMinifier` with a reference to `html-minifier-terser`,
