@@ -35,6 +35,7 @@ declare namespace fastifyView {
       dot?: any;
       edge?: any;
       squirrelly?: any;
+      swig?: any;
     };
     templates?: string | string[];
     includeViewExtension?: boolean;
