@@ -272,11 +272,11 @@ validation on the template content.
 
 __DO NOT USE `raw` with untrusted content, or you will make yourself vulnerable to Remote Code Execution (RCE) attacks.__
 
-## Template names are trusted
+## Security notice: template names are trusted input
 
-The template name (the first argument passed to `reply.view()` / `reply.viewAsync()` / `fastify.view()`) is
-resolved against the configured templates root and used to load a file from the filesystem. `@fastify/view` does not
-perform any validation on the template name.
+The template name parameter (the first argument passed to `reply.view()` / `reply.viewAsync()` / `fastify.view()`) is
+trusted input. It is resolved against the configured templates root and used to load a file from the filesystem.
+`@fastify/view` does not perform any validation on the template name.
 
 __DO NOT pass untrusted (e.g. request-derived) input as the template name, or you will make yourself vulnerable to
 Local File Inclusion (LFI) and, depending on the template engine, Remote Code Execution (RCE) attacks.__
