@@ -4,7 +4,7 @@ const fp = require('fastify-plugin')
 const { accessSync, existsSync, mkdirSync, readdirSync } = require('node:fs')
 const { basename, dirname, extname, join, resolve } = require('node:path')
 const { LruMap } = require('toad-cache')
-const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'mustache', 'twig', 'liquid', 'dot', 'eta', 'edge', 'squirrelly']
+const supportedEngines = ['ejs', 'nunjucks', 'pug', 'handlebars', 'mustache', 'twig', 'liquid', 'dot', 'eta', 'edge', 'squirrelly', 'swig']
 
 const viewCache = Symbol('@fastify/view/cache')
 
@@ -104,6 +104,7 @@ async function fastifyView (fastify, opts) {
     eta: withLayout(viewEta, globalLayoutFileName),
     edge: viewEdge,
     squirrelly: viewSquirrelly,
+    swig: viewSwig,
     _default: view
   }
 
@@ -635,6 +636,21 @@ async function fastifyView (fastify, opts) {
 
     const file = await readFileSemaphore(join(templatesDir, page))
     return engine.render(file, data, config)
+  }
+
+  async function viewSwig (page, data, opts) {
+    data = Object.assign({}, defaultCtx, this.locals, data)
+
+    if (typeof page === 'function') {
+      return page(data)
+    }
+
+    if (typeof page === 'object' && page.raw) {
+      return engine.render(page.raw.toString(), { locals: data })
+    }
+
+    page = getPage(page, 'swig')
+    return engine.renderFile(join(templatesDir, page), data)
   }
 
   function withLayout (render, layout) {

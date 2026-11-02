@@ -12,6 +12,7 @@ const nunjucks = require('nunjucks')
 const pug = require('pug')
 const Twig = require('twig')
 const Sqrl = require('squirrelly')
+const swig = require('free-swig')
 
 const data = { text: 'text' }
 const minifierOpts = {
@@ -592,6 +593,74 @@ module.exports.squirrellyHtmlMinifierTests = function (withMinifierOptions) {
     t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
     t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
     t.assert.strictEqual(Sqrl.render(fs.readFileSync('./templates/index.squirrelly', 'utf8'), data), responseContent)
+
+    await fastify.close()
+  })
+}
+
+module.exports.swigHtmlMinifierTests = function (withMinifierOptions) {
+  const options = withMinifierOptions ? minifierOpts : {}
+
+  test('reply.view with swig engine and html-minifier-terser', async t => {
+    t.plan(4)
+    const fastify = Fastify()
+
+    fastify.register(POV, {
+      engine: {
+        swig
+      },
+      options: {
+        useHtmlMinifier: minifier,
+        ...(withMinifierOptions && { htmlMinifierOptions: minifierOpts })
+      }
+    })
+
+    fastify.get('/', (_req, reply) => {
+      reply.view('templates/index.swig', data)
+    })
+
+    const address = await fastify.listen({ port: 0 })
+
+    const result = await fetch(address)
+
+    const responseContent = await result.text()
+
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(await minifier.minify(swig.renderFile('./templates/index.swig', data), options), responseContent)
+
+    await fastify.close()
+  })
+  test('reply.view with swig engine and paths excluded from html-minifier-terser', async t => {
+    t.plan(4)
+    const fastify = Fastify()
+
+    fastify.register(POV, {
+      engine: {
+        swig
+      },
+      options: {
+        useHtmlMinifier: minifier,
+        ...(withMinifierOptions && { htmlMinifierOptions: minifierOpts }),
+        pathsToExcludeHtmlMinifier: ['/test']
+      }
+    })
+
+    fastify.get('/test', (_req, reply) => {
+      reply.view('templates/index.swig', data)
+    })
+
+    const address = await fastify.listen({ port: 0 })
+
+    const result = await fetch(address + '/test')
+
+    const responseContent = await result.text()
+
+    t.assert.strictEqual(result.status, 200)
+    t.assert.strictEqual(result.headers.get('content-length'), '' + responseContent.length)
+    t.assert.strictEqual(result.headers.get('content-type'), 'text/html; charset=utf-8')
+    t.assert.strictEqual(swig.renderFile('./templates/index.swig', data), responseContent)
 
     await fastify.close()
   })
