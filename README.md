@@ -136,6 +136,22 @@ fastify.register(require("@fastify/view"), {
 });
 ```
 
+TypeScript still types the default `view` / `viewAsync` names. Fastify cannot infer decorator names from `register()` options, so custom `propertyName` / `asyncPropertyName` values need a module augmentation:
+
+```ts
+import type {
+  FastifyViewInstanceProperty,
+  FastifyViewReplyProperty,
+} from "@fastify/view";
+
+declare module "fastify" {
+  interface FastifyReply extends FastifyViewReplyProperty<"render"> {}
+  interface FastifyInstance extends FastifyViewInstanceProperty<"render"> {}
+}
+```
+
+That adds `reply.render()`, `reply.renderAsync()`, and `fastify.render()`. Override the async name with a second type argument (`FastifyViewReplyProperty<"render", "viewAsPromise">`). Multiple engines can be listed as a union (`FastifyViewReplyProperty<"mobile" | "desktop">`). The default `view` / `viewAsync` typings stay in place; hide them with `view: never` / `viewAsync: never` if those methods are not registered.
+
 ## Layouts
 
 @fastify/view supports layouts for **EJS**, **Handlebars**, **Eta** and **doT**. When a layout is specified, the request template is first rendered, then the layout template is rendered with the request-rendered html set on `body`.
@@ -249,6 +265,18 @@ fastify.get("/desktop", (req, reply) => {
   // Render using the `desktop` render function
   return reply.desktop("/templates/index.ejs", { text: "text" });
 });
+```
+
+```ts
+import type {
+  FastifyViewInstanceProperty,
+  FastifyViewReplyProperty,
+} from "@fastify/view";
+
+declare module "fastify" {
+  interface FastifyReply extends FastifyViewReplyProperty<"mobile" | "desktop"> {}
+  interface FastifyInstance extends FastifyViewInstanceProperty<"mobile" | "desktop"> {}
+}
 ```
 
 ## Rendering a template from a string ("raw" template)

@@ -1,4 +1,4 @@
-import { FastifyPluginAsync } from 'fastify'
+import { FastifyPluginAsync, FastifyReply } from 'fastify'
 
 declare module 'fastify' {
 
@@ -22,6 +22,44 @@ declare module 'fastify' {
 type FastifyView = FastifyPluginAsync<fastifyView.FastifyViewOptions>
 
 declare namespace fastifyView {
+  export interface FastifyViewRouteSpecificOptions {
+    layout?: string;
+  }
+
+  export interface FastifyViewReplyDecorator {
+    <T extends object>(page: string, data: T, opts?: FastifyViewRouteSpecificOptions): FastifyReply;
+    (page: string, data?: object, opts?: FastifyViewRouteSpecificOptions): FastifyReply;
+  }
+
+  export interface FastifyViewAsyncReplyDecorator {
+    <T extends object>(page: string, data: T, opts?: FastifyViewRouteSpecificOptions): Promise<string>;
+    (page: string, data?: object, opts?: FastifyViewRouteSpecificOptions): Promise<string>;
+  }
+
+  export interface FastifyViewInstanceDecorator {
+    <T extends object>(page: string, data: T, opts?: FastifyViewRouteSpecificOptions): Promise<string>;
+    (page: string, data?: object, opts?: FastifyViewRouteSpecificOptions): Promise<string>;
+    clearCache(): void;
+  }
+
+  export type FastifyViewDecorators<
+    PropertyName extends string = 'view',
+    AsyncPropertyName extends string = `${PropertyName}Async`
+  > = {
+    instance: { [K in PropertyName]: FastifyViewInstanceDecorator }
+    reply: { [K in PropertyName]: FastifyViewReplyDecorator } & {
+      [K in AsyncPropertyName]: FastifyViewAsyncReplyDecorator
+    }
+  }
+
+  export type FastifyViewInstanceProperty<PropertyName extends string = 'view'> =
+    FastifyViewDecorators<PropertyName>['instance']
+
+  export type FastifyViewReplyProperty<
+    PropertyName extends string = 'view',
+    AsyncPropertyName extends string = `${PropertyName}Async`
+  > = FastifyViewDecorators<PropertyName, AsyncPropertyName>['reply']
+
   export interface FastifyViewOptions {
     engine: {
       ejs?: any;
