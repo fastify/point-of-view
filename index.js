@@ -482,6 +482,9 @@ async function fastifyView (fastify, opts) {
 
   async function viewTwig (page, data) {
     data = Object.assign({}, defaultCtx, globalOptions, this.locals, data)
+    // twig.renderFile() reads its engine settings (`settings['twig options']`)
+    // from the render context, so they must only come from the plugin configuration.
+    data.settings = globalOptions.settings
     let render
     if (typeof page === 'string') {
       // Append view extension.
