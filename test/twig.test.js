@@ -543,3 +543,59 @@ test('reply.view with twig engine and unknown template type', async t => {
 
   await fastify.close()
 })
+
+test('reply.view with twig engine ignores engine settings passed in the template data', async t => {
+  const os = require('node:os')
+  const path = require('node:path')
+
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'pov-twig-'))
+  const outside = fs.mkdtempSync(path.join(os.tmpdir(), 'pov-twig-outside-'))
+  t.after(() => {
+    fs.rmSync(root, { recursive: true, force: true })
+    fs.rmSync(outside, { recursive: true, force: true })
+  })
+
+  const template = path.join(root, 'profile.twig')
+  const escaped = path.join(root, 'escaped.twig')
+  const other = path.join(outside, 'other.txt')
+  fs.writeFileSync(template, 'Hi {{ name }}')
+  fs.writeFileSync(escaped, 'Hi {{ name }}')
+  fs.writeFileSync(other, 'outside the templates root')
+
+  const fastify = Fastify()
+  t.after(() => fastify.close())
+
+  fastify.register(require('../index'), {
+    engine: { twig: require('twig') },
+    root,
+    options: { settings: { 'twig options': { autoescape: true } } }
+  })
+
+  fastify.post('/:page', (request, reply) => {
+    reply.view(request.params.page, request.body)
+  })
+
+  const render = async (page, payload) => {
+    const res = await fastify.inject({ method: 'POST', url: `/${page}`, payload })
+    t.assert.strictEqual(res.statusCode, 200)
+    return res.body
+  }
+
+  t.assert.strictEqual(
+    await render('profile.twig', { name: 'path', settings: { 'twig options': { path: other } } }),
+    'Hi path'
+  )
+
+  t.assert.strictEqual(
+    await render('profile.twig', { name: 'data', settings: { 'twig options': { data: 'injected {{ name }}' } } }),
+    'Hi data'
+  )
+
+  await render('profile.twig', { name: 'id', settings: { 'twig options': { data: 'injected', id: template } } })
+  t.assert.strictEqual(await render('profile.twig', { name: 'later' }), 'Hi later')
+
+  t.assert.strictEqual(
+    await render('escaped.twig', { name: '<b>x</b>', settings: { 'twig options': {} } }),
+    'Hi &lt;b&gt;x&lt;/b&gt;'
+  )
+})

@@ -293,6 +293,24 @@ fastify.get('/page', (req, reply) => {
 })
 ```
 
+## Security notice: build template data explicitly
+
+The template data (the second argument passed to `reply.view()` / `reply.viewAsync()` / `fastify.view()`) is passed to
+the template engine as is. Values inside it may come from the request, but its keys should be chosen by the
+application: template engines may give special meaning to some keys, such as configuration or helpers.
+
+__DO NOT pass a request-derived object (e.g. `request.body`, `request.query` or a spread of them) as the template
+data.__ Build the data object from the fields you need, or validate the request with a schema that sets
+`additionalProperties: false`:
+
+```js
+fastify.post('/profile', (req, reply) => {
+  reply.view('profile.ejs', { name: req.body.name })
+})
+```
+
+See [SECURITY.md](./SECURITY.md) for the full threat model of this module.
+
 ## Minifying HTML on render
 
 To utilize [`html-minifier-terser`](https://www.npmjs.com/package/html-minifier-terser) in the rendering process, you can add the option `useHtmlMinifier` with a reference to `html-minifier-terser`,
